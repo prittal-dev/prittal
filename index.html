@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var version = localStorage.getItem('prittal-theme-default-v2');
+          if (!version) {
+            localStorage.setItem('prittal-theme', 'dark');
+            localStorage.setItem('portfolio-theme', 'dark');
+            localStorage.setItem('prittal-theme-default-v2', 'true');
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+            document.documentElement.setAttribute('data-theme', 'dark');
+            return;
+          }
+          var saved = localStorage.getItem('prittal-theme') || localStorage.getItem('portfolio-theme');
+          if (saved === 'light') {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+            document.documentElement.setAttribute('data-theme', 'light');
+          } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      })();
+    </script>
+    <link rel="icon" type="image/png" href="/assets/Prittal_logo_Icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Best Branding Agency in Delhi | Prittal Creative</title>
+    <meta name="description" content="Looking for the Brand Growth Partner? We craft powerful brand identities &amp; strategies that drive growth. For Nokia, OYO, CAMBRIDGE OXFORD" />
+    <link rel="canonical" href="https://www.prittal.com/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <!-- Google Fonts: Montserrat & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              tealBrand: '#03A6C7',
+              darkBase: '#1B1B1B',
+              offWhite: '#F8F8F6',
+              prittal: {
+                cyan: '#11b1d0',
+                'cyan-hover': '#0fa1be',
+                navy: '#003E4D',
+                'navy-dark': '#002833',
+                'navy-light': '#005568',
+                offwhite: '#fff6f1',
+                dark: {
+                  bg: '#0A0E17',
+                  card: '#121826',
+                  border: '#1E293B',
+                  surface: '#1A2234'
+                },
+                light: {
+                  bg: '#F8FAFC',
+                  card: '#FFFFFF',
+                  border: '#E2E8F0',
+                  surface: '#F1F5F9'
+                }
+              }
+            },
+            animation: {
+              'glow-pulse': 'glow 4s ease-in-out infinite alternate',
+              'float': 'float 6s ease-in-out infinite',
+            },
+            keyframes: {
+              glow: {
+                '0%': { opacity: '0.4', transform: 'scale(1)' },
+                '100%': { opacity: '0.8', transform: 'scale(1.08)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-10px)' },
+              }
+            },
+            fontFamily: {
+              montserrat: ['Montserrat', 'sans-serif'],
+              outfit: ['Outfit', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-black text-white dark:bg-black dark:text-white overflow-x-hidden selection:bg-[#03A6C7] selection:text-white font-outfit">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

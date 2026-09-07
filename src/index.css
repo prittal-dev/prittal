@@ -1,0 +1,289 @@
+:root {
+  --bg-base: #F8F8F6;
+  --bg-white: #ffffff;
+  --text-dark: #003E4D;
+  --text-muted: #666666;
+  --brand-teal: #00afc8;
+  --brand-teal-hover: #009cb3;
+  --brand-teal-light: rgba(0, 175, 200, 0.08);
+  --border-light: rgba(0, 62, 77, 0.07);
+  --font-montserrat: 'Montserrat', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: var(--font-outfit), 'Outfit', sans-serif;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  background-color: #000000;
+  color: #fff6f1;
+}
+
+html.dark, html.dark body, html[data-theme="dark"], html[data-theme="dark"] body {
+  background-color: #000000;
+  color: #fff6f1;
+}
+
+html.light, html.light body, html[data-theme="light"], html[data-theme="light"] body {
+  background-color: #F8F8F6;
+  color: #003E4D;
+}
+
+.font-montserrat {
+  font-family: var(--font-montserrat);
+}
+
+.font-outfit {
+  font-family: var(--font-outfit);
+}
+
+/* Hidden Scrollbar (scroll still works) */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+/* Glassmorphism Light */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Infinite Marquee */
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+  will-change: transform;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Dedicated Ultra-Smooth Testimonials Marquee (3x Duplicated) */
+@keyframes marquee-smooth {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-33.33333%, 0, 0); }
+}
+
+.animate-marquee-smooth {
+  display: flex;
+  width: max-content;
+  animation: marquee-smooth 20s linear infinite;
+  will-change: transform;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.animate-marquee-smooth:hover {
+  animation-play-state: paused;
+}
+
+/* Vertical Marquee (down to up) */
+@keyframes marquee-vertical {
+  0% { transform: translateY(0%); }
+  100% { transform: translateY(-50%); }
+}
+
+.animate-marquee-vertical {
+  display: flex;
+  flex-direction: column;
+  animation: marquee-vertical 25s linear infinite;
+}
+
+.animate-marquee-vertical:hover {
+  animation-play-state: paused;
+}
+
+/* Subtle Grid Background */
+.bg-grid-subtle {
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+}
+
+/* Lenis Smooth Scroll Rules */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* MacBook 100vh Full Screen Snap Utilities */
+@media (min-width: 1024px) {
+  html, body {
+    scroll-snap-type: y proximity;
+  }
+  .snap-container {
+    scroll-snap-type: y proximity;
+  }
+  .snap-section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+}
+
+/* Default 110% Responsive Scale for Mac Devices */
+html.mac-device {
+  font-size: 110%;
+  -webkit-text-size-adjust: 110%;
+}
+
+/* MacBook Pro 16-inch (M4) & Large Screen Proportional Zoom (logical width 1728px) */
+@media (min-width: 1700px) {
+  html {
+    zoom: 1.1;
+  }
+}
+
+/* ─── Mobile Infinite Marquee Carousel (< 1024px) ─── */
+@keyframes statsMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 1023px) {
+  .stats-marquee-wrapper {
+    overflow: hidden !important;
+    width: 100% !important;
+    position: relative !important;
+    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+  }
+
+  .stats-marquee-track {
+    display: flex !important;
+    width: max-content !important;
+    animation: statsMarqueeScroll 10s linear infinite !important;
+    gap: 12px !important;
+    padding: 4px 0 !important;
+  }
+
+  .stats-marquee-track:hover,
+  .stats-marquee-track:active {
+    animation-play-state: paused !important;
+  }
+
+  .stat-card {
+    flex-shrink: 0 !important;
+    width: 190px !important;
+    min-width: 190px !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 12px 10px !important;
+    box-sizing: border-box !important;
+  }
+
+  .stat-number {
+    font-size: 17px !important;
+    white-space: nowrap !important;
+  }
+
+  .stat-label {
+    font-size: 9px !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+    text-align: center !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .stats-marquee-wrapper {
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+  .stats-marquee-track {
+    animation: none !important;
+    transform: none !important;
+    width: 100% !important;
+  }
+}
+
+/* DEFAULT / LIGHT MODE STYLES FOR STAT CARDS */
+.stat-card {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+.stat-card .stat-number {
+  color: #1B1B1B !important;
+}
+
+.stat-card .stat-label {
+  color: #475569 !important;
+}
+
+/* DARK MODE CONTRAST OVERRIDES FOR STAT CARDS */
+html.dark .stat-card,
+html[data-theme="dark"] .stat-card,
+body.dark .stat-card,
+.portfolio-root-container[data-theme="dark"] .stat-card {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+html.dark .stat-card .stat-number,
+html[data-theme="dark"] .stat-card .stat-number,
+body.dark .stat-card .stat-number,
+.portfolio-root-container[data-theme="dark"] .stat-card .stat-number {
+  color: #ffffff !important;
+}
+
+html.dark .stat-card .stat-label,
+html[data-theme="dark"] .stat-card .stat-label,
+body.dark .stat-card .stat-label,
+.portfolio-root-container[data-theme="dark"] .stat-card .stat-label {
+  color: #cbd5e1 !important;
+}

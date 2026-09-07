@@ -1,0 +1,35 @@
+# ==========================================
+# Prittal Creative - Robots.txt
+# Controls crawler access and blocks spam routes / parameter poisoning
+# ==========================================
+
+User-agent: *
+Allow: /
+Allow: /portfolio
+Allow: /about-us
+Allow: /services/
+Allow: /insights/
+Allow: /assets/
+
+# Hide /package route completely from Google and all web crawlers
+Disallow: /package
+Disallow: /packages
+Disallow: /package/
+Disallow: /packages/
+
+# Block ALL query parameters across the entire site (Protects against any parameter spam)
+Disallow: /*?*
+
+# Block fake/spam scraper routes & legacy CMS probes
+Disallow: /hiroshi*
+Disallow: /item*
+Disallow: /*.php$
+Disallow: /wp-*
+Disallow: /wp-admin/
+Disallow: /wp-content/
+Disallow: /wp-includes/
+Disallow: /admin/
+Disallow: /cgi-bin/
+
+# Authoritative XML Sitemap
+Sitemap: https://www.prittal.com/sitemap.xml

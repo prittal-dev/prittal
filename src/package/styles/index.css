@@ -1,0 +1,67 @@
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-card-accent: #fff6f1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-color: #e2e8f0;
+  --nav-bg: rgba(255, 255, 255, 0.85);
+}
+
+.dark {
+  --bg-primary: #000000;
+  --bg-secondary: #080808;
+  --bg-card: #0f0f11;
+  --bg-card-accent: #003E4D;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: #1e293b;
+  --nav-bg: rgba(0, 0, 0, 0.90);
+}
+
+/* Custom Glassmorphism & Effects */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-panel {
+  background: rgba(12, 12, 14, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-nav {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Cyan Glow Effect */
+.cyan-glow {
+  box-shadow: 0 0 25px rgba(17, 177, 208, 0.25);
+}
+
+.cyan-glow-lg {
+  box-shadow: 0 0 50px rgba(17, 177, 208, 0.35);
+}
+
+.glow-bg {
+  background: radial-gradient(circle at 50% 30%, rgba(17, 177, 208, 0.15) 0%, rgba(0, 62, 77, 0.05) 50%, transparent 70%);
+}
+
+.dark .glow-bg {
+  background: radial-gradient(circle at 50% 30%, rgba(17, 177, 208, 0.2) 0%, rgba(0, 62, 77, 0.15) 50%, transparent 70%);
+}
+
+/* Hide scrollbar for category tabs on mobile */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

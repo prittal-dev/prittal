@@ -1,0 +1,49 @@
+{
+  "redirects": [
+    {
+      "source": "/(.*).php",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/hiroshi(.*)",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/item(.*)",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/wp-(.*)",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ]
+}

@@ -14,12 +14,24 @@ import FloatingWhatsApp from '../components/FloatingWhatsApp';
 import ProjectInquiryModal from './components/ProjectInquiryModal';
 import { createAnimation, updateTransitionStyles } from '../components/v1/skiper26';
 
-export default function PortfolioApp({ onNavigateHome, isDarkTheme = true }) {
+const VALID_PORTFOLIO_PAGES = [
+  'home',
+  '',
+  'services-page',
+  'portfolio-archive',
+  'service-branding',
+  'service-websites',
+  'service-ai-creative',
+  'service-content',
+  'service-growth'
+];
+
+export default function PortfolioApp({ onNavigateHome, onNavigate, isDarkTheme = true }) {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(() => {
     if (typeof window !== 'undefined') {
       const hash = window.location.hash.replace('#/', '').replace('#', '');
-      return hash || 'home';
+      return VALID_PORTFOLIO_PAGES.includes(hash) ? (hash || 'home') : 'home';
     }
     return 'home';
   });
@@ -29,9 +41,11 @@ export default function PortfolioApp({ onNavigateHome, isDarkTheme = true }) {
 
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
-      const version = localStorage.getItem('prittal-theme-default-v2');
+      const version = localStorage.getItem('prittal-theme-default-v4');
       if (!version) {
         localStorage.setItem('portfolio-theme', 'dark');
+        localStorage.setItem('prittal-theme', 'dark');
+        localStorage.setItem('prittal-theme-default-v4', 'true');
         return 'dark';
       }
       const saved = localStorage.getItem('portfolio-theme') || localStorage.getItem('prittal-theme');
@@ -63,6 +77,12 @@ export default function PortfolioApp({ onNavigateHome, isDarkTheme = true }) {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#/', '').replace('#', '');
       const page = hash || 'home';
+      if (!VALID_PORTFOLIO_PAGES.includes(page)) {
+        if (onNavigate) {
+          onNavigate('/404');
+        }
+        return;
+      }
       setCurrentPage(page);
       if (page === 'services-page' || page.startsWith('service-')) {
         setActiveTab('services');
@@ -83,7 +103,7 @@ export default function PortfolioApp({ onNavigateHome, isDarkTheme = true }) {
       window.removeEventListener('hashchange', handleHashChange);
       window.removeEventListener('popstate', handleHashChange);
     };
-  }, []);
+  }, [onNavigate]);
 
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
@@ -229,6 +249,7 @@ export default function PortfolioApp({ onNavigateHome, isDarkTheme = true }) {
         isOpen={isProjectModalOpen}
         onClose={() => setIsProjectModalOpen(false)}
         isDark={theme === 'dark'}
+        onNavigate={onNavigate}
       />
     </div>
   );

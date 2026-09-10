@@ -51,7 +51,7 @@ export default function ServiceBranding({ setActiveTab, navigateTo }) {
 
           {/* Visual Showcase Feature / Grid */}
           <div style={{ marginBottom: '60px' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+            <div className="archive-posters-grid">
               {creativeItems.map((p, idx) => (
                 <div key={p.id} className="archive-poster-card" onClick={() => openLightbox(creativeItems, idx)} style={{ cursor: 'pointer', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
                   <div className="archive-poster-img-wrapper" style={{ aspectRatio: '1', overflow: 'hidden' }}>

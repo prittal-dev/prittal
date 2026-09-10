@@ -641,29 +641,78 @@ export const CategorySection = ({
                 <div className={`my-3 pt-3 border-t ${
                   isDark ? 'border-slate-800/80' : 'border-slate-100'
                 }`}>
-                  <ul className="space-y-2 text-xs">
-                    {category.featureGroups.map((group) =>
-                      group.features.map((feature, featureIdx) => {
+                  {(() => {
+                    const includedList = [];
+                    const additionalList = [];
+
+                    category.featureGroups.forEach((group) => {
+                      group.features.forEach((feature) => {
                         const val = feature.values[tier.id];
-                        if (val === false || val === '-' || val === undefined) return null;
-                        return (
-                          <li key={featureIdx} className={`flex items-center space-x-2 font-semibold ${
-                            isDark ? 'text-slate-200' : 'text-slate-800'
-                          }`}>
-                            <Check className="w-4 h-4 text-[#11b1d0] flex-shrink-0" />
-                            <span>
-                              {feature.name}
-                              {typeof val === 'string' && val !== 'true' && (
-                                <span className={`ml-1 font-extrabold ${
-                                  isDark ? 'text-white' : 'text-slate-900'
-                                }`}>({val})</span>
-                              )}
-                            </span>
-                          </li>
-                        );
-                      })
-                    )}
-                  </ul>
+                        if (val === false || val === '-' || val === undefined) return;
+                        if (typeof val === 'string' && val.startsWith('₹')) {
+                          additionalList.push({ name: feature.name, price: val });
+                        } else {
+                          includedList.push({ name: feature.name, val });
+                        }
+                      });
+                    });
+
+                    return (
+                      <div className="space-y-3">
+                        <div>
+                          <div className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5">
+                            Included in Plan:
+                          </div>
+                          <ul className="space-y-2 text-xs">
+                            {includedList.map((item, idx) => (
+                              <li key={idx} className={`flex items-center space-x-2 font-semibold ${
+                                isDark ? 'text-slate-200' : 'text-slate-800'
+                              }`}>
+                                <Check className="w-4 h-4 text-[#11b1d0] flex-shrink-0" />
+                                <span>
+                                  {item.name}
+                                  {typeof item.val === 'string' && item.val !== 'true' && (
+                                    <span className={`ml-1 font-extrabold ${
+                                      isDark ? 'text-white' : 'text-slate-900'
+                                    }`}>({item.val})</span>
+                                  )}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {additionalList.length > 0 ? (
+                          <div className={`pt-2.5 mt-2.5 border-t border-dashed ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+                            <div className="text-[10px] font-black uppercase tracking-wider text-[#11b1d0] mb-1.5 flex items-center gap-1">
+                              <Plus className="w-3 h-3 stroke-[2.5]" />
+                              <span>Additional Services (Add-ons):</span>
+                            </div>
+                            <ul className="space-y-1.5 text-xs">
+                              {additionalList.map((item, idx) => (
+                                <li key={idx} className="flex items-center justify-between">
+                                  <span className={`flex items-center gap-1.5 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#11b1d0]/60 flex-shrink-0" />
+                                    {item.name}
+                                  </span>
+                                  <span className={`font-bold px-1.5 py-0.5 rounded text-[10px] font-mono ${
+                                    isDark ? 'bg-[#11b1d0]/10 text-[#11b1d0]' : 'bg-slate-100 text-[#0f8da7]'
+                                  }`}>
+                                    {item.price}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : (
+                          <div className="pt-2 mt-2 border-t border-emerald-500/20 flex items-center gap-1.5 text-emerald-400 text-xs font-bold">
+                            <Check className="w-3.5 h-3.5 stroke-[3]" />
+                            <span>All Services Included</span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* CTA Quote Button */}
@@ -796,36 +845,79 @@ export const CategorySection = ({
                       )}
                     </div>
 
-                    {/* Features List */}
-                    <div className="space-y-3.5 mb-8">
-                      {category.featureGroups.map((group, groupIdx) => (
-                        <div key={groupIdx} className="space-y-2.5">
-                          <ul className="space-y-3 text-sm">
-                            {group.features.map((feature, featureIdx) => {
-                              const val = feature.values[tier.id];
-                              if (val === false || val === '-' || val === undefined) return null;
-                              return (
-                                <li key={featureIdx} className="flex items-start space-x-2.5">
+                    {/* Inclusions & Additional Services */}
+                    {(() => {
+                      const includedList = [];
+                      const additionalList = [];
+
+                      category.featureGroups.forEach((group) => {
+                        group.features.forEach((feature) => {
+                          const val = feature.values[tier.id];
+                          if (val === false || val === '-' || val === undefined) return;
+                          if (typeof val === 'string' && val.startsWith('₹')) {
+                            additionalList.push({ name: feature.name, price: val });
+                          } else {
+                            includedList.push({ name: feature.name, val });
+                          }
+                        });
+                      });
+
+                      return (
+                        <div className="space-y-4 mb-8">
+                          {/* Included In Plan */}
+                          <div className="space-y-2.5">
+                            <div className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-400">
+                              Included in Plan:
+                            </div>
+                            <ul className="space-y-3 text-sm">
+                              {includedList.map((item, idx) => (
+                                <li key={idx} className="flex items-start space-x-2.5">
                                   <Check className="w-5 h-5 text-[#11b1d0] flex-shrink-0 mt-0.5" />
-                                  <span className={`font-semibold leading-relaxed ${
-                                    isDark ? 'text-slate-100' : 'text-slate-800'
-                                  }`}>
-                                    {feature.name}
-                                    {typeof val === 'string' && val !== 'true' && (
-                                      <span className={`ml-1 font-extrabold ${
-                                        isDark ? 'text-white' : 'text-slate-900'
-                                      }`}>
-                                        ({val})
+                                  <span className={`font-semibold leading-relaxed ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
+                                    {item.name}
+                                    {typeof item.val === 'string' && item.val !== 'true' && (
+                                      <span className={`ml-1 font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                        ({item.val})
                                       </span>
                                     )}
                                   </span>
                                 </li>
-                              );
-                            })}
-                          </ul>
+                              ))}
+                            </ul>
+                          </div>
+
+                          {/* Additional Services (Optional Add-ons) */}
+                          {additionalList.length > 0 ? (
+                            <div className={`pt-3.5 mt-3.5 border-t border-dashed ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+                              <div className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#11b1d0] mb-2.5 flex items-center gap-1.5">
+                                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                                <span>Additional Services (Add-ons):</span>
+                              </div>
+                              <ul className="space-y-2 text-xs sm:text-sm">
+                                {additionalList.map((item, idx) => (
+                                  <li key={idx} className="flex items-center justify-between gap-2">
+                                    <span className={`flex items-center gap-1.5 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                                      <span className="w-1.5 h-1.5 rounded-full bg-[#11b1d0]/60 flex-shrink-0" />
+                                      {item.name}
+                                    </span>
+                                    <span className={`font-bold px-2 py-0.5 rounded text-[11px] font-mono whitespace-nowrap ${
+                                      isDark ? 'bg-[#11b1d0]/10 text-[#11b1d0]' : 'bg-slate-100 text-[#0f8da7]'
+                                    }`}>
+                                      {item.price}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ) : (
+                            <div className={`pt-3 mt-3 border-t ${isDark ? 'border-emerald-500/20' : 'border-emerald-500/30'} flex items-center gap-2 text-emerald-500 dark:text-emerald-400 text-xs font-extrabold`}>
+                              <Check className="w-4 h-4 stroke-[3]" />
+                              <span>All Services Included in Plan</span>
+                            </div>
+                          )}
                         </div>
-                      ))}
-                    </div>
+                      );
+                    })()}
                   </div>
 
                   {/* CTA Button */}

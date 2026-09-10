@@ -443,13 +443,13 @@ export const getDeliverablesSummary = (packageInfo) => {
 
   if (cat.includes('web')) {
     if (tier.includes('basic')) {
-      return 'Essential 5-Page Responsive Web Architecture, Modern CMS Integration, SEO Friendly Structure, Meta Links & Sitemaps.';
+      return 'Essential 5-Page Responsive Web Architecture, Modern CMS Integration, SEO Friendly Structure, Meta Links & Sitemaps (Additional services available on request).';
     }
     if (tier.includes('standard')) {
-      return '10-Page Dynamic Business Portal, SSL Security Certificate, Responsive Mobile/Tablet Architecture, CMS, Contact Forms & Analytics.';
+      return '10-Page Dynamic Business Portal, SSL Security Certificate, Responsive Mobile/Tablet Architecture, CMS, Annual Maintenance, Blog, WhatsApp Chat, Catalogue Download, Language Converter & Live Chat Integration included.';
     }
     if (tier.includes('premium')) {
-      return 'Full-Fledged E-Commerce Storefront, 50 Products Catalog Upload, 1 Domain + 1-Yr Hosting + Annual Maintenance included.';
+      return 'Full-Fledged E-Commerce Storefront, 50 Products Catalog Upload, 1 Domain, Annual Hosting, Maintenance, Blog, WhatsApp, Catalogue, Email, Reviews, Language Converter & Live Chat — All Services Included.';
     }
     return 'End-to-end modern web design, responsive development, CMS configuration, and performance optimization.';
   }
@@ -495,13 +495,13 @@ export const getDeliverablesSummary = (packageInfo) => {
 
   if (cat.includes('shoot') || cat.includes('product')) {
     if (tier.includes('basic')) {
-      return '10 Clean White Background E-Com Photos, Basic Color Grading, High-Res Web Delivery for Marketplaces & Catalogs.';
+      return 'Up to 5 Products Studio Photos (3 Photos/Product), White Background Shots, Basic Retouching, High-Res Delivery.';
     }
     if (tier.includes('standard')) {
-      return '25 Lifestyle & Studio Shots, 3 Short Video Clips (Reels), Creative Props & Lighting, Commercial Retouching.';
+      return 'Up to 10 Products Studio Photos (5 Photos/Product), 1 Short Product Video, Advanced Editing & Compositing, High-Res Delivery.';
     }
     if (tier.includes('premium')) {
-      return '50 Multi-Angle Studio Shots, 10 Corporate / Product Commercial Videos, Model Coordination, Master Color Grading & 4K Output.';
+      return 'Up to 25 Products Multi-Angle Photos (8 Photos/Product), 3 Product Videos, 360° View, Lifestyle Shots & Model Add-on.';
     }
     return 'Professional product photography, lifestyle commercial shoots, high-definition post-processing, and video production.';
   }
@@ -652,13 +652,50 @@ export const getPlanFeaturesList = (packageInfo, dataList = packagesData) => {
   cat.featureGroups.forEach((group) => {
     group.features.forEach((feat) => {
       const val = feat.values ? feat.values[tierId] : undefined;
+      // Only include features that are ACTUALLY INCLUDED in this plan tier (val === true or non-price quantitative strings)
       if (val === true) {
         includedFeatures.push(feat.name);
-      } else if (typeof val === 'string' && val.trim() !== '-' && val.trim() !== '' && val !== 'false') {
+      } else if (
+        typeof val === 'string' &&
+        !val.startsWith('₹') &&
+        group.groupName !== 'ADDITIONAL SERVICES' &&
+        val.trim() !== '-' &&
+        val.trim() !== '' &&
+        val !== 'false'
+      ) {
         includedFeatures.push(`${feat.name}: ${val}`);
       }
     });
   });
 
   return includedFeatures;
+};
+
+/**
+ * Extracts optional additional services available for this plan tier with their pricing
+ */
+export const getAdditionalServicesList = (packageInfo, dataList = packagesData) => {
+  if (!packageInfo) return [];
+  const categoryId = (packageInfo.categoryId || '').toLowerCase();
+  const tierId = (packageInfo.tierId || '').toLowerCase();
+
+  const cat = (dataList || []).find((c) => 
+    c.id.toLowerCase() === categoryId ||
+    c.title.toLowerCase().includes(categoryId) ||
+    categoryId.includes(c.id.toLowerCase())
+  );
+
+  if (!cat || !cat.featureGroups) return [];
+
+  const addServices = [];
+  cat.featureGroups.forEach((group) => {
+    group.features.forEach((feat) => {
+      const val = feat.values ? feat.values[tierId] : undefined;
+      if (typeof val === 'string' && val.startsWith('₹')) {
+        addServices.push(`${feat.name} (${val})`);
+      }
+    });
+  });
+
+  return addServices;
 };

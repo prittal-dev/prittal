@@ -3,18 +3,44 @@ import React, { useState, useRef } from 'react';
 export default function BlogFeaturedGallery({ blogs = [], onSelectBlog }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const hoverTimer = useRef(null);
+  const scrollRef = useRef(null);
 
   if (!blogs || blogs.length === 0) return null;
 
-  // Use all available blog articles
   const displayBlogs = blogs;
-  const currentFeatured = displayBlogs[activeIdx] || displayBlogs[0];
+
+  const handleDotClick = (index) => {
+    setActiveIdx(index);
+    if (scrollRef.current && window.innerWidth <= 768) {
+      const container = scrollRef.current;
+      const cardWidth = container.offsetWidth;
+      container.scrollTo({
+        left: index * cardWidth,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  const handleScroll = () => {
+    if (scrollRef.current && window.innerWidth <= 768) {
+      const container = scrollRef.current;
+      const cardWidth = container.offsetWidth;
+      if (cardWidth > 0) {
+        const newIdx = Math.round(container.scrollLeft / cardWidth);
+        if (newIdx !== activeIdx && newIdx >= 0 && newIdx < displayBlogs.length) {
+          setActiveIdx(newIdx);
+        }
+      }
+    }
+  };
 
   const handleMouseEnter = (index) => {
-    if (hoverTimer.current) clearTimeout(hoverTimer.current);
-    hoverTimer.current = setTimeout(() => {
-      setActiveIdx(index);
-    }, 180);
+    if (window.innerWidth > 768) {
+      if (hoverTimer.current) clearTimeout(hoverTimer.current);
+      hoverTimer.current = setTimeout(() => {
+        setActiveIdx(index);
+      }, 180);
+    }
   };
 
   const handleMouseLeave = () => {
@@ -31,8 +57,12 @@ export default function BlogFeaturedGallery({ blogs = [], onSelectBlog }) {
 
   return (
     <div className="blog-featured-gallery-container">
-      {/* DESKTOP & TABLET FLEX SHOWCASE */}
-      <div className="blog-gallery-flex">
+      {/* DESKTOP & MOBILE FLEX / SCROLL SHOWCASE */}
+      <div 
+        ref={scrollRef} 
+        className="blog-gallery-flex"
+        onScroll={handleScroll}
+      >
         {displayBlogs.map((item, index) => {
           const isFeatured = index === activeIdx;
 
@@ -66,44 +96,42 @@ export default function BlogFeaturedGallery({ blogs = [], onSelectBlog }) {
               </div>
 
               {/* CONTENT DISPLAY: FEATURED vs NARROW */}
-              {isFeatured ? (
-                <div className="blog-featured-content fade-in-up">
-                  <div className="blog-meta-tags">
-                    <span className="blog-category-pill">✦ {category}</span>
-                    <span className="blog-read-time">{readTime}</span>
-                  </div>
-
-                  <h3 className="blog-featured-title">
-                    {item.title}
-                  </h3>
-
-                  <p className="blog-featured-snippet">
-                    {snippet}
-                  </p>
-
-                  <div className="blog-featured-cta">
-                    <button 
-                      className="blog-cta-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (onSelectBlog) onSelectBlog(item, index);
-                      }}
-                    >
-                      <span>READ FULL ARTICLE</span>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                        <polyline points="12 5 19 12 12 19"></polyline>
-                      </svg>
-                    </button>
-                  </div>
+              <div className={`blog-featured-content ${isFeatured ? 'fade-in-up' : ''}`}>
+                <div className="blog-meta-tags">
+                  <span className="blog-category-pill">✦ {category}</span>
+                  <span className="blog-read-time">{readTime}</span>
                 </div>
-              ) : (
-                <div className="blog-narrow-content">
-                  <div className="blog-narrow-vertical-title">
-                    {item.title}
-                  </div>
+
+                <h3 className="blog-featured-title">
+                  {item.title}
+                </h3>
+
+                <p className="blog-featured-snippet">
+                  {snippet}
+                </p>
+
+                <div className="blog-featured-cta">
+                  <button 
+                    className="blog-cta-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onSelectBlog) onSelectBlog(item, index);
+                    }}
+                  >
+                    <span>READ FULL ARTICLE</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                  </button>
                 </div>
-              )}
+              </div>
+
+              <div className="blog-narrow-content">
+                <div className="blog-narrow-vertical-title">
+                  {item.title}
+                </div>
+              </div>
             </div>
           );
         })}
@@ -115,7 +143,7 @@ export default function BlogFeaturedGallery({ blogs = [], onSelectBlog }) {
           <button
             key={item.id || index}
             className={`blog-mobile-dot ${index === activeIdx ? 'active' : ''}`}
-            onClick={() => setActiveIdx(index)}
+            onClick={() => handleDotClick(index)}
             aria-label={`Select blog ${index + 1}`}
           />
         ))}

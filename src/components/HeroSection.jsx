@@ -152,7 +152,7 @@ export default function HeroSection({ onOpenContact, onExploreWork }) {
     <section 
       id="hero" 
       ref={sectionRef}
-      className="snap-section relative min-h-screen min-h-[100dvh] lg:h-screen lg:max-h-screen bg-[#f4f4f6] dark:bg-[#0F0F0F] text-[#003E4D] dark:text-[#fff6f1] flex items-center justify-center overflow-hidden pt-24 sm:pt-28 lg:pt-20 xl:pt-24 pb-0 transition-colors duration-300"
+      className="snap-section relative min-h-screen min-h-[100dvh] lg:h-screen lg:max-h-screen bg-[#F8F8F6] dark:bg-[#05070a] text-[#003E4D] dark:text-[#fff6f1] flex items-center justify-center overflow-hidden pt-24 sm:pt-28 lg:pt-20 xl:pt-24 pb-0 transition-colors duration-300"
     >
       
 

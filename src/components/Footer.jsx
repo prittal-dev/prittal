@@ -47,16 +47,18 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
     { title: 'USA', detail: 'California, USA' },
   ];
 
+  const [subscribeError, setSubscribeError] = useState(null);
+
   const handleSubscribe = async (e) => {
     e.preventDefault();
     if (!email.trim()) return;
 
+    setSubscribeError(null);
     setIsSubmitting(true);
     const submittedEmail = email;
-    setEmail('');
 
     try {
-      await fetch('https://formsubmit.co/ajax/sales@prittal.com', {
+      const response = await fetch('https://formsubmit.co/ajax/sales@prittal.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,12 +70,32 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
           _template: 'table'
         })
       });
+
+      if (!response.ok) {
+        throw new Error('Subscription failed.');
+      }
+
+      setEmail('');
+      setIsSubmitting(false);
+
+      try {
+        sessionStorage.setItem('prittal_last_submission', JSON.stringify({
+          type: 'newsletter',
+          email: submittedEmail,
+          service: 'Prittal Strategy Insights Newsletter',
+          timestamp: new Date().toISOString()
+        }));
+      } catch (e) {}
+
+      if (onNavigate) {
+        onNavigate('/thank-you');
+      } else {
+        window.location.href = '/thank-you';
+      }
     } catch (err) {
       console.error('Subscription submission error:', err);
-    } finally {
+      setSubscribeError('Unable to subscribe. Please try again.');
       setIsSubmitting(false);
-      setSubscribed(true);
-      setTimeout(() => setSubscribed(false), 4000);
     }
   };
 

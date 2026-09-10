@@ -3,7 +3,7 @@ import {
   X, Send, Check, Loader2, Mail, MapPin, CheckCircle, FileText, 
   Printer, Download, ExternalLink, ArrowLeft, Sparkles, Building2,
   Phone, User, CreditCard, ShieldCheck, HelpCircle, Layers, CheckCircle2,
-  ChevronDown, ChevronUp, Sliders, AlertCircle, Tag
+  ChevronDown, ChevronUp, Sliders, AlertCircle, MessageCircle, Tag, ClipboardCheck
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { useTheme } from '../context/ThemeContext';
@@ -17,6 +17,7 @@ import {
   getInitialCheckedServices,
   getActiveCategoriesWithServices,
   getPlanFeaturesList,
+  getAdditionalServicesList,
   getDeliverablesSummary,
   buildInvoiceEmailText 
 } from '../utils/proformaUtils';
@@ -27,6 +28,7 @@ export const ProjectModal = ({
   isOpen,
   onClose,
   initialPackage,
+  onNavigate,
 }) => {
   const { isDark } = useTheme();
   const printRef = useRef(null);
@@ -161,6 +163,11 @@ export const ProjectModal = ({
   // List of all individual service inclusions/deliverables written on this plan
   const planFeaturesList = useMemo(() => {
     return getPlanFeaturesList(selectedPkg, packagesData);
+  }, [selectedPkg]);
+
+  // List of optional additional services available for this plan
+  const additionalServicesList = useMemo(() => {
+    return getAdditionalServicesList(selectedPkg, packagesData);
   }, [selectedPkg]);
 
   // Manage background scroll lock and Lenis lifecycle when modal is open
@@ -487,13 +494,100 @@ export const ProjectModal = ({
     window.open(gmailUrl, '_blank');
   };
 
+  // WhatsApp Dispatch Handler — sends PI details & bank info directly via WhatsApp
+  const handleWhatsApp = () => {
+    // Trigger PDF generation so the user can save and attach it manually
+    handlePrint();
+
+    const companyTitle = formData.companyName || formData.name || 'Valued Client';
+    const message = `*PRITTAL CREATIVE AGENCY — OFFICIAL PROFORMA INVOICE*
+Ref: *${docCode}*
+Date: ${new Date().toLocaleDateString('en-GB')}
+
+*Client / Advertiser:* ${companyTitle}
+*Scope:* ${selectedPkg?.categoryTitle || 'Digital Retainer'} (${selectedPkg?.tierName || 'Custom Scope'})
+*Total Amount:* ₹${formatINR(financialData.totalAmount)} (Incl. 18% GST)
+*Status:* ${formData.paymentStatus}
+
+*Beneficiary Bank Details:*
+• Beneficiary: ${AGENCY_DETAILS.bank.beneficiary}
+• Account No: ${AGENCY_DETAILS.bank.accountNo}
+• IFSC: ${AGENCY_DETAILS.bank.ifsc}
+• Bank: ${AGENCY_DETAILS.bank.bankName}
+
+Official 2-Page printable PI attached. For questions, reply directly to this message.`;
+
+    const phoneClean = (formData.phone || '').replace(/[^0-9]/g, '');
+    const targetPhone = phoneClean.length >= 10 ? (phoneClean.length === 10 ? `91${phoneClean}` : phoneClean) : '';
+    const url = targetPhone
+      ? `https://api.whatsapp.com/send?phone=${targetPhone}&text=${encodeURIComponent(message)}`
+      : `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+    
+    window.open(url, '_blank');
+  };
+
+  // Send for Approval Handler — opens Gmail to send PI to management for negotiation approval
+  const handleSendForApproval = () => {
+    const companyTitle = formData.companyName || formData.name || 'Valued Client';
+    const approvalBody = `Dear Management,
+
+Please review and approve the following Proforma Invoice for client negotiation acceptance.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 PROFORMA INVOICE — APPROVAL REQUEST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📄 PI Reference: ${docCode}
+📅 Date: ${new Date().toLocaleDateString('en-GB')}
+
+🏢 Client / Advertiser: ${companyTitle}
+👤 Contact Person: ${formData.name || 'N/A'} ${formData.designation ? `(${formData.designation})` : ''}
+📧 Email: ${formData.email || 'N/A'}
+📱 Phone: ${formData.phone || 'N/A'}
+
+🎯 Package: ${selectedPkg?.categoryTitle || 'Digital Service'} — ${selectedPkg?.tierName || 'Custom'}
+💰 Billing: ${selectedPkg?.billingCycle === 'annual' ? 'Annual Plan' : selectedPkg?.billingCycle === 'one-time' ? 'One-Time Project' : 'Monthly Retainer'}
+
+━━━━━━━━ FINANCIAL BREAKDOWN ━━━━━━━━
+
+  Base Amount:     ₹${formatINR(financialData.baseAmount)}
+  GST (18%):       ₹${formatINR(financialData.gstAmount)}
+  ─────────────────────────
+  TOTAL:           ₹${formatINR(financialData.totalAmount)}
+
+  Payment Status:  ${formData.paymentStatus}
+  Payment Mode:    ${formData.paymentMode}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔹 ACTION REQUIRED:
+Please reply with APPROVED or provide negotiation feedback.
+Once approved, the official PI will be dispatched to the client via email.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Regards,
+Sales Desk — Prittal Creative Agency
+${AGENCY_DETAILS.website}`;
+
+    const to = encodeURIComponent(AGENCY_DETAILS.email || 'sale@prittal.com');
+    const subject = encodeURIComponent(`[APPROVAL REQUIRED] PI ${docCode} — ${companyTitle} | ${selectedPkg?.categoryTitle || 'Service'} (${selectedPkg?.tierName || 'Custom'})`);
+    const body = encodeURIComponent(approvalBody);
+
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
+    window.open(gmailUrl, '_blank');
+  };
+
+  const [submitError, setSubmitError] = useState(null);
+
   // Form Submit Handler to notify sales team via FormSubmit
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
+    setSubmitError(null);
     setIsSubmitting(true);
 
     try {
-      await fetch('https://formsubmit.co/ajax/sales@prittal.com', {
+      const response = await fetch('https://formsubmit.co/ajax/sales@prittal.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -527,20 +621,36 @@ export const ProjectModal = ({
           _template: 'table',
         }),
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to dispatch proforma invoice.');
+      }
+
+      // Success flow
+      try {
+        sessionStorage.setItem('prittal_last_submission', JSON.stringify({
+          type: 'package',
+          name: formData.name || formData.companyName,
+          company: formData.companyName,
+          email: formData.email,
+          phone: formData.phone,
+          package: `${selectedPkg?.categoryTitle || 'Package Order'} (${selectedPkg?.tierName || 'Custom'})`,
+          proformaCode: docCode,
+          timestamp: new Date().toISOString()
+        }));
+      } catch (e) {}
+
+      setIsSubmitting(false);
+      onClose();
+      if (onNavigate) {
+        onNavigate('/thank-you');
+      } else {
+        window.location.href = '/thank-you';
+      }
     } catch (err) {
       console.error('Inquiry submission error:', err);
-    } finally {
+      setSubmitError('Unable to process proforma request right now. Please check your network or reach out directly to sales@prittal.com.');
       setIsSubmitting(false);
-      setSubmitted(true);
-      try {
-        confetti({
-          particleCount: 140,
-          spread: 80,
-          origin: { y: 0.6 },
-        });
-      } catch (err) {
-        // Fallback
-      }
     }
   };
 
@@ -621,6 +731,17 @@ export const ProjectModal = ({
                 >
                   <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
                   <span>Send via Gmail</span>
+                </button>
+
+                {/* Send via WhatsApp Button */}
+                <button
+                  type="button"
+                  onClick={handleWhatsApp}
+                  className="px-3 py-1.5 rounded-xl text-xs font-extrabold text-white bg-green-600 hover:bg-green-700 shadow-sm transition-colors flex items-center space-x-1.5 cursor-pointer"
+                  title="Share PI details via WhatsApp"
+                >
+                  <MessageCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span>WhatsApp</span>
                 </button>
 
                 {/* Print / Save PDF Button */}
@@ -776,6 +897,22 @@ export const ProjectModal = ({
                       </span>
                     ))}
                   </div>
+
+                  {/* Plan Inclusions Summary */}
+                  {planFeaturesList.length > 0 && (
+                    <div className="mt-2.5 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                      <strong className="text-slate-800 dark:text-slate-200">Included in Plan:</strong>{' '}
+                      {planFeaturesList.join(' • ')}
+                    </div>
+                  )}
+
+                  {/* Available Add-ons Summary */}
+                  {additionalServicesList.length > 0 && (
+                    <div className="mt-1.5 text-[10.5px] leading-relaxed text-[#11b1d0] dark:text-[#38d4f2]">
+                      <strong>Additional Services (Add-ons):</strong>{' '}
+                      {additionalServicesList.join(' • ')}
+                    </div>
+                  )}
 
                   {/* Expandable Plan & Tier Switcher */}
                   {isPlanSelectorOpen && (
@@ -1276,10 +1413,16 @@ export const ProjectModal = ({
                 </div>
 
                 {/* Submit & Next Step Buttons */}
+                {submitError && (
+                  <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-medium mb-3">
+                    {submitError}
+                  </div>
+                )}
                 <div className="pt-3 flex flex-col sm:flex-row gap-3">
                   <button
                     type="submit"
-                    className="flex-1 py-3.5 px-6 rounded-2xl text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-[#11b1d0] hover:bg-[#0fa1be] text-white shadow-xl shadow-[#11b1d0]/25 transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                    disabled={isSubmitting}
+                    className="flex-1 py-3.5 px-6 rounded-2xl text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-[#11b1d0] hover:bg-[#0fa1be] text-white shadow-xl shadow-[#11b1d0]/25 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
                   >
                     <span>Generate & Preview Proforma Invoice (PI)</span>
                     <FileText className="w-4 h-4" />
@@ -1473,6 +1616,12 @@ export const ProjectModal = ({
                                   <div className="text-slate-600 leading-normal">
                                     <strong className="font-semibold text-[#00adc8]">Included In Plan:</strong>{' '}
                                     {planFeaturesList.join('   •   ')}
+                                  </div>
+                                )}
+                                {additionalServicesList.length > 0 && (
+                                  <div className="text-slate-500 leading-normal pt-1 border-t border-slate-200/60 text-[7px] sm:text-[7.5px]">
+                                    <strong className="font-semibold text-slate-700">Additional Services (Add-on Options):</strong>{' '}
+                                    {additionalServicesList.join('   •   ')}
                                   </div>
                                 )}
                               </div>
@@ -1777,6 +1926,15 @@ export const ProjectModal = ({
 
                   <button
                     type="button"
+                    onClick={handleWhatsApp}
+                    className="w-full sm:w-auto py-2.5 sm:py-3 px-4 sm:px-5 rounded-xl text-xs font-extrabold text-white bg-green-600 hover:bg-green-700 shadow-md transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+                  >
+                    <MessageCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>WhatsApp</span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={handlePrint}
                     className="w-full sm:w-auto py-2.5 sm:py-3 px-4 sm:px-5 rounded-xl text-xs font-extrabold text-white bg-[#11b1d0] hover:bg-[#0fa1be] shadow-md transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
                   >
@@ -1786,18 +1944,11 @@ export const ProjectModal = ({
 
                   <button
                     type="button"
-                    disabled={isSubmitting}
-                    onClick={handleSubmit}
-                    className="w-full sm:w-auto py-2.5 sm:py-3 px-4 sm:px-5 rounded-xl text-xs font-extrabold text-white bg-emerald-600 hover:bg-emerald-700 shadow-md transition-all flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-50"
+                    onClick={handleSendForApproval}
+                    className="w-full sm:w-auto py-2.5 sm:py-3 px-4 sm:px-5 rounded-xl text-xs font-extrabold text-white bg-amber-500 hover:bg-amber-600 shadow-md transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
                   >
-                    {isSubmitting ? (
-                      <Loader2 className="w-4 h-4 animate-spin flex-shrink-0" />
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4 flex-shrink-0" />
-                        <span>Confirm & Log</span>
-                      </>
-                    )}
+                    <ClipboardCheck className="w-4 h-4 flex-shrink-0" />
+                    <span>Send for Approval</span>
                   </button>
                 </div>
               </div>

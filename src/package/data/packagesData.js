@@ -22,10 +22,7 @@ export const packagesData = [
           { name: 'Favicon', values: { basic: true, standard: true, premium: true } },
           { name: 'SSL Certificate', values: { basic: false, standard: true, premium: true } },
           { name: 'Responsive Design', values: { basic: false, standard: true, premium: true } },
-          { name: '50 Products Upload', values: { basic: false, standard: false, premium: true }, isHighlight: true },
-          { name: '1 Domain', values: { basic: false, standard: false, premium: true } },
-          { name: 'Annual Hosting', values: { basic: false, standard: false, premium: true } },
-          { name: 'Annual Maintenance', values: { basic: false, standard: false, premium: true } }
+          { name: '50 Products Upload', values: { basic: false, standard: false, premium: true }, isHighlight: true }
         ]
       },
       {
@@ -33,14 +30,14 @@ export const packagesData = [
         features: [
           { name: '1 Domain', values: { basic: '₹1,000', standard: '₹1,000', premium: true } },
           { name: 'Annual Hosting', values: { basic: '₹3,000', standard: '₹3,000', premium: true } },
-          { name: 'Annual Maintenance', values: { basic: '₹3,000', standard: '₹2,000', premium: true } },
-          { name: 'Catalogue Download', values: { basic: '₹3,000', standard: '₹2,000', premium: true } },
+          { name: 'Annual Maintenance', values: { basic: '₹3,000', standard: true, premium: true } },
+          { name: 'Catalogue Download', values: { basic: '₹3,000', standard: true, premium: true } },
           { name: 'Email', values: { basic: '₹3,000', standard: '₹2,000', premium: true } },
-          { name: 'Blog', values: { basic: '₹3,000', standard: '₹2,000', premium: true } },
+          { name: 'Blog', values: { basic: '₹3,000', standard: true, premium: true } },
           { name: 'Google Review Integration', values: { basic: '₹3,000', standard: '₹2,000', premium: true } },
-          { name: 'Whatsapp Chat Integration', values: { basic: '₹3,000', standard: '₹2,000', premium: true } },
-          { name: 'Language Converter', values: { basic: '₹5,000', standard: '₹5,000', premium: '₹5,000' } },
-          { name: 'Live Chat Integration', values: { basic: '₹10,000', standard: '₹10,000', premium: '₹10,000' } }
+          { name: 'Whatsapp Chat Integration', values: { basic: '₹3,000', standard: true, premium: true } },
+          { name: 'Language Converter', values: { basic: '₹5,000', standard: true, premium: true } },
+          { name: 'Live Chat Integration', values: { basic: '₹10,000', standard: true, premium: true } }
         ]
       }
     ]
@@ -242,7 +239,7 @@ export const packagesData = [
       {
         groupName: 'PACKAGE OVERVIEW',
         features: [
-          { name: 'Products Covered', values: { basic: 'Up to 10', standard: 'Up to 25', premium: 'Up to 50' }, isHighlight: true }
+          { name: 'Products Covered', values: { basic: 'Up to 5', standard: 'Up to 10', premium: 'Up to 25' }, isHighlight: true }
         ]
       },
       {

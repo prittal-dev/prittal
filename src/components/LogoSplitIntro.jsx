@@ -17,7 +17,7 @@ export default function LogoSplitIntro({ children, onSkipIntro }) {
     restDelta: 0.0001
   });
 
-  // Intercept wheel & touch scroll events during intro sequence + 5-second idle auto-scroll
+  // Intercept wheel & touch scroll events during intro sequence + 2-second idle auto-scroll
   useEffect(() => {
     if (isCompleted) return;
 
@@ -59,13 +59,13 @@ export default function LogoSplitIntro({ children, onSkipIntro }) {
       }
       idleTimer = setTimeout(() => {
         startAutoScroll();
-      }, 5000);
+      }, 2000);
     };
 
-    // Auto-scroll trigger if user does not scroll or wait for more than 5 seconds
+    // Auto-scroll trigger if user does not scroll or wait for more than 2 seconds
     idleTimer = setTimeout(() => {
       startAutoScroll();
-    }, 5000);
+    }, 2000);
 
     let touchStartY = 0;
 

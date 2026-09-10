@@ -30,7 +30,7 @@ export default function ServiceWebsites({ setActiveTab, navigateTo }) {
 
           {/* Websites Showcase Grid */}
           <div style={{ marginBottom: '60px' }}>
-            <div className="archive-platforms-grid-2col" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
+            <div className="archive-platforms-grid-2col">
               {PROJECTS_DATA.filter(p => p.type === 'websites').map(p => (
                 <div key={p.id} className="archive-platform-card" onClick={p.link && p.link.startsWith('http') ? () => window.open(p.link, '_blank') : undefined} style={{ cursor: 'pointer' }}>
                   <div className="view-project-indicator">View Project →</div>

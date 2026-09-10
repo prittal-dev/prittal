@@ -6,8 +6,11 @@ export const ThemeProvider = ({ children, isDark, onToggleTheme }) => {
   const [internalDark, setInternalDark] = useState(() => {
     if (typeof isDark === 'boolean') return isDark;
     if (typeof window !== 'undefined') {
-      const version = localStorage.getItem('prittal-theme-default-v2');
+      const version = localStorage.getItem('prittal-theme-default-v4');
       if (!version) {
+        localStorage.setItem('prittal-theme', 'dark');
+        localStorage.setItem('portfolio-theme', 'dark');
+        localStorage.setItem('prittal-theme-default-v4', 'true');
         return true;
       }
       const saved = localStorage.getItem('prittal-theme');

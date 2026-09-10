@@ -75,6 +75,7 @@ export const PackagesPage = ({ onNavigateHome, onNavigate }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         initialPackage={selectedPackage}
+        onNavigate={onNavigate}
       />
     </div>
   );

@@ -760,7 +760,7 @@ export default function WorkSection({ onOpenContact, onSelectArticle }) {
     <section id="work" className="snap-section py-8 md:py-10 lg:py-6 lg:h-screen lg:max-h-screen flex flex-col justify-center bg-transparent text-[#1B1B1B] dark:text-white relative z-10 overflow-visible lg:overflow-hidden">
       
       {/* Blog & Insights Showcase with Interactive Accordion Cards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full max-w-full overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         
         {/* Section Header */}
         <motion.div
@@ -768,10 +768,10 @@ export default function WorkSection({ onOpenContact, onSelectArticle }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-5 lg:mb-4 gap-4 max-w-full overflow-hidden"
+          className="flex flex-col sm:flex-row sm:items-end justify-between mb-5 lg:mb-4 gap-4 w-full"
         >
-          <div className="max-w-full">
-            <h2 className="font-montserrat text-2xl sm:text-4xl lg:text-4xl font-extrabold text-[#1B1B1B] dark:text-white tracking-tight break-words">
+          <div className="flex-1 min-w-0 pr-2 sm:pr-4">
+            <h2 className="font-montserrat text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1B1B1B] dark:text-white tracking-tight break-words">
               Inside stories for your brand needs
             </h2>
             <p className="text-[#1B1B1B]/70 dark:text-white/70 text-xs sm:text-sm font-light mt-1 break-words">
@@ -779,17 +779,17 @@ export default function WorkSection({ onOpenContact, onSelectArticle }) {
             </p>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-start gap-4">
+          <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 whitespace-nowrap">
             <button
               onClick={onOpenContact}
-              className="inline-flex items-center gap-2 text-xs font-montserrat font-bold text-[#00A9B9] hover:text-[#008f9d] uppercase tracking-wider group cursor-pointer"
+              className="inline-flex items-center gap-2 text-xs font-montserrat font-bold text-[#00A9B9] hover:text-[#008f9d] uppercase tracking-wider group cursor-pointer shrink-0 whitespace-nowrap"
             >
               <span>Read All Articles</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
             </button>
 
             {/* Mobile Carousel Arrow Navigation */}
-            <div className="lg:hidden flex items-center gap-2">
+            <div className="lg:hidden flex items-center gap-2 shrink-0">
               <button
                 onClick={() => scrollBlog('left')}
                 className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/15 flex items-center justify-center text-[#1B1B1B] dark:text-white hover:bg-[#00A9B9] hover:text-white transition-all active:scale-95"

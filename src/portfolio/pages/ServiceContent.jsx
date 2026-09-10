@@ -33,7 +33,7 @@ export default function ServiceContent({ setActiveTab, navigateTo }) {
 
           {/* Content Reels & Video Grid Showcase */}
           <div style={{ marginBottom: '60px' }}>
-            <div className="archive-reels-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+            <div className="archive-reels-grid">
               {reelsList.map(p => (
                 <div key={p.id} className="archive-reel-card" onClick={p.link && p.link.startsWith('http') ? () => window.open(p.link, '_blank') : undefined} style={{ cursor: 'pointer', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-color)', position: 'relative' }}>
                   <div className="view-project-indicator">View Project →</div>

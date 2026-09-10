@@ -147,7 +147,7 @@ export default function Navbar({ onOpenContact, onReplayIntro, isDark, onToggleT
 
     if (isDark) {
       return {
-        bg: 'bg-[#0b0e14]',
+        bg: 'bg-[#05070a]',
         text: 'text-[#fff6f1]',
         logo: logoWhite,
         isDarkNavText: true,
@@ -156,7 +156,7 @@ export default function Navbar({ onOpenContact, onReplayIntro, isDark, onToggleT
 
     if (currentSectionId === 'hero') {
       return {
-        bg: 'bg-[#f4f4f6]',
+        bg: 'bg-[#F8F8F6]',
         text: 'text-[#003E4D]',
         logo: logoBlack,
         isDarkNavText: false,

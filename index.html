@@ -5,11 +5,11 @@
     <script>
       (function() {
         try {
-          var version = localStorage.getItem('prittal-theme-default-v2');
+          var version = localStorage.getItem('prittal-theme-default-v4');
           if (!version) {
             localStorage.setItem('prittal-theme', 'dark');
             localStorage.setItem('portfolio-theme', 'dark');
-            localStorage.setItem('prittal-theme-default-v2', 'true');
+            localStorage.setItem('prittal-theme-default-v4', 'true');
             document.documentElement.classList.add('dark');
             document.documentElement.classList.remove('light');
             document.documentElement.setAttribute('data-theme', 'dark');

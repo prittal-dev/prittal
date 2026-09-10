@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function ProjectInquiryModal({ isOpen, onClose, isDark }) {
+export default function ProjectInquiryModal({ isOpen, onClose, isDark, onNavigate }) {
   // Determine dark mode preference accurately
   const isDarkMode = isDark !== undefined 
     ? Boolean(isDark)
@@ -28,8 +28,11 @@ export default function ProjectInquiryModal({ isOpen, onClose, isDark }) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const [submitError, setSubmitError] = useState(null);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError(null);
     setIsSubmitting(true);
 
     const payload = {
@@ -66,28 +69,34 @@ export default function ProjectInquiryModal({ isOpen, onClose, isDark }) {
         });
       }
 
+      if (!response.ok) {
+        throw new Error('Form submission failed.');
+      }
+
+      // Save submission info on success
+      try {
+        sessionStorage.setItem('prittal_last_submission', JSON.stringify({
+          type: 'project',
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          service: `${formData.primaryService} — ${formData.specificRequirement}`,
+          message: formData.details,
+          timestamp: new Date().toISOString()
+        }));
+      } catch (e) {}
+
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        primaryService: 'Brand & Design',
-        specificRequirement: 'Visual Identity Systems',
-        details: ''
-      });
-      setTimeout(() => {
-        setIsSubmitted(false);
-        onClose();
-      }, 2500);
+      onClose();
+      if (onNavigate) {
+        onNavigate('/thank-you');
+      } else {
+        window.location.href = '/thank-you';
+      }
     } catch (error) {
-      console.log('AJAX Form submission handled:', error);
+      console.log('AJAX Form submission error:', error);
+      setSubmitError('Unable to send inquiry right now. Please check your details or email us at sales@prittal.com.');
       setIsSubmitting(false);
-      setIsSubmitted(true);
-      setTimeout(() => {
-        setIsSubmitted(false);
-        onClose();
-      }, 2500);
     }
   };
 
@@ -325,6 +334,20 @@ export default function ProjectInquiryModal({ isOpen, onClose, isDark }) {
             </div>
 
             {/* Submit Button */}
+            {submitError && (
+              <div style={{
+                padding: '10px 14px',
+                borderRadius: '10px',
+                marginBottom: '16px',
+                backgroundColor: isDarkMode ? 'rgba(239, 68, 68, 0.15)' : '#fef2f2',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                color: isDarkMode ? '#fca5a5' : '#b91c1c',
+                fontSize: '0.8rem',
+                fontWeight: '500'
+              }}>
+                {submitError}
+              </div>
+            )}
             <button 
               type="submit" 
               className="pm-submit-btn"

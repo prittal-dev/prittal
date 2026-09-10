@@ -104,7 +104,7 @@ export default function PortfolioArchive({ setActiveTab, navigateTo, activeFilte
                 >
                   <div className="selected-work-tag">🌐 Website</div>
                   <div className="view-project-indicator">View Website &rarr;</div>
-                  <img src={selectedWorkItems[2].image} alt={selectedWorkItems[2].title || 'Website'} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={selectedWorkItems[2].image} alt={selectedWorkItems[2].title || 'Website'} style={{ width: '100%', height: '100%', objectFit: 'contain', backgroundColor: '#ffffff' }} />
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '24px', background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }}>
                     <h3 style={{ color: '#ffffff', fontSize: '1.4rem', fontWeight: '700', margin: 0 }}>{selectedWorkItems[2].title}</h3>
                     <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem', margin: '4px 0 0 0' }}>{selectedWorkItems[2].category}</p>
@@ -192,7 +192,7 @@ export default function PortfolioArchive({ setActiveTab, navigateTo, activeFilte
 
 
               {activeFilter === 'Websites' && (
-                <div className="archive-platforms-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                <div className="archive-platforms-grid">
                   {PROJECTS_DATA.filter(p => p.type === 'websites').map(p => (
                     <div key={p.id} className="archive-platform-card" onClick={p.link && p.link.startsWith('http') ? () => window.open(p.link, '_blank') : undefined}>
                       <div className="view-project-indicator">View Project →</div>
@@ -209,7 +209,7 @@ export default function PortfolioArchive({ setActiveTab, navigateTo, activeFilte
               )}
 
               {activeFilter === 'Creative' && (
-                <div className="archive-posters-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                <div className="archive-posters-grid">
                   {PROJECTS_DATA.filter(p => p.type === 'creative').map((p, idx, arr) => (
                     <div key={p.id} className="archive-poster-card" onClick={() => openLightbox(arr, idx)}>
                       <div className="archive-poster-img-wrapper">
@@ -231,7 +231,7 @@ export default function PortfolioArchive({ setActiveTab, navigateTo, activeFilte
               )}
 
               {(activeFilter === 'Reels' || activeFilter === 'Content') && (
-                <div className="archive-reels-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+                <div className="archive-reels-grid">
                   {PROJECTS_DATA.filter(p => p.type === 'reels' || p.category === 'Content').map((p, idx, arr) => (
                     <div key={p.id} className="archive-reel-card" onClick={() => openLightbox(arr, idx)} style={{ cursor: 'pointer', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-color)', position: 'relative' }}>
                       <div className="view-project-indicator">View Project →</div>

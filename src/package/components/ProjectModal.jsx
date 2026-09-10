@@ -18,6 +18,7 @@ import {
   getActiveCategoriesWithServices,
   getPlanFeaturesList,
   getAdditionalServicesList,
+  getParseableAdditionalServicesList,
   getDeliverablesSummary,
   buildInvoiceEmailText 
 } from '../utils/proformaUtils';
@@ -62,15 +63,26 @@ export const ProjectModal = ({
     getInitialCheckedServices(initialPackage || defaultPkg)
   );
 
+  // Selected Optional Add-ons
+  const [selectedAddons, setSelectedAddons] = useState([]);
+
   // Regenerate docCode and synchronize package when modal opens
   useEffect(() => {
     if (isOpen) {
       setDocCode(generateDocCode());
       setActiveView('form');
       setSubmitted(false);
-      const pkg = initialPackage || defaultPkg;
+      let pkg = initialPackage || defaultPkg;
+      
+      const catId = (pkg.categoryId || '').toLowerCase();
+      const isOneTime = catId === 'websites' || catId === 'product-shoots' || catId === 'product_shoot' || catId === 'google-my-business' || catId === 'google_my_business';
+      if (isOneTime && pkg.billingCycle !== 'one-time') {
+        pkg = { ...pkg, billingCycle: 'one-time' };
+      }
+
       setSelectedPkg(pkg);
       setCheckedServices(getInitialCheckedServices(pkg));
+      setSelectedAddons([]);
     }
   }, [isOpen, initialPackage, defaultPkg]);
 
@@ -166,9 +178,18 @@ export const ProjectModal = ({
   }, [selectedPkg]);
 
   // List of optional additional services available for this plan
-  const additionalServicesList = useMemo(() => {
-    return getAdditionalServicesList(selectedPkg, packagesData);
+  const parseableAddons = useMemo(() => {
+    return getParseableAdditionalServicesList(selectedPkg, packagesData);
   }, [selectedPkg]);
+
+  // Handle toggling an add-on
+  const toggleAddon = (addon) => {
+    setSelectedAddons(prev => {
+      const isSelected = prev.find(a => a.id === addon.id);
+      if (isSelected) return prev.filter(a => a.id !== addon.id);
+      return [...prev, addon];
+    });
+  };
 
   // Manage background scroll lock and Lenis lifecycle when modal is open
   useEffect(() => {
@@ -249,6 +270,10 @@ export const ProjectModal = ({
         discount = Math.min(originalBase, numDisc);
       }
     }
+
+    // Add selected add-ons price
+    const addonsTotal = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
+    originalBase += addonsTotal;
 
     const baseAfterDiscount = Math.max(0, originalBase - discount);
     const gst = Math.round(baseAfterDiscount * 0.18);
@@ -480,6 +505,7 @@ export const ProjectModal = ({
       financialData,
       docCode,
       checkedServices,
+      selectedAddons,
     });
 
     const to = encodeURIComponent(trimmedEmail);
@@ -907,10 +933,33 @@ ${AGENCY_DETAILS.website}`;
                   )}
 
                   {/* Available Add-ons Summary */}
-                  {additionalServicesList.length > 0 && (
-                    <div className="mt-1.5 text-[10.5px] leading-relaxed text-[#11b1d0] dark:text-[#38d4f2]">
-                      <strong>Additional Services (Add-ons):</strong>{' '}
-                      {additionalServicesList.join(' • ')}
+                  {parseableAddons.length > 0 && (
+                    <div className="mt-2 text-[11px] leading-relaxed">
+                      <strong className="block mb-2 text-slate-800 dark:text-slate-200">Optional Add-ons:</strong>
+                      <div className="flex flex-wrap gap-2">
+                        {parseableAddons.map((addon, idx) => {
+                          const isSelected = selectedAddons.some(a => a.id === addon.id);
+                          return (
+                            <label
+                              key={idx}
+                              className={`flex items-center gap-1.5 px-2 py-1 rounded-md border cursor-pointer select-none transition-colors ${
+                                isSelected 
+                                  ? isDark ? 'bg-cyan-900/40 border-cyan-500/50 text-cyan-300' : 'bg-cyan-50 border-cyan-200 text-cyan-700'
+                                  : isDark ? 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => toggleAddon(addon)}
+                                className="w-3 h-3 text-cyan-600 rounded border-gray-300 focus:ring-cyan-500 cursor-pointer"
+                              />
+                              <span className="font-medium">{addon.name}</span>
+                              <span className="text-[10px] opacity-80">(₹{formatINR(addon.price)})</span>
+                            </label>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
 
@@ -1618,10 +1667,10 @@ ${AGENCY_DETAILS.website}`;
                                     {planFeaturesList.join('   •   ')}
                                   </div>
                                 )}
-                                {additionalServicesList.length > 0 && (
-                                  <div className="text-slate-500 leading-normal pt-1 border-t border-slate-200/60 text-[7px] sm:text-[7.5px]">
-                                    <strong className="font-semibold text-slate-700">Additional Services (Add-on Options):</strong>{' '}
-                                    {additionalServicesList.join('   •   ')}
+                                {selectedAddons.length > 0 && (
+                                  <div className="text-slate-600 leading-normal mt-1">
+                                    <strong className="font-semibold text-slate-700">Selected Add-ons:</strong>{' '}
+                                    {selectedAddons.map(a => `${a.name} (₹${formatINR(a.price)})`).join(' • ')}
                                   </div>
                                 )}
                               </div>

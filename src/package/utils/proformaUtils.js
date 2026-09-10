@@ -522,7 +522,7 @@ export const getDeliverablesSummary = (packageInfo) => {
 /**
  * Builds the comprehensive formatted email text matching the CRM Gmail body format
  */
-export const buildInvoiceEmailText = ({ clientData, packageInfo, financialData, docCode, checkedServices = {} }) => {
+export const buildInvoiceEmailText = ({ clientData, packageInfo, financialData, docCode, checkedServices = {}, selectedAddons = [] }) => {
   const companyName = clientData.companyName || clientData.name || 'Valued Client';
   const docTitle = `Proforma Invoice — Official Scope & Agreement`;
   const deliverablesLine = getDeliverablesSummary(packageInfo);
@@ -535,6 +535,10 @@ export const buildInvoiceEmailText = ({ clientData, packageInfo, financialData, 
   const servicesSoldList = activeServices.length > 0
     ? activeServices.map((s) => `  • [✓] ${s}`).join('\n')
     : '  • [✓] Full Digital Marketing Solution Retainer Scope';
+
+  const addonsListStr = selectedAddons.length > 0 
+    ? `\n\nSelected Add-ons:\n${selectedAddons.map(a => `  • [+] ${a.name} (₹${a.price.toLocaleString('en-IN')})`).join('\n')}`
+    : '';
 
   return `Dear ${companyName},
 
@@ -565,7 +569,7 @@ Services Active in Plan:
 ${servicesSoldList}
 
 Deliverables Quota & Strategy:
-${deliverablesLine}
+${deliverablesLine}${addonsListStr}
 
 ============================================================
 COMMERCIAL BREAKDOWN & TAX SPECIFICATIONS
@@ -693,6 +697,54 @@ export const getAdditionalServicesList = (packageInfo, dataList = packagesData) 
       const val = feat.values ? feat.values[tierId] : undefined;
       if (typeof val === 'string' && val.startsWith('₹')) {
         addServices.push(`${feat.name} (${val})`);
+      }
+    });
+  });
+
+  return addServices;
+};
+
+/**
+ * Extracts parseable additional services with price breakdown for UI interaction
+ */
+export const getParseableAdditionalServicesList = (packageInfo, dataList = packagesData) => {
+  if (!packageInfo) return [];
+  const categoryId = (packageInfo.categoryId || '').toLowerCase();
+  const tierId = (packageInfo.tierId || '').toLowerCase();
+
+  const cat = (dataList || []).find((c) => 
+    c.id.toLowerCase() === categoryId ||
+    c.title.toLowerCase().includes(categoryId) ||
+    categoryId.includes(c.id.toLowerCase())
+  );
+
+  if (!cat || !cat.featureGroups) return [];
+
+  const addServices = [];
+  cat.featureGroups.forEach((group) => {
+    group.features.forEach((feat) => {
+      const val = feat.values ? feat.values[tierId] : undefined;
+      let priceText = null;
+      if (typeof val === 'string' && val.startsWith('₹')) {
+        priceText = val;
+      } else if (typeof val === 'string' && val.startsWith('+ ₹')) {
+        priceText = val.replace('+ ', '');
+      } else if (typeof val === 'string' && val.startsWith('')) {
+        priceText = val.replace('', '₹');
+      } else if (typeof val === 'string' && val.startsWith('+ ')) {
+        priceText = val.replace('+ ', '₹');
+      }
+
+      if (priceText) {
+        const numericMatch = priceText.replace(/,/g, '').match(/\d+/);
+        const price = numericMatch ? Number(numericMatch[0]) : 0;
+        addServices.push({
+          id: feat.name,
+          name: feat.name,
+          priceText: priceText,
+          price: price,
+          label: `${feat.name} (${priceText})`
+        });
       }
     });
   });

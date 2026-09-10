@@ -111,7 +111,49 @@ export const servicesData = [
     closing: {
       heading: 'Ready to talk brand and design?',
       desc: 'Tell us where you\'re stuck and we\'ll tell you honestly if this is the right service to start with.'
-    }
+    },
+    faqs: [
+      {
+        id: 'bd-1',
+        question: 'What does your Brand & Design service include?',
+        answer: 'We create complete brand systems including logo design, visual identity, typography, color palettes, UI design, packaging, and brand guidelines.'
+      },
+      {
+        id: 'bd-2',
+        question: 'Can you redesign an existing brand identity?',
+        answer: 'Yes. We can refresh or completely rework an existing identity while keeping the elements that already have value for your business.'
+      },
+      {
+        id: 'bd-3',
+        question: 'Do you provide a complete brand identity system or just a logo?',
+        answer: 'We focus on building a complete, connected brand system—not just a standalone logo—so your brand stays consistent across every touchpoint.'
+      },
+      {
+        id: 'bd-4',
+        question: 'What will I receive at the end of the project?',
+        answer: 'You receive a complete brand kit with final design assets, guidelines, editable/source files, and the formats needed for digital and print use.'
+      },
+      {
+        id: 'bd-5',
+        question: 'How long does a Brand & Design project take?',
+        answer: 'Most projects take around 2–4 weeks, depending on the scope, number of deliverables, and feedback rounds.'
+      },
+      {
+        id: 'bd-6',
+        question: 'Can the branding be customized for my industry and audience?',
+        answer: 'Absolutely. Every identity is developed around your business, target audience, positioning, and industry rather than using a one-size-fits-all template.'
+      },
+      {
+        id: 'bd-7',
+        question: 'Will I have full ownership of the final brand assets?',
+        answer: 'Yes. Once the project is completed according to the agreed terms, we provide the final assets and applicable intellectual-property handover.'
+      },
+      {
+        id: 'bd-8',
+        question: 'Can you design branding for both digital and physical applications?',
+        answer: 'Yes. We can create a system that works across websites, social media, apps, packaging, print materials, presentations, and other brand touchpoints.'
+      }
+    ]
   },
   {
     id: 'digital-marketing',
@@ -191,7 +233,49 @@ export const servicesData = [
     closing: {
       heading: 'Ready to talk digital marketing?',
       desc: 'Tell us where you\'re stuck and we\'ll tell you honestly if this is the right service to start with.'
-    }
+    },
+    faqs: [
+      {
+        id: 'dm-1',
+        question: 'What does your Digital Marketing service include?',
+        answer: 'We provide SEO, social media marketing, content strategy, AEO optimization, and organic growth solutions to increase your brand’s online visibility.'
+      },
+      {
+        id: 'dm-2',
+        question: 'How can digital marketing help my business grow?',
+        answer: 'Our strategy helps your brand reach the right audience, increase organic traffic, improve search visibility, and build a stronger online presence.'
+      },
+      {
+        id: 'dm-3',
+        question: 'Do you provide both SEO and Social Media Marketing?',
+        answer: 'Yes. We combine SEO and social media strategies to create consistent visibility across search engines and social platforms.'
+      },
+      {
+        id: 'dm-4',
+        question: 'How long does it take to see results from SEO?',
+        answer: 'SEO is a long-term growth strategy. Results can vary depending on your industry, competition, website authority, and current search performance.'
+      },
+      {
+        id: 'dm-5',
+        question: 'Do you create content for social media and SEO?',
+        answer: 'Yes. We develop strategic content designed to improve engagement, search visibility, and consistent brand presence.'
+      },
+      {
+        id: 'dm-6',
+        question: 'What is AEO and why is it important?',
+        answer: 'Answer Engine Optimization (AEO) helps your content appear in AI-powered answers and search experiences, making it easier for potential customers to discover your brand.'
+      },
+      {
+        id: 'dm-7',
+        question: 'How often will you publish content for my brand?',
+        answer: 'We create a consistent content schedule based on your goals and strategy, with regular social and SEO-focused content to maintain organic momentum.'
+      },
+      {
+        id: 'dm-8',
+        question: 'Can you improve the rankings of my existing website?',
+        answer: 'Yes. We can audit your existing website, identify SEO opportunities, and develop an optimization strategy to improve its search visibility and organic performance.'
+      }
+    ]
   },
   {
     id: 'performance-marketing',
@@ -271,7 +355,49 @@ export const servicesData = [
     closing: {
       heading: 'Ready to talk performance marketing?',
       desc: 'Tell us where you\'re stuck and we\'ll tell you honestly if this is the right service to start with.'
-    }
+    },
+    faqs: [
+      {
+        id: 'pm-1',
+        question: 'What does your Performance Marketing service include?',
+        answer: 'We manage paid advertising campaigns across platforms like Google and Meta, covering strategy, campaign setup, audience targeting, optimization, retargeting, and performance tracking.'
+      },
+      {
+        id: 'pm-2',
+        question: 'Which advertising platforms do you work with?',
+        answer: 'We primarily work with platforms such as Google Ads and Meta Ads, selecting the channels that best match your audience and business goals.'
+      },
+      {
+        id: 'pm-3',
+        question: 'How do you measure the success of a paid advertising campaign?',
+        answer: 'We track key metrics such as ROAS, conversions, cost per acquisition, ad spend, revenue, and overall campaign performance.'
+      },
+      {
+        id: 'pm-4',
+        question: 'Can you help improve the ROAS of my existing campaigns?',
+        answer: 'Yes. We audit your existing campaigns, identify areas of wasted spend, and continuously optimize targeting, creatives, bidding, and conversion paths to improve efficiency.'
+      },
+      {
+        id: 'pm-5',
+        question: 'Do you provide retargeting campaigns?',
+        answer: 'Yes. We build retargeting strategies to reconnect with people who have already interacted with your website, ads, or brand and move them further through the conversion funnel.'
+      },
+      {
+        id: 'pm-6',
+        question: 'How often do you optimize and test campaigns?',
+        answer: 'We monitor campaigns continuously and perform regular testing and optimization of audiences, creatives, budgets, placements, and bidding strategies.'
+      },
+      {
+        id: 'pm-7',
+        question: 'Do you track every rupee spent on advertising?',
+        answer: 'Yes. We use detailed tracking and attribution systems to monitor ad spend, conversions, and campaign performance so you can clearly understand where your budget is going.'
+      },
+      {
+        id: 'pm-8',
+        question: 'How quickly can I expect results from Performance Marketing?',
+        answer: 'Paid campaigns can generate data and traffic quickly, but meaningful results depend on your industry, budget, offer, audience, and conversion process. We use ongoing testing and optimization to improve performance over time.'
+      }
+    ]
   },
   {
     id: 'video-production',
@@ -351,7 +477,49 @@ export const servicesData = [
     closing: {
       heading: 'Ready to talk video production?',
       desc: 'Tell us where you\'re stuck and we\'ll tell you honestly if this is the right service to start with.'
-    }
+    },
+    faqs: [
+      {
+        id: 'vp-1',
+        question: 'What types of videos do you produce?',
+        answer: 'We create brand films, social media reels, UGC content, product videos, advertisements, and short-form or long-form video content.'
+      },
+      {
+        id: 'vp-2',
+        question: 'Do you provide complete video production from concept to final edit?',
+        answer: 'Yes. We can handle the complete production process, including concept development, scripting, shooting, editing, color grading, sound, and final delivery.'
+      },
+      {
+        id: 'vp-3',
+        question: 'Can you create videos specifically for Instagram and social media?',
+        answer: 'Absolutely. We create platform-ready content in formats such as 9:16 vertical reels and 16:9 videos, optimized for social media viewing and retention.'
+      },
+      {
+        id: 'vp-4',
+        question: 'What video quality and formats do you deliver?',
+        answer: 'We can deliver high-quality 4K video with professional editing and exports in the formats required for your website, social media, advertising, or other platforms.'
+      },
+      {
+        id: 'vp-5',
+        question: 'Can you create both UGC-style and cinematic videos?',
+        answer: 'Yes. We produce both authentic, creator-style UGC content and polished cinematic productions depending on your brand and campaign goals.'
+      },
+      {
+        id: 'vp-6',
+        question: 'How long does a video production project take?',
+        answer: 'Turnaround depends on the type and complexity of the project. Short-form content can have a faster turnaround, while larger brand films may require more production and editing time.'
+      },
+      {
+        id: 'vp-7',
+        question: 'Do you help with the script and creative concept?',
+        answer: 'Yes. Our team can help develop the concept, storyline, script, hooks, and creative direction before production begins.'
+      },
+      {
+        id: 'vp-8',
+        question: 'How do you make videos that keep viewers watching?',
+        answer: 'We design videos around strong hooks, pacing, storytelling, visuals, and editing techniques that are built specifically to capture attention and improve viewer retention.'
+      }
+    ]
   },
   {
     id: 'events-activations',
@@ -431,7 +599,49 @@ export const servicesData = [
     closing: {
       heading: 'Ready to talk events and activations?',
       desc: 'Tell us where you\'re stuck and we\'ll tell you honestly if this is the right service to start with.'
-    }
+    },
+    faqs: [
+      {
+        id: 'ea-1',
+        question: 'What types of events and activations do you manage?',
+        answer: 'We manage brand launches, exhibitions, expos, pop-ups, experiential campaigns, PR events, and other on-ground brand activations.'
+      },
+      {
+        id: 'ea-2',
+        question: 'Do you provide end-to-end event management?',
+        answer: 'Yes. We can manage the complete experience, from concept and planning to production, execution, coordination, and post-event content.'
+      },
+      {
+        id: 'ea-3',
+        question: 'Can you manage events across India?',
+        answer: 'Yes. Our event solutions can be executed at a Pan-India scale, depending on the location, event size, and requirements.'
+      },
+      {
+        id: 'ea-4',
+        question: 'Do you handle booth and stage design?',
+        answer: 'Yes. We can manage spatial design, booth architecture, stage setups, AV requirements, lighting, and other physical brand experiences.'
+      },
+      {
+        id: 'ea-5',
+        question: 'Can you arrange influencers and creators for our event?',
+        answer: 'Yes. We can support creator and influencer outreach, PR curation, guest management, and event-focused creator campaigns.'
+      },
+      {
+        id: 'ea-6',
+        question: 'Do you create content during the event?',
+        answer: 'Yes. We can produce real-time social content, event coverage, reels, aftermovies, and other content designed to extend the event\'s reach online.'
+      },
+      {
+        id: 'ea-7',
+        question: 'Can you organize VIP and media experiences?',
+        answer: 'Yes. We can plan and coordinate VIP guests, creators, media, and other key attendees to create a more curated brand experience.'
+      },
+      {
+        id: 'ea-8',
+        question: 'How do you measure the success of an event activation?',
+        answer: 'We can measure factors such as attendance, creator and media reach, audience engagement, content performance, brand visibility, and overall campaign impact.'
+      }
+    ]
   },
   {
     id: 'marketplace-growth',
@@ -511,7 +721,49 @@ export const servicesData = [
     closing: {
       heading: 'Ready to talk marketplace growth?',
       desc: 'Tell us where you\'re stuck and we\'ll tell you honestly if this is the right service to start with.'
-    }
+    },
+    faqs: [
+      {
+        id: 'mg-1',
+        question: 'What does your Marketplace Growth service include?',
+        answer: 'We manage your marketplace presence across platforms like Amazon, Flipkart, Meesho, and quick-commerce channels, covering listings, content, advertising, pricing, and optimization.'
+      },
+      {
+        id: 'mg-2',
+        question: 'Which marketplaces do you manage?',
+        answer: 'We work across major marketplaces including Amazon, Flipkart, Meesho, and quick-commerce platforms such as Blinkit, Zepto, and Instamart.'
+      },
+      {
+        id: 'mg-3',
+        question: 'Can you optimize my existing product listings?',
+        answer: 'Yes. We optimize product titles, descriptions, images, keywords, enhanced content, and other listing elements to improve visibility and conversions.'
+      },
+      {
+        id: 'mg-4',
+        question: 'Do you manage Amazon and Flipkart advertising?',
+        answer: 'Yes. We can manage marketplace advertising and PPC campaigns, including campaign strategy, keyword targeting, budget optimization, and performance tracking.'
+      },
+      {
+        id: 'mg-5',
+        question: 'Can you help improve my product\'s marketplace ranking?',
+        answer: 'Yes. We use a combination of listing optimization, keyword strategy, advertising, pricing, inventory management, and performance analysis to improve marketplace visibility.'
+      },
+      {
+        id: 'mg-6',
+        question: 'Do you manage pricing and inventory across marketplaces?',
+        answer: 'Yes. We help monitor pricing, stock levels, and product availability to support sales performance and reduce missed opportunities.'
+      },
+      {
+        id: 'mg-7',
+        question: 'Do you provide quick-commerce marketplace support?',
+        answer: 'Yes. We can help brands establish and optimize their presence across platforms such as Blinkit, Zepto, and Instamart, including product visibility and promotional placements.'
+      },
+      {
+        id: 'mg-8',
+        question: 'How do you measure Marketplace Growth?',
+        answer: 'We track metrics such as sales, conversion rate, marketplace visibility, advertising performance, product rankings, customer reviews, and overall revenue growth.'
+      }
+    ]
   }
 ];
 

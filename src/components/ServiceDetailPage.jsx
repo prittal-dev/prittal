@@ -13,6 +13,7 @@ import {
 import Navbar from './Navbar';
 import Footer from './Footer';
 import ServiceHeroVisual from './ServiceHeroVisual';
+import FaqSection from './FaqSection';
 import { servicesData } from '../data/servicesData';
 
 export default function ServiceDetailPage({
@@ -333,7 +334,7 @@ export default function ServiceDetailPage({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-4 xl:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             {service.process.map((step, idx) => (
               <motion.div
                 key={idx}
@@ -342,44 +343,44 @@ export default function ServiceDetailPage({
                 viewport={{ once: true }}
                 transition={{ duration: 0.35, delay: idx * 0.08 }}
                 whileHover={{ y: -3 }}
-                className={`rounded-2xl p-4.5 sm:p-5 lg:p-5.5 border ${
+                className={`rounded-2xl p-5 sm:p-6 border ${
                   isDark 
                     ? 'bg-[#0a0f19] border-white/10 hover:border-[#00A9B9]/50 shadow-md' 
                     : 'bg-white border-black/5 hover:border-[#00A9B9]/40 shadow-sm hover:shadow-lg'
                 } transition-all flex flex-col justify-between relative group h-full`}
               >
-                <div>
+                <div className="mb-4">
                   {/* Step Header */}
-                  <div className="flex items-center justify-end mb-3">
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-widest text-[#00A9B9] font-bold bg-[#00A9B9]/10 border border-[#00A9B9]/20 px-2.5 py-0.5 rounded-full">
                       Step {step.num}
                     </span>
                   </div>
 
                   {/* Step Name */}
-                  <h4 className={`text-sm sm:text-base lg:text-lg font-semibold ${
+                  <h4 className={`text-base sm:text-lg font-semibold ${
                     isDark ? 'text-white' : 'text-[#003E4D]'
-                  } mb-1.5`}>
+                  } mb-2`}>
                     {step.name}
                   </h4>
 
                   {/* Step Description */}
-                  <p className={`text-xs ${
+                  <p className={`text-xs sm:text-sm ${
                     isDark ? 'text-slate-300' : 'text-slate-600'
-                  } leading-relaxed mb-3 font-normal`}>
+                  } leading-relaxed font-normal`}>
                     {step.desc}
                   </p>
                 </div>
 
                 {/* Key Deliverable Box */}
                 {step.deliverable && (
-                  <div className={`pt-2.5 border-t ${isDark ? 'border-white/10' : 'border-black/5'} mt-2`}>
-                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#00A9B9] block mb-0.5">
+                  <div className={`pt-3 border-t ${isDark ? 'border-white/10' : 'border-black/5'} mt-auto`}>
+                    <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-[#00A9B9] block mb-1">
                       Key Milestone
                     </span>
-                    <p className={`text-[11px] sm:text-xs font-medium ${
+                    <p className={`text-xs font-semibold ${
                       isDark ? 'text-white/90' : 'text-[#003E4D]'
-                    } leading-tight`}>
+                    } leading-snug`}>
                       {step.deliverable}
                     </p>
                   </div>
@@ -531,6 +532,14 @@ export default function ServiceDetailPage({
         </section>
 
       </main>
+
+      {/* FAQ Section */}
+      <FaqSection
+        faqs={service.faqs}
+        title={`FAQs — ${service.displayTitle || service.title}`}
+        subtitle={`Everything you need to know about our ${service.displayTitle || service.title} service`}
+        onOpenContact={(serviceName) => onOpenContact(serviceName || service.displayTitle || service.title)}
+      />
 
       {/* Footer */}
       <Footer

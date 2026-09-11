@@ -693,10 +693,14 @@ export const getAdditionalServicesList = (packageInfo, dataList = packagesData) 
 
   const addServices = [];
   cat.featureGroups.forEach((group) => {
+    const gn = (group.groupName || '').toUpperCase();
+    const isAddonGroup = gn.includes('ADDITIONAL') || gn.includes('ADD-ON') || gn.includes('ADDON') || gn.includes('OPTIONAL');
+    if (!isAddonGroup) return;
+
     group.features.forEach((feat) => {
       const val = feat.values ? feat.values[tierId] : undefined;
-      if (typeof val === 'string' && val.startsWith('₹')) {
-        addServices.push(`${feat.name} (${val})`);
+      if (typeof val === 'string' && val.trim().startsWith('₹')) {
+        addServices.push(`${feat.name} (${val.trim()})`);
       }
     });
   });
@@ -722,29 +726,36 @@ export const getParseableAdditionalServicesList = (packageInfo, dataList = packa
 
   const addServices = [];
   cat.featureGroups.forEach((group) => {
+    const gn = (group.groupName || '').toUpperCase();
+    const isAddonGroup = gn.includes('ADDITIONAL') || gn.includes('ADD-ON') || gn.includes('ADDON') || gn.includes('OPTIONAL');
+    if (!isAddonGroup) return;
+
     group.features.forEach((feat) => {
       const val = feat.values ? feat.values[tierId] : undefined;
       let priceText = null;
-      if (typeof val === 'string' && val.startsWith('₹')) {
-        priceText = val;
-      } else if (typeof val === 'string' && val.startsWith('+ ₹')) {
-        priceText = val.replace('+ ', '');
-      } else if (typeof val === 'string' && val.startsWith('')) {
-        priceText = val.replace('', '₹');
-      } else if (typeof val === 'string' && val.startsWith('+ ')) {
-        priceText = val.replace('+ ', '₹');
+      if (typeof val === 'string') {
+        const trimmed = val.trim();
+        if (trimmed.startsWith('₹')) {
+          priceText = trimmed;
+        } else if (trimmed.startsWith('+ ₹')) {
+          priceText = trimmed.replace('+ ', '');
+        } else if (trimmed.startsWith('+') && trimmed.replace(/^\+\s*/, '').startsWith('₹')) {
+          priceText = trimmed.replace(/^\+\s*/, '');
+        }
       }
 
       if (priceText) {
         const numericMatch = priceText.replace(/,/g, '').match(/\d+/);
         const price = numericMatch ? Number(numericMatch[0]) : 0;
-        addServices.push({
-          id: feat.name,
-          name: feat.name,
-          priceText: priceText,
-          price: price,
-          label: `${feat.name} (${priceText})`
-        });
+        if (price > 0) {
+          addServices.push({
+            id: feat.name,
+            name: feat.name,
+            priceText: priceText,
+            price: price,
+            label: `${feat.name} (${priceText})`
+          });
+        }
       }
     });
   });

@@ -151,6 +151,7 @@ export const ProjectModal = ({
 
     setSelectedPkg(newPkg);
     setCheckedServices(getInitialCheckedServices(newPkg));
+    setSelectedAddons([]);
   };
 
   const handleToggleModalBillingCycle = (newCycle) => {

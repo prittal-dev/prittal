@@ -456,62 +456,62 @@ export const getDeliverablesSummary = (packageInfo) => {
 
   if (cat.includes('social')) {
     if (tier.includes('basic')) {
-      return '8 Creative Graphics/mo, 4 Engagement Reels, Content Strategy, Hashtag Research, Facebook & Instagram Account Management.';
+      return '4 Creative Graphics/mo, 4 Engagement Reels, Content Strategy, Hashtag Research, Facebook & Instagram Presence.';
     }
     if (tier.includes('standard')) {
-      return '12 Creative Graphics/mo, 8 High-Impact Reels, LinkedIn & X Marketing, Meta Ads Setup, Bi-Weekly Analytics & Strategy.';
+      return '8 Creative Graphics/mo, 8 High-Impact Reels, 2 Carousels/mo, LinkedIn & X Marketing, Ad Campaign Setup, Bi-Weekly Analytics & Strategy.';
     }
     if (tier.includes('premium')) {
-      return '20 Premium Creatives/mo, 12 Studio Reels, YouTube Marketing, Influencer Collaboration Management, Dedicated Brand Manager.';
+      return '24 Premium Creatives/mo, 24 Studio Reels, 4 Carousels/mo, 4 Blogs/mo, YouTube & Full Meta Ads Management, Dedicated Community Manager.';
     }
     return 'Monthly social media content creation, viral reels production, multi-platform publishing, and community engagement.';
   }
 
   if (cat.includes('paid') || cat.includes('campaign') || cat.includes('performance')) {
     if (tier.includes('starter')) {
-      return 'Meta Ads Setup, Audience Targeting, 2 Campaign Funnels, Pixel Tracking, Creative Testing & Bi-Weekly Optimization.';
+      return 'Meta & Google Ads Setup (Ad Spend Upto ₹75,000 p.m.), 2 Ad Types, Audience Targeting, Pixel Tracking & Optimization.';
     }
     if (tier.includes('standard')) {
-      return 'Meta & Google Search Ads Management, Retargeting Funnels, A/B Ad Creative Testing, Weekly ROI & Cost Per Lead Reports.';
+      return 'Multi-Platform Ads (FB/IG/Google/LI, Ad Spend Upto ₹20,00,000 p.m.), 4 Ad Types, Retargeting Funnels, A/B Testing & Weekly ROI Reports.';
     }
     if (tier.includes('business')) {
-      return 'Enterprise Multi-Channel Paid Ads (Meta, Google, YouTube, LinkedIn), Dedicated Performance Team, Daily Budget Scaling.';
+      return 'Enterprise Multi-Channel Ads (Ad Spend Upto ₹1,00,00,000 p.m.), 4–7 Ad Types, Custom & Lookalike Audiences, Dedicated Performance Team & Daily Budget Scaling.';
     }
     return 'End-to-end performance marketing, paid campaigns architecture, conversion optimization, and weekly reporting.';
   }
 
   if (cat.includes('seo') || cat.includes('search')) {
     if (tier.includes('starter')) {
-      return '10 Target Keywords, On-Page SEO Optimization, Google Search Console Setup, Sitemaps & Monthly Ranking Audit.';
+      return '10 Target Keywords, On-Page & Off-Page SEO Optimization, Google Search Console Setup, Backlink Building, Sitemaps & Monthly Ranking Audit.';
     }
     if (tier.includes('standard')) {
       return '25 Target Keywords, GEO (Generative Engine Optimization), Technical SEO Audit, Quality Backlink Strategy & Monthly Growth Report.';
     }
     if (tier.includes('business')) {
-      return '50+ Keywords, International SEO, AI Search Engine Optimization (AEO), E-Commerce SEO, Competitor Analysis & Guaranteed Growth.';
+      return '50+ Target Keywords, International SEO, AI Search Engine Optimization (AEO), E-Commerce SEO, Competitor Analysis & Guaranteed Growth.';
     }
     return 'Organic search visibility, keyword ranking optimization, generative AI search alignment, and technical indexation.';
   }
 
   if (cat.includes('shoot') || cat.includes('product')) {
     if (tier.includes('basic')) {
-      return 'Up to 5 Products Studio Photos (3 Photos/Product), White Background Shots, Basic Retouching, High-Res Delivery.';
+      return 'Up to 5 Products Studio Photos (15 High-Res Photos / 3 per Product), White Background Shots, Basic Retouching, 7 Days Delivery.';
     }
     if (tier.includes('standard')) {
-      return 'Up to 10 Products Studio Photos (5 Photos/Product), 1 Short Product Video, Advanced Editing & Compositing, High-Res Delivery.';
+      return 'Up to 10 Products Studio Photos (50 High-Res Photos / 5 per Product), 1 Short Product Video, Advanced Editing & Compositing, 5 Days Delivery.';
     }
     if (tier.includes('premium')) {
-      return 'Up to 25 Products Multi-Angle Photos (8 Photos/Product), 3 Product Videos, 360° View, Lifestyle Shots & Model Add-on.';
+      return 'Up to 25 Products Multi-Angle Photos (200 Photos / 8 per Product), 3 Product Videos, 360° View, Lifestyle Shots & Model Add-on, 3 Days Delivery.';
     }
     return 'Professional product photography, lifestyle commercial shoots, high-definition post-processing, and video production.';
   }
 
   if (cat.includes('google') || cat.includes('gmb') || cat.includes('business')) {
     if (tier.includes('starter')) {
-      return 'Google Business Profile Verification, Local Keyword Optimization, NAP Consistency, 10 High-Res Geo-Tagged Photos.';
+      return 'Google Business Profile Verification (1 Attempt), Local Keyword Optimization, NAP Consistency, Google Maps Integration, 10 High-Res Photos.';
     }
     if (tier.includes('business')) {
-      return 'Complete 3-Pack Map Domination, GEO Optimization, Review Generation Strategy, Weekly Geo-Tagged Posts & Citation Building.';
+      return 'Complete 3-Pack Map Domination, 8 Ad Post Designs/mo, GEO Optimization, Review Generation Strategy, Weekly Geo-Tagged Posts & Citation Building.';
     }
     return 'Google Business Profile optimization, local search dominance, map ranking, and localized customer engagement.';
   }
@@ -762,3 +762,78 @@ export const getParseableAdditionalServicesList = (packageInfo, dataList = packa
 
   return addServices;
 };
+
+/**
+ * Resolves the actual plan quotas based on the soldPlanName by looking up packagesData.
+ * Falls back to default limits if not found.
+ */
+export const getPlanBaseQuotasByPlanName = (soldPlanName, dataList = packagesData) => {
+  const defaultQuotas = { creatives: 4, aiReels: 4, carousels: 0, longVideos: 0, festival: true, blogs: 0, gmb: false };
+  if (!soldPlanName || typeof soldPlanName !== 'string') return defaultQuotas;
+
+  const normalized = soldPlanName.toLowerCase();
+  
+  // Find category and tier
+  let matchedCat = null;
+  let matchedTier = null;
+  
+  for (const cat of dataList) {
+    if (normalized.includes(cat.id.replace(/-/g, ' ')) || normalized.includes(cat.shortTitle.toLowerCase())) {
+      matchedCat = cat;
+      for (const tier of cat.tiers) {
+        if (normalized.includes(tier.name.toLowerCase()) || normalized.includes(tier.id.toLowerCase().replace(/-/g, ' '))) {
+          matchedTier = tier;
+          break;
+        }
+      }
+      if (matchedTier) break;
+    }
+  }
+
+  // If no tier is matched but category is matched, assume standard or standard equivalent
+  if (matchedCat && !matchedTier && matchedCat.tiers.length > 0) {
+     matchedTier = matchedCat.tiers.find(t => t.isPopular) || matchedCat.tiers[0];
+  }
+
+  if (!matchedCat || !matchedCat.featureGroups || !matchedTier) return defaultQuotas;
+
+  const quotas = { ...defaultQuotas };
+
+  matchedCat.featureGroups.forEach((group) => {
+    group.features.forEach((feat) => {
+      const val = feat.values ? feat.values[matchedTier.id] : undefined;
+      const valStr = String(val || '').toLowerCase();
+      
+      if (feat.name.includes('Creative Posts Per Week')) {
+        const num = parseInt(valStr, 10);
+        if (!isNaN(num)) quotas.creatives = num * 4;
+      }
+      if (feat.name.includes('AI Reels') || feat.name.includes('Basic Reels') || feat.name.includes('Reels')) {
+        const num = parseInt(valStr, 10);
+        if (!isNaN(num)) quotas.aiReels = num * 4;
+      }
+      if (feat.name.includes('Carousel Per Month')) {
+        const num = parseInt(valStr, 10);
+        if (!isNaN(num)) quotas.carousels = num;
+      }
+      if (feat.name.includes('Blog Per Month')) {
+        const num = parseInt(valStr, 10);
+        if (!isNaN(num)) quotas.blogs = num;
+      }
+      if (feat.name.includes('Stories Per Week')) {
+        const num = parseInt(valStr, 10);
+        if (!isNaN(num)) quotas.stories = num * 4;
+      }
+      if (feat.name.includes('Festival')) {
+        quotas.festival = val === true;
+      }
+      if (feat.name.includes('Ad Designs Per Month')) {
+        const num = parseInt(valStr, 10);
+        if (!isNaN(num)) quotas.creatives = num;
+      }
+    });
+  });
+
+  return quotas;
+};
+

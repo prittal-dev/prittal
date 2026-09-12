@@ -11,7 +11,7 @@ export const AGENCY_DETAILS = {
   gstin: '07AAJCP9381M1ZL',
   address: 'Plot No - 2, 3rd Floor, PSV-IV, Sector-11, Rohini, Delhi - 110085',
   website: 'www.prittal.com',
-  email: 'sale@prittal.com',
+  email: 'sales@prittal.com',
   phone: '011 47035184',
   bank: {
     beneficiary: 'PRITTAL CREATIVE AGENCY PVT LTD',
@@ -227,8 +227,11 @@ export const generateDocCode = () => {
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
   const day = String(now.getDate()).padStart(2, '0');
-  const random = Math.floor(1000 + Math.random() * 9000);
-  return `PI-PRITTAL-${year}${month}${day}-${random}`;
+  
+  let currentNum = parseInt(localStorage.getItem('prittal_invoice_seq') || '201', 10);
+  localStorage.setItem('prittal_invoice_seq', (currentNum + 1).toString());
+  
+  return `PI-PRITTAL-${year}${month}${day}-${currentNum}`;
 };
 
 /**

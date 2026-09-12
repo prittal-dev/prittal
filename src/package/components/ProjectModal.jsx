@@ -528,7 +528,7 @@ export const ProjectModal = ({
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [emailModalData, setEmailModalData] = useState({
     clientEmail: '',
-    ccEmail: 'sale@prittal.com',
+    ccEmail: 'sales@prittal.com',
     subject: '',
     error: '',
   });
@@ -538,7 +538,7 @@ export const ProjectModal = ({
     const companyTitle = formData.companyName || formData.name || 'Valued Client';
     setEmailModalData({
       clientEmail: formData.email || '',
-      ccEmail: AGENCY_DETAILS.email || 'sale@prittal.com',
+      ccEmail: AGENCY_DETAILS.email || 'sales@prittal.com',
       subject: `[${docCode}] Official Scope & Proforma Invoice — ${companyTitle} | Prittal Digital Agency`,
       error: '',
     });
@@ -572,7 +572,7 @@ export const ProjectModal = ({
     });
 
     const to = encodeURIComponent(trimmedEmail);
-    const cc = encodeURIComponent(emailModalData.ccEmail.trim() || AGENCY_DETAILS.email || 'sale@prittal.com');
+    const cc = encodeURIComponent(emailModalData.ccEmail.trim() || AGENCY_DETAILS.email || 'sales@prittal.com');
     const subject = encodeURIComponent(emailModalData.subject.trim());
     const body = encodeURIComponent(emailBody);
 
@@ -662,7 +662,7 @@ Regards,
 Sales Desk — Prittal Creative Agency
 ${AGENCY_DETAILS.website}`;
 
-    const to = encodeURIComponent(AGENCY_DETAILS.email || 'sale@prittal.com');
+    const to = encodeURIComponent(AGENCY_DETAILS.email || 'sales@prittal.com');
     const subject = encodeURIComponent(`[APPROVAL REQUIRED] PI ${docCode} — ${companyTitle} | ${selectedPkg?.categoryTitle || 'Service'} (${selectedPkg?.tierName || 'Custom'})`);
     const body = encodeURIComponent(approvalBody);
 
@@ -2209,7 +2209,7 @@ ${AGENCY_DETAILS.website}`;
                     type="email"
                     value={emailModalData.ccEmail}
                     onChange={(e) => setEmailModalData({ ...emailModalData, ccEmail: e.target.value })}
-                    placeholder="sale@prittal.com"
+                    placeholder="sales@prittal.com"
                     className={`w-full pl-10 pr-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] ${
                       isDark ? 'bg-[#131d33] border-slate-700 text-white' : 'bg-slate-50 border-slate-300 text-slate-900'
                     }`}

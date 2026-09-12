@@ -655,7 +655,8 @@ export const getPlanFeaturesList = (packageInfo, dataList = packagesData) => {
   const includedFeatures = [];
   cat.featureGroups.forEach((group) => {
     group.features.forEach((feat) => {
-      const val = feat.values ? feat.values[tierId] : undefined;
+      const rawVal = feat.values ? feat.values[tierId] : undefined;
+      const val = typeof rawVal === 'function' ? rawVal(packageInfo?.billingCycle || 'monthly') : rawVal;
       // Only include features that are ACTUALLY INCLUDED in this plan tier (val === true or non-price quantitative strings)
       if (val === true) {
         includedFeatures.push(feat.name);
@@ -698,7 +699,8 @@ export const getAdditionalServicesList = (packageInfo, dataList = packagesData) 
     if (!isAddonGroup) return;
 
     group.features.forEach((feat) => {
-      const val = feat.values ? feat.values[tierId] : undefined;
+      const rawVal = feat.values ? feat.values[tierId] : undefined;
+      const val = typeof rawVal === 'function' ? rawVal(packageInfo?.billingCycle || 'monthly') : rawVal;
       if (typeof val === 'string' && val.trim().startsWith('₹')) {
         addServices.push(`${feat.name} (${val.trim()})`);
       }
@@ -731,7 +733,8 @@ export const getParseableAdditionalServicesList = (packageInfo, dataList = packa
     if (!isAddonGroup) return;
 
     group.features.forEach((feat) => {
-      const val = feat.values ? feat.values[tierId] : undefined;
+      const rawVal = feat.values ? feat.values[tierId] : undefined;
+      const val = typeof rawVal === 'function' ? rawVal(packageInfo?.billingCycle || 'monthly') : rawVal;
       let priceText = null;
       if (typeof val === 'string') {
         const trimmed = val.trim();

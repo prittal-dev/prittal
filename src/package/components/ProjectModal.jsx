@@ -250,10 +250,19 @@ export const ProjectModal = ({
       if (numericMatch) {
         originalBase = Number(numericMatch[0]);
       } else {
-        const t = (pkg?.tierName || '').toLowerCase();
-        if (t.includes('standard')) originalBase = 50000;
-        else if (t.includes('premium') || t.includes('business')) originalBase = 100000;
-        else originalBase = 25000;
+        const catData = packagesData.find(c => c.id === pkg?.categoryId);
+        if (catData) {
+          const tierData = catData.tiers.find(t => t.id === pkg?.tierId);
+          if (tierData && tierData.price) {
+            originalBase = tierData.price;
+          } else if (catData.basePrice) {
+            originalBase = catData.basePrice;
+          } else {
+            originalBase = 25000;
+          }
+        } else {
+          originalBase = 25000;
+        }
       }
     }
 
@@ -462,6 +471,59 @@ export const ProjectModal = ({
     }, 350);
   };
 
+  const handleDirectDownloadPDF = async () => {
+    if (!printRef.current) return;
+    
+    // Create a deep clone to avoid modifying the original DOM
+    const printContent = printRef.current.cloneNode(true);
+    
+    // Replace all form elements with spans to preserve values visually
+    const inputs = printContent.querySelectorAll('input, textarea, select');
+    const originalInputs = printRef.current.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach((input, index) => {
+      const originalInput = originalInputs[index];
+      const span = document.createElement('span');
+      span.className = 'underline-input';
+      span.textContent = originalInput.value || originalInput.placeholder || '';
+      input.parentNode.replaceChild(span, input);
+    });
+    
+    const wrapper = document.createElement('div');
+    
+    // Attach styles necessary for html2pdf
+    const style = document.createElement('style');
+    style.innerHTML = `
+      * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      html, body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #0f172a; margin: 0; padding: 0; background: #ffffff !important; }
+      .page-container { width: 210mm; height: 297mm; padding: 24px 32px 28px 32px; position: relative; background: #ffffff !important; margin: 0 auto; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; page-break-after: always; }
+      .page-container:last-child { page-break-after: avoid; }
+      .page-bottom-ribbon { margin-left: -32px !important; margin-right: -32px !important; margin-bottom: -28px !important; margin-top: auto !important; width: calc(100% + 64px) !important; }
+      .page-bottom-footer { margin-top: auto !important; padding-top: 16px !important; }
+      .underline-input { border-bottom: 1px solid #94a3b8; display: inline-block; font-size: 11px; color: #0f172a; padding: 0 4px; min-height: 16px; }
+      table { border-collapse: collapse; width: 100%; }
+      .no-print { display: none !important; }
+    `;
+    wrapper.appendChild(style);
+    wrapper.innerHTML += printContent.innerHTML;
+    
+    try {
+      const html2pdf = (await import('html2pdf.js')).default;
+      const opt = {
+        margin: 0,
+        filename: `Prittal_Invoice_${docCode}.pdf`,
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(wrapper).save();
+    } catch (e) {
+      console.error('PDF Download error:', e);
+      // Fallback to print if html2pdf fails
+      handlePrint();
+    }
+  };
+
   // Gmail Dispatch Modal State (Matching CRM DocumentPreviewDrawer)
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [emailModalData, setEmailModalData] = useState({
@@ -516,6 +578,9 @@ export const ProjectModal = ({
 
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&cc=${cc}&su=${subject}&body=${body}`;
 
+    // Auto-download PDF so user can attach it
+    handleDirectDownloadPDF();
+
     // 2. Close modal and open Gmail in a new tab without popup blocker conflict
     setIsEmailModalOpen(false);
     window.open(gmailUrl, '_blank');
@@ -524,7 +589,7 @@ export const ProjectModal = ({
   // WhatsApp Dispatch Handler — sends PI details & bank info directly via WhatsApp
   const handleWhatsApp = () => {
     // Trigger PDF generation so the user can save and attach it manually
-    handlePrint();
+    handleDirectDownloadPDF();
 
     const companyTitle = formData.companyName || formData.name || 'Valued Client';
     const message = `*PRITTAL CREATIVE AGENCY — OFFICIAL PROFORMA INVOICE*
@@ -776,10 +841,21 @@ ${AGENCY_DETAILS.website}`;
                   type="button"
                   onClick={handlePrint}
                   className="px-3 py-1.5 rounded-xl text-xs font-extrabold text-white bg-[#11b1d0] hover:bg-[#0fa1be] shadow-sm transition-colors flex items-center space-x-1.5 cursor-pointer"
-                  title="Print or Save Official A4 PDF"
+                  title="Print Official A4 PDF"
                 >
                   <Printer className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>Print / PDF</span>
+                  <span>Print</span>
+                </button>
+
+                {/* Direct Download PDF Button */}
+                <button
+                  type="button"
+                  onClick={handleDirectDownloadPDF}
+                  className="px-3 py-1.5 rounded-xl text-xs font-extrabold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-colors flex items-center space-x-1.5 cursor-pointer"
+                  title="Directly Download Official A4 PDF"
+                >
+                  <Download className="w-3.5 h-3.5 flex-shrink-0" />
+                  <span>Download PDF</span>
                 </button>
               </div>
             )}
@@ -999,7 +1075,13 @@ ${AGENCY_DETAILS.website}`;
                                     ? 'text-slate-400' 
                                     : 'text-slate-500'
                               }`}>
-                                from {cat.id === 'websites' ? '₹25,000' : '₹10,000'}
+                                {(() => {
+                                  if (isCatSelected) {
+                                    const selectedTier = cat.tiers.find(t => t.id === selectedPkg?.tierId) || cat.tiers[0];
+                                    return `₹${(selectedTier.price || cat.basePrice || 10000).toLocaleString('en-IN')}`;
+                                  }
+                                  return `from ₹${(cat.basePrice || 10000).toLocaleString('en-IN')}`;
+                                })()}
                               </div>
                             </button>
                           );

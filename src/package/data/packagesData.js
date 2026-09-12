@@ -5,10 +5,11 @@ export const packagesData = [
     shortTitle: 'WEBSITE',
     subtitle: 'Static · Dynamic · Customized · E-Commerce',
     tagline: 'High-performance web solutions built with modern CMS, custom design, and robust security.',
+    basePrice: 25000,
     tiers: [
-      { id: 'basic', name: 'BASIC', tagline: 'Essential website for small businesses & portfolios' },
-      { id: 'standard', name: 'STANDARD', isPopular: true, tagline: 'Comprehensive setup with SSL & responsive design' },
-      { id: 'premium', name: 'PREMIUM', tagline: 'Full-fledged E-Commerce & Custom Enterprise Solution' },
+      { id: 'basic', name: 'BASIC', tagline: 'Essential website for small businesses & portfolios', price: 25000 },
+      { id: 'standard', name: 'STANDARD', isPopular: true, tagline: 'Comprehensive setup with SSL & responsive design', price: 50000 },
+      { id: 'premium', name: 'PREMIUM', tagline: 'Full-fledged E-Commerce & Custom Enterprise Solution', price: 100000 },
       { id: 'custom', name: 'CUSTOM OFFER', tagline: 'Tailor-made solution built to your exact specifications' }
     ],
     featureGroups: [
@@ -22,7 +23,7 @@ export const packagesData = [
           { name: 'Favicon', values: { basic: true, standard: true, premium: true } },
           { name: 'SSL Certificate', values: { basic: false, standard: true, premium: true } },
           { name: 'Responsive Design', values: { basic: false, standard: true, premium: true } },
-          { name: '50 Products Upload', values: { basic: false, standard: false, premium: true }, isHighlight: true }
+          { name: 'Products Upload', values: { basic: 'Upto 50', standard: '200', premium: 'Upto 500' }, isHighlight: true }
         ]
       },
       {
@@ -48,10 +49,11 @@ export const packagesData = [
     shortTitle: 'SEO',
     subtitle: 'Rank in 3–5 Months on Page 1–2',
     tagline: 'Data-backed search engine optimization strategies to rank in 3–5 months on Page 1–2.',
+    basePrice: 10000,
     tiers: [
-      { id: 'starter', name: 'STARTER', tagline: 'Single location businesses starting search optimization' },
-      { id: 'standard', name: 'STANDARD', isPopular: true, tagline: 'Growing brands needing strong organic search ranking' },
-      { id: 'business', name: 'BUSINESS', tagline: 'Maximum search coverage with full technical SEO setup' },
+      { id: 'starter', name: 'STARTER', tagline: 'Single location businesses starting search optimization', price: 10000 },
+      { id: 'standard', name: 'STANDARD', isPopular: true, tagline: 'Growing brands needing strong organic search ranking', price: 20000 },
+      { id: 'business', name: 'BUSINESS', tagline: 'Maximum search coverage with full technical SEO setup', price: 40000 },
       { id: 'custom', name: 'CUSTOM OFFER', tagline: 'Tailor-made SEO package for enterprise & multi-region' }
     ],
     featureGroups: [
@@ -105,10 +107,11 @@ export const packagesData = [
     shortTitle: 'SOCIAL MEDIA',
     subtitle: 'Facebook · Instagram · LinkedIn · X · YouTube | Package Comparison & Custom Pricing',
     tagline: 'End-to-end creative social media management, organic growth, and content publishing.',
+    basePrice: 10000,
     tiers: [
-      { id: 'basic', name: 'BASIC', tagline: 'Essential multi-channel social presence' },
-      { id: 'standard', name: 'STANDARD', isPopular: true, tagline: 'Active engagement & AI-assisted strategy' },
-      { id: 'premium', name: 'PREMIUM', tagline: 'Complete brand takeover with Meta Ads & community care' },
+      { id: 'basic', name: 'BASIC', tagline: 'Essential multi-channel social presence', price: 10000 },
+      { id: 'standard', name: 'STANDARD', isPopular: true, tagline: 'Active engagement & AI-assisted strategy', price: 20000 },
+      { id: 'premium', name: 'PREMIUM', tagline: 'Complete brand takeover with Meta Ads & community care', price: 40000 },
       { id: 'custom', name: 'CUSTOM OFFER', tagline: 'Bespoke social media strategy tailored to your business' }
     ],
     featureGroups: [
@@ -131,7 +134,6 @@ export const packagesData = [
       {
         groupName: 'SETUP & PROFILE',
         features: [
-          { name: 'Account Setup & Management', values: { basic: false, standard: true, premium: true } },
           { name: 'Bio Crafting with #Hashtags', values: { basic: false, standard: true, premium: true } },
           { name: 'Highlight Design & Optimization', values: { basic: false, standard: true, premium: true } }
         ]
@@ -166,6 +168,19 @@ export const packagesData = [
           { name: 'Reach & Engagement Insights', values: { basic: false, standard: true, premium: true } },
           { name: 'Strategic Recommendations', values: { basic: false, standard: true, premium: true } }
         ]
+      },
+      {
+        groupName: 'ADDITIONAL SERVICES',
+        features: [
+          { 
+            name: 'Account Setup & Management', 
+            values: { 
+              basic: (billing) => billing === 'annual' ? true : '₹5,000', 
+              standard: (billing) => billing === 'annual' ? true : '₹5,000', 
+              premium: (billing) => billing === 'annual' ? true : '₹5,000' 
+            } 
+          }
+        ]
       }
     ]
   },
@@ -175,10 +190,11 @@ export const packagesData = [
     shortTitle: 'PAID CAMPAIGNS',
     subtitle: 'Facebook · Instagram · Google · LinkedIn | PPC & Meta Ads Management',
     tagline: 'High-ROI pay-per-click and Meta ads management for lead generation & customer acquisition.',
+    basePrice: 10000,
     tiers: [
-      { id: 'pc-starter', name: 'PC STARTER', tagline: 'Targeted PPC campaigns for emerging businesses' },
-      { id: 'pc-standard', name: 'PC STANDARD', isPopular: true, tagline: 'Multi-ad type targeting with A/B testing & interest strategy' },
-      { id: 'pc-business', name: 'PC BUSINESS', tagline: 'Full performance marketing suite with custom lookalike audiences & bi-monthly reports' },
+      { id: 'pc-starter', name: 'PC STARTER', tagline: 'Targeted PPC campaigns for emerging businesses', price: 10000 },
+      { id: 'pc-standard', name: 'PC STANDARD', isPopular: true, tagline: 'Multi-ad type targeting with A/B testing & interest strategy', price: 20000 },
+      { id: 'pc-business', name: 'PC BUSINESS', tagline: 'Full performance marketing suite with custom lookalike audiences & bi-monthly reports', price: 40000 },
       { id: 'custom', name: 'CUSTOM OFFER', tagline: 'Enterprise ad campaigns with dedicated media buying team' }
     ],
     featureGroups: [
@@ -229,10 +245,11 @@ export const packagesData = [
     shortTitle: 'PRODUCT SHOOTS',
     subtitle: 'Product Photos · Product Videos · Editing',
     tagline: 'Studio-grade e-commerce product photography, 360° views, styled lifestyle shots & reels.',
+    basePrice: 10000,
     tiers: [
-      { id: 'basic', name: 'BASIC', tagline: 'Essential white-background studio shots for cataloguing' },
-      { id: 'standard', name: 'STANDARD', isPopular: true, tagline: 'Advanced compositing with product reel video included' },
-      { id: 'premium', name: 'PREMIUM', tagline: 'Complete production including 360° view, lifestyle shots & model add-ons' },
+      { id: 'basic', name: 'BASIC', tagline: 'Essential white-background studio shots for cataloguing', price: 10000 },
+      { id: 'standard', name: 'STANDARD', isPopular: true, tagline: 'Advanced compositing with product reel video included', price: 20000 },
+      { id: 'premium', name: 'PREMIUM', tagline: 'Complete production including 360° view, lifestyle shots & model add-ons', price: 40000 },
       { id: 'custom', name: 'CUSTOM OFFER', tagline: 'Large catalog & specialized studio production' }
     ],
     featureGroups: [
@@ -277,9 +294,10 @@ export const packagesData = [
     shortTitle: 'GOOGLE MY BUSINESS',
     subtitle: 'Google My Business — Setup, Optimization & Ongoing Management',
     tagline: 'Dominate local Google Maps search results, drive walk-ins, and optimize GMB listings.',
+    basePrice: 10000,
     tiers: [
-      { id: 'starter', name: 'STARTER', tagline: 'Essential location verification and business setup' },
-      { id: 'business', name: 'BUSINESS', isPopular: true, tagline: 'Full optimization with monthly ad designs, analytics & performance reporting' }
+      { id: 'starter', name: 'STARTER', tagline: 'Essential location verification and business setup', price: 10000 },
+      { id: 'business', name: 'BUSINESS', isPopular: true, tagline: 'Full optimization with monthly ad designs, analytics & performance reporting', price: 20000 }
     ],
     featureGroups: [
       {

@@ -1514,9 +1514,9 @@ ${AGENCY_DETAILS.website}`;
                   {/* ========================================================================= */}
                   {/* PAGE 1: PROFORMA INVOICE & ORDER SPECIFICATIONS                           */}
                   {/* ========================================================================= */}
-                  <div className="page-container page-break relative space-y-3.5">
+                  <div className="page-container page-break relative space-y-6 flex flex-col min-h-[1050px]">
                     {/* SECTION 1: TOP HEADER & ADVERTISER DETAILS */}
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {/* Top Dot Grids & Center Logo */}
                       <div className="flex justify-between items-center">
                           {/* Left Dot Grid */}
@@ -1606,7 +1606,7 @@ ${AGENCY_DETAILS.website}`;
                       </div>
 
                       {/* SECTION 2: SERVICES DETAILS & SERVICE BRIEF */}
-                      <div className="space-y-3 my-2">
+                      <div className="space-y-4 my-4">
                         {/* SERVICES DETAILS Section (Compact & Inline Services Display) */}
                         <div>
                           <div className="flex border border-[#00adc8] rounded-xl overflow-hidden shadow-xs bg-white">
@@ -1618,7 +1618,7 @@ ${AGENCY_DETAILS.website}`;
                             </div>
 
                             {/* Right Content Area: Compact & Inline */}
-                            <div className="flex-1 p-2.5 sm:p-3 bg-white space-y-2">
+                            <div className="flex-1 p-3 sm:p-4 bg-white space-y-3">
                               {/* Top Sub-Bar: Selected Plan & Service Count */}
                               <div className="flex items-center justify-between flex-wrap gap-1.5 pb-1.5 border-b border-[#00adc8]/25">
                                 <div className="flex items-center gap-1.5">
@@ -1657,7 +1657,7 @@ ${AGENCY_DETAILS.website}`;
                               </div>
 
                               {/* Plan Details & Scope Deliverables: Shown IN LINE */}
-                              <div className="bg-slate-50 p-2 sm:p-2.5 rounded border border-slate-200 text-[7.5px] sm:text-[8px] text-slate-700 leading-snug space-y-1">
+                              <div className="bg-slate-50 p-3 sm:p-4 rounded border border-slate-200 text-[8.5px] sm:text-[9px] text-slate-700 leading-relaxed space-y-1.5">
                                 <div>
                                   <strong className="font-semibold text-slate-900">Scope Deliverables:</strong>{' '}
                                   {getDeliverablesSummary(selectedPkg)}
@@ -1695,74 +1695,78 @@ ${AGENCY_DETAILS.website}`;
                           </div>
 
                           {/* Client Remark Display */}
-                          <div className="text-[7.5px] sm:text-[8px] text-slate-700 leading-tight font-normal bg-[#f0fdfa] p-1.5 sm:p-2 rounded border border-[#00adc8]/30 mb-1.5">
+                          <div className="text-[8.5px] sm:text-[9px] text-slate-700 leading-relaxed font-normal bg-[#f0fdfa] p-2.5 sm:p-3 rounded border border-[#00adc8]/30 mb-2.5">
                             <strong className="font-semibold text-[#008ba3]">Client Remark:</strong> {formData.clientRemark?.trim() || 'No special remarks recorded (Standard SLA execution)'}
                           </div>
 
                           {/* Execution Notes & Briefing Terms */}
-                          <div className="text-[7.5px] sm:text-[8px] text-slate-600 leading-tight font-normal bg-slate-50 p-1.5 sm:p-2 rounded border border-slate-200">
+                          <div className="text-[8.5px] sm:text-[9px] text-slate-600 leading-relaxed font-normal bg-slate-50 p-2.5 sm:p-3 rounded border border-slate-200">
                             <strong className="font-semibold text-slate-800">Execution Terms:</strong> Production onboarding, creative briefing, and asset deployment commence immediately upon clearance of advance payment and brief sign-off. All deliverables specified above will be executed in accordance with Prittal's commercial service standards.
                           </div>
                         </div>
                       </div>
 
                       {/* SECTION 3: MODE OF PAYMENT, PARTICULARS, BANK & DIGITAL AUTH */}
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {/* Lower Section: Two Columns (Payment & Acknowledgements vs Amounts & Bank) */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                           {/* Left: Mode of Payment & Acknowledgements */}
                           <div className="space-y-2.5">
                             {/* Mode of Payment Badge */}
-                            <div>
-                              <div className="inline-block bg-[#00adc8] text-white px-2 py-0.5 rounded text-[8.5px] font-bold tracking-wider uppercase mb-1">
+                            <div className="space-y-1.5">
+                              <div className="inline-block bg-[#00adc8] text-white px-2 py-0.5 rounded text-[9.5px] font-bold tracking-wider uppercase mb-1">
                                 MODE OF PAYMENT
                               </div>
-                              <div className="text-[9.5px] font-normal text-slate-600">
+                              <div className="text-[10px] font-normal text-slate-600 mb-1">
                                 A/C Payee cheque / RTGS / NEFT / IMPS / UPI / Card
                               </div>
-                              <div className="flex items-center text-[9.5px] mt-0.5">
+                              <div className="flex items-center text-[10px] mt-1">
                                 <span className="font-medium text-slate-700 mr-1">Selected Mode:</span>
-                                <span className="font-semibold text-[#00adc8] border-b border-slate-400 flex-1 px-1">
+                                <span className="font-semibold text-[#00adc8] border-b border-slate-400 flex-1 px-1 min-h-[14px]">
                                   {formData.paymentMode}
                                 </span>
                               </div>
-                              <div className="flex items-center text-[9.5px] mt-0.5">
+                              <div className="flex items-center text-[10px] mt-1">
                                 <span className="font-medium text-slate-700 mr-1">Payment Status:</span>
-                                <span className={`font-semibold border-b border-slate-400 flex-1 px-1 ${
+                                <span className={`font-semibold border-b border-slate-400 flex-1 px-1 min-h-[14px] ${
                                   financialData.balanceAmount === 0 ? 'text-emerald-700' : 'text-[#00adc8]'
                                 }`}>
                                   {formData.paymentStatus}
                                   {formData.paymentStatus === 'Partial Received' && ` (₹${formatINR(financialData.receivedAmount)} Advance)`}
                                 </span>
                               </div>
-                              <div className="flex items-center text-[9.5px] mt-0.5">
+                              <div className="flex items-center text-[10px] mt-1">
                                 <span className="font-medium text-slate-700 mr-1">Drawn in Favour of PRITTAL:</span>
-                                <span className="font-semibold text-slate-800 border-b border-slate-400 flex-1 px-1">
+                                <span className="font-semibold text-slate-800 border-b border-slate-400 flex-1 px-1 min-h-[14px]">
                                   Rupees ₹{formatINR(financialData.receivedAmount > 0 ? financialData.receivedAmount : financialData.totalAmount)}
                                 </span>
                               </div>
                             </div>
 
                             {/* Company Acknowledges Badge */}
-                            <div>
-                              <div className="inline-block bg-[#00adc8] text-white px-2 py-0.5 rounded text-[8.5px] font-bold tracking-wider uppercase mb-1">
+                            <div className="mt-4">
+                              <div className="inline-block bg-[#00adc8] text-white px-2 py-0.5 rounded text-[9.5px] font-bold tracking-wider uppercase mb-1">
                                 COMPANY ACKNOWLEDGES
                               </div>
-                              <ul className="text-[7.2px] text-slate-600 space-y-0.5 pl-3 list-disc font-normal">
+                              <ul className="text-[8px] text-slate-600 space-y-1 pl-3 list-disc font-normal mt-1">
                                 <li>Invoice details and terms have been read and accepted.</li>
                                 <li>Services subject to formal sign-off and advance terms.</li>
                                 <li>All disputes subject to Delhi jurisdiction only.</li>
                                 <li>Standard GST rates apply as per prevailing Govt notifications.</li>
                               </ul>
-                              <div className="mt-8 space-y-1">
-                                <div className="text-[11px] text-slate-800 flex items-center">
-                                  <span className="font-semibold text-slate-700 mr-1.5">Name:</span>
-                                  <span className="font-bold">{formData.name || 'Authorized Signatory'}</span>
+                              <div className="mt-10 space-y-2 w-3/4">
+                                <div className="flex items-center text-[11px]">
+                                  <span className="font-medium text-slate-700 mr-1">Name:</span>
+                                  <span className="font-bold text-slate-800 border-b border-slate-400 flex-1 px-1 pb-0.5 min-h-[16px]">
+                                    {formData.name || 'Authorized Signatory'}
+                                  </span>
                                 </div>
                                 {formData.designation && (
-                                  <div className="text-[10px] text-slate-700 flex items-center">
-                                    <span className="font-semibold text-slate-700 mr-1.5">Designation:</span>
-                                    <span>{formData.designation}</span>
+                                  <div className="flex items-center text-[11px]">
+                                    <span className="font-medium text-slate-700 mr-1">Designation:</span>
+                                    <span className="font-semibold text-slate-700 border-b border-slate-400 flex-1 px-1 pb-0.5 min-h-[16px]">
+                                      {formData.designation}
+                                    </span>
                                   </div>
                                 )}
                               </div>
@@ -1773,50 +1777,50 @@ ${AGENCY_DETAILS.website}`;
                           <div className="space-y-2">
                             {/* Table */}
                             <div className="border border-[#00adc8] rounded overflow-hidden">
-                              <div className="bg-[#00adc8] text-white flex justify-between p-1 font-bold text-[9.5px]">
+                              <div className="bg-[#00adc8] text-white flex justify-between p-1.5 font-bold text-[10.5px]">
                                 <span>PARTICULARS</span>
                                 <span>AMOUNT (INR)</span>
                               </div>
                               <div className="divide-y divide-slate-200">
                                 {financialData.discountAmount > 0 ? (
                                   <>
-                                    <div className="flex justify-between px-2 py-0.5 text-[9px] font-normal text-slate-600">
+                                    <div className="flex justify-between px-2.5 py-1 text-[10px] font-normal text-slate-600">
                                       <span>Package Standard Price</span>
                                       <span className="font-semibold text-slate-700 line-through">₹{formatINR(financialData.originalBaseAmount)}</span>
                                     </div>
-                                    <div className="flex justify-between px-2 py-0.5 text-[9px] font-bold text-emerald-700 bg-emerald-50/60">
+                                    <div className="flex justify-between px-2.5 py-1 text-[10px] font-bold text-emerald-700 bg-emerald-50/60">
                                       <span>Special Discount / Offer</span>
                                       <span>- ₹{formatINR(financialData.discountAmount)}</span>
                                     </div>
-                                    <div className="flex justify-between px-2 py-1 text-[9.5px] font-semibold text-slate-800">
+                                    <div className="flex justify-between px-2.5 py-1.5 text-[10.5px] font-semibold text-slate-800">
                                       <span>Net Taxable Base Amount</span>
                                       <span className="font-bold text-slate-900">₹{formatINR(financialData.baseAmount)}</span>
                                     </div>
                                   </>
                                 ) : (
-                                  <div className="flex justify-between px-2 py-1 text-[9.5px] font-normal text-slate-700">
+                                  <div className="flex justify-between px-2.5 py-1.5 text-[10.5px] font-normal text-slate-700">
                                     <span>Taxable Base Amount</span>
                                     <span className="font-semibold text-slate-900">₹{formatINR(financialData.baseAmount)}</span>
                                   </div>
                                 )}
-                                <div className="flex justify-between px-2 py-1 text-[9.5px] font-normal text-slate-700">
+                                <div className="flex justify-between px-2.5 py-1.5 text-[10.5px] font-normal text-slate-700">
                                   <span>GST ( 18% )</span>
                                   <span className="font-semibold text-rose-600">+ ₹{formatINR(financialData.gstAmount)}</span>
                                 </div>
-                                <div className="flex justify-between px-2 py-1 text-[9.5px] font-bold bg-slate-50 text-[#00adc8]">
+                                <div className="flex justify-between px-2.5 py-1.5 text-[10.5px] font-bold bg-slate-50 text-[#00adc8]">
                                   <span>Total Amount (Incl. GST)</span>
                                   <span>₹{formatINR(financialData.totalAmount)}</span>
                                 </div>
-                                <div className="flex justify-between px-2 py-1 text-[9.5px] font-normal text-slate-700">
+                                <div className="flex justify-between px-2.5 py-1.5 text-[10.5px] font-normal text-slate-700">
                                   <span>Received Amount</span>
                                   <span className={financialData.receivedAmount > 0 ? "font-semibold text-emerald-600" : "font-normal text-slate-500"}>
                                     ₹{formatINR(financialData.receivedAmount)}
                                     {formData.paymentStatus === 'Partial Received' && (
-                                      <span className="text-[7.5px] font-medium text-emerald-700 ml-1">(Advance)</span>
+                                      <span className="text-[8.5px] font-medium text-emerald-700 ml-1">(Advance)</span>
                                     )}
                                   </span>
                                 </div>
-                                <div className={`flex justify-between px-2 py-1 text-[9.5px] font-bold ${
+                                <div className={`flex justify-between px-2.5 py-1.5 text-[10.5px] font-bold ${
                                   financialData.balanceAmount === 0 ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-900'
                                 }`}>
                                   <span>Balance Amount</span>
@@ -1826,8 +1830,8 @@ ${AGENCY_DETAILS.website}`;
                             </div>
 
                             {/* Bank Details Beneficiary */}
-                            <div className="border border-[#00adc8] rounded p-1.5 bg-slate-50 text-[8.5px] space-y-0.5">
-                              <div className="inline-block bg-[#00adc8] text-white px-2 py-0.5 rounded text-[7.5px] font-bold tracking-wider uppercase mb-0.5">
+                            <div className="border border-[#00adc8] rounded p-2 bg-slate-50 text-[9.5px] space-y-1 mt-3">
+                              <div className="inline-block bg-[#00adc8] text-white px-2 py-0.5 rounded text-[8.5px] font-bold tracking-wider uppercase mb-0.5">
                                 BANK DETAILS (BENEFICIARY)
                               </div>
                               <div className="flex justify-between"><span className="font-medium text-slate-600">Name:</span> <span className="font-semibold text-slate-800">{AGENCY_DETAILS.bank.beneficiary}</span></div>
@@ -1868,39 +1872,39 @@ ${AGENCY_DETAILS.website}`;
                   {/* ========================================================================= */}
                   <div className="page-container pt-6 border-t-2 border-dashed border-slate-300 mt-8 relative print:border-t-0 print:mt-0 print:pt-4 space-y-3">
                     {/* Header: Prittal Logo */}
-                    <div className="text-center mb-2">
+                    <div className="text-center mb-4">
                       <img 
                         src={logoBlack} 
                         alt="Prittal Logo" 
-                        className="h-7 sm:h-9 w-auto object-contain mx-auto" 
+                        className="h-9 sm:h-11 w-auto object-contain mx-auto" 
                       />
                     </div>
 
                     {/* TERMS & CONDITIONS Bar */}
-                    <div className="flex items-center justify-center space-x-3 mb-1.5">
-                      <div className="w-12 border-b-2 border-[#00adc8]" />
-                      <span className="text-[11px] font-bold text-[#00adc8] uppercase tracking-widest">
+                    <div className="flex items-center justify-center space-x-4 mb-2">
+                      <div className="w-16 border-b-2 border-[#00adc8]" />
+                      <span className="text-[13px] font-bold text-[#00adc8] uppercase tracking-widest">
                         TERMS & CONDITIONS
                       </span>
-                      <div className="w-12 border-b-2 border-[#00adc8]" />
+                      <div className="w-16 border-b-2 border-[#00adc8]" />
                     </div>
-                    <p className="text-[8px] text-slate-500 text-center mb-3 font-normal">
+                    <p className="text-[10px] text-slate-500 text-center mb-5 font-normal">
                       By accepting this proforma invoice, the Company agrees to be bound by the following terms.
                     </p>
 
                     {/* Dual Column Layout (16 Numbered Sections) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[7.8px] sm:text-[8.2px] leading-relaxed text-slate-700 font-normal">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-[9.5px] sm:text-[10px] leading-relaxed text-slate-700 font-normal">
                       {/* Left Column: 1 to 8 */}
-                      <div className="space-y-2">
+                      <div className="space-y-4">
                         {TERMS_AND_CONDITIONS.slice(0, 8).map((tc) => (
-                          <div key={tc.num} className="space-y-0.5">
-                            <div className="font-semibold text-[#00adc8] flex items-center space-x-1">
-                              <span className="w-3.5 h-3.5 rounded-full bg-[#00adc8] text-white flex items-center justify-center text-[7.5px] font-bold">
+                          <div key={tc.num} className="space-y-1">
+                            <div className="font-semibold text-[#00adc8] flex items-center space-x-1.5">
+                              <span className="w-4 h-4 rounded-full bg-[#00adc8] text-white flex items-center justify-center text-[9px] font-bold">
                                 {tc.num}
                               </span>
-                              <span className="text-[8.2px]">{tc.title}</span>
+                              <span className="text-[10px]">{tc.title}</span>
                             </div>
-                            <ul className="pl-4 list-disc space-y-0.5 text-slate-600 font-normal">
+                            <ul className="pl-5 list-disc space-y-1 text-slate-600 font-normal">
                               {tc.items.map((it, idx) => (
                                 <li key={it}>{it}</li>
                               ))}
@@ -1910,34 +1914,34 @@ ${AGENCY_DETAILS.website}`;
                       </div>
 
                       {/* Right Column: 9 to 16 */}
-                      <div className="space-y-2">
+                      <div className="space-y-4">
                         {TERMS_AND_CONDITIONS.slice(8).map((tc) => (
-                          <div key={tc.num} className="space-y-0.5">
-                            <div className="font-semibold text-[#00adc8] flex items-center space-x-1">
-                              <span className="w-3.5 h-3.5 rounded-full bg-[#00adc8] text-white flex items-center justify-center text-[7.5px] font-bold">
+                          <div key={tc.num} className="space-y-1">
+                            <div className="font-semibold text-[#00adc8] flex items-center space-x-1.5">
+                              <span className="w-4 h-4 rounded-full bg-[#00adc8] text-white flex items-center justify-center text-[9px] font-bold">
                                 {tc.num}
                               </span>
-                              <span className="text-[8.2px]">{tc.title}</span>
+                              <span className="text-[10px]">{tc.title}</span>
                             </div>
                             {tc.isTable ? (
-                              <table className="border border-[#00adc8] rounded text-[7.2px] mt-1 w-full font-normal">
+                              <table className="border border-[#00adc8] rounded text-[9px] mt-1.5 w-full font-normal">
                                 <thead className="bg-[#00adc8] text-white font-semibold">
                                   <tr>
-                                    <th className="p-0.5 text-left">Service</th>
-                                    <th className="p-0.5 text-left">Cancellation Policy</th>
+                                    <th className="p-1 text-left">Service</th>
+                                    <th className="p-1 text-left">Cancellation Policy</th>
                                   </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-200 text-slate-600">
                                   {tc.tableRows.map((r, rIdx) => (
                                     <tr key={rIdx}>
-                                      <td className="p-0.5 font-medium text-slate-800 whitespace-pre-line">{r.service}</td>
-                                      <td className="p-0.5">{r.policy}</td>
+                                      <td className="p-1 font-medium text-slate-800 whitespace-pre-line">{r.service}</td>
+                                      <td className="p-1">{r.policy}</td>
                                     </tr>
                                   ))}
                                 </tbody>
                               </table>
                             ) : (
-                              <ul className="pl-4 list-disc space-y-0.5 text-slate-600 font-normal">
+                              <ul className="pl-5 list-disc space-y-1 text-slate-600 font-normal">
                                 {tc.items.map((it, idx) => (
                                   <li key={it}>{it}</li>
                                 ))}
@@ -1949,14 +1953,14 @@ ${AGENCY_DETAILS.website}`;
                     </div>
 
                     {/* Page 2 Bottom Registered Footer */}
-                    <div className="page-bottom-footer text-center pt-3 mt-auto border-t border-slate-200 space-y-0.5">
-                      <div className="text-sm font-bold text-slate-900">
+                    <div className="page-bottom-footer text-center pt-4 mt-auto border-t border-slate-200 space-y-1 pb-4">
+                      <div className="text-base font-bold text-slate-900">
                         Prittal<span className="text-[#00adc8]">.</span>
                       </div>
-                      <div className="text-[8px] font-bold text-[#00adc8] uppercase">
+                      <div className="text-[10px] font-bold text-[#00adc8] uppercase">
                         {AGENCY_DETAILS.name}
                       </div>
-                      <div className="text-[7.5px] text-slate-500 font-normal">
+                      <div className="text-[9px] text-slate-500 font-normal">
                         {AGENCY_DETAILS.address}   |   {AGENCY_DETAILS.website}
                       </div>
                     </div>

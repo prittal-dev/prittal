@@ -431,6 +431,8 @@ export const getDeliverablesSummary = (packageInfo) => {
     return 'Official full-suite creative deliverables and strategic direction as per agreed retainer specifications.';
   }
 
+  let summary = '';
+
   if (packageInfo.isCustom || packageInfo.tierId === 'custom') {
     if (packageInfo.customSummary) {
       return `Custom Scope (${packageInfo.activeCount || 'Multiple'} Deliverables): ${packageInfo.customSummary}`;
@@ -443,80 +445,89 @@ export const getDeliverablesSummary = (packageInfo) => {
 
   if (cat.includes('web')) {
     if (tier.includes('basic')) {
-      return 'Essential 5-Page Responsive Web Architecture, Modern CMS Integration, SEO Friendly Structure, Meta Links & Sitemaps (Additional services available on request).';
+      summary = 'Essential 5-Page Responsive Web Architecture, Modern CMS Integration, SEO Friendly Structure, Meta Links & Sitemaps (Additional services available on request).';
+    } else if (tier.includes('standard')) {
+      summary = '10-Page Dynamic Business Portal, SSL Security Certificate, Responsive Mobile/Tablet Architecture, CMS, Annual Maintenance, Blog, WhatsApp Chat, Catalogue Download, Language Converter & Live Chat Integration included.';
+    } else if (tier.includes('premium')) {
+      summary = 'Full-Fledged E-Commerce Storefront, 50 Products Catalog Upload, 1 Domain, Annual Hosting, Maintenance, Blog, WhatsApp, Catalogue, Email, Reviews, Language Converter & Live Chat — All Services Included.';
+    } else {
+      summary = 'End-to-end modern web design, responsive development, CMS configuration, and performance optimization.';
     }
-    if (tier.includes('standard')) {
-      return '10-Page Dynamic Business Portal, SSL Security Certificate, Responsive Mobile/Tablet Architecture, CMS, Annual Maintenance, Blog, WhatsApp Chat, Catalogue Download, Language Converter & Live Chat Integration included.';
-    }
-    if (tier.includes('premium')) {
-      return 'Full-Fledged E-Commerce Storefront, 50 Products Catalog Upload, 1 Domain, Annual Hosting, Maintenance, Blog, WhatsApp, Catalogue, Email, Reviews, Language Converter & Live Chat — All Services Included.';
-    }
-    return 'End-to-end modern web design, responsive development, CMS configuration, and performance optimization.';
   }
 
-  if (cat.includes('social')) {
+  else if (cat.includes('social')) {
     if (tier.includes('basic')) {
-      return '4 Creative Graphics/mo, 4 Engagement Reels, Content Strategy, Hashtag Research, Facebook & Instagram Presence.';
+      summary = '4 Creative Graphics/mo, 4 Engagement Reels, Content Strategy, Hashtag Research, Facebook & Instagram Presence.';
+    } else if (tier.includes('standard')) {
+      summary = '8 Creative Graphics/mo, 8 High-Impact Reels, 2 Carousels/mo, LinkedIn & X Marketing, Ad Campaign Setup, Bi-Weekly Analytics & Strategy.';
+    } else if (tier.includes('premium')) {
+      summary = '24 Premium Creatives/mo, 24 Studio Reels, 4 Carousels/mo, 4 Blogs/mo, YouTube & Full Meta Ads Management, Dedicated Community Manager.';
+    } else {
+      summary = 'Monthly social media content creation, viral reels production, multi-platform publishing, and community engagement.';
     }
-    if (tier.includes('standard')) {
-      return '8 Creative Graphics/mo, 8 High-Impact Reels, 2 Carousels/mo, LinkedIn & X Marketing, Ad Campaign Setup, Bi-Weekly Analytics & Strategy.';
-    }
-    if (tier.includes('premium')) {
-      return '24 Premium Creatives/mo, 24 Studio Reels, 4 Carousels/mo, 4 Blogs/mo, YouTube & Full Meta Ads Management, Dedicated Community Manager.';
-    }
-    return 'Monthly social media content creation, viral reels production, multi-platform publishing, and community engagement.';
   }
 
-  if (cat.includes('paid') || cat.includes('campaign') || cat.includes('performance')) {
+  else if (cat.includes('paid') || cat.includes('campaign') || cat.includes('performance')) {
     if (tier.includes('starter')) {
-      return 'Meta & Google Ads Setup (Ad Spend Upto ₹75,000 p.m.), 2 Ad Types, Audience Targeting, Pixel Tracking & Optimization.';
+      summary = 'Meta & Google Ads Setup (Ad Spend Upto ₹75,000 p.m.), 2 Ad Types, Audience Targeting, Pixel Tracking & Optimization.';
+    } else if (tier.includes('standard')) {
+      summary = 'Multi-Platform Ads (FB/IG/Google/LI, Ad Spend Upto ₹20,00,000 p.m.), 4 Ad Types, Retargeting Funnels, A/B Testing & Weekly ROI Reports.';
+    } else if (tier.includes('business')) {
+      summary = 'Enterprise Multi-Channel Ads (Ad Spend Upto ₹1,00,00,000 p.m.), 4–7 Ad Types, Custom & Lookalike Audiences, Dedicated Performance Team & Daily Budget Scaling.';
+    } else {
+      summary = 'End-to-end performance marketing, paid campaigns architecture, conversion optimization, and weekly reporting.';
     }
-    if (tier.includes('standard')) {
-      return 'Multi-Platform Ads (FB/IG/Google/LI, Ad Spend Upto ₹20,00,000 p.m.), 4 Ad Types, Retargeting Funnels, A/B Testing & Weekly ROI Reports.';
-    }
-    if (tier.includes('business')) {
-      return 'Enterprise Multi-Channel Ads (Ad Spend Upto ₹1,00,00,000 p.m.), 4–7 Ad Types, Custom & Lookalike Audiences, Dedicated Performance Team & Daily Budget Scaling.';
-    }
-    return 'End-to-end performance marketing, paid campaigns architecture, conversion optimization, and weekly reporting.';
   }
 
-  if (cat.includes('seo') || cat.includes('search')) {
+  else if (cat.includes('seo') || cat.includes('search')) {
     if (tier.includes('starter')) {
-      return '10 Target Keywords, On-Page & Off-Page SEO Optimization, Google Search Console Setup, Backlink Building, Sitemaps & Monthly Ranking Audit.';
+      summary = '10 Target Keywords, On-Page & Off-Page SEO Optimization, Google Search Console Setup, Backlink Building, Sitemaps & Monthly Ranking Audit.';
+    } else if (tier.includes('standard')) {
+      summary = '25 Target Keywords, GEO (Generative Engine Optimization), Technical SEO Audit, Quality Backlink Strategy & Monthly Growth Report.';
+    } else if (tier.includes('business')) {
+      summary = '50+ Target Keywords, International SEO, AI Search Engine Optimization (AEO), E-Commerce SEO, Competitor Analysis & Guaranteed Growth.';
+    } else {
+      summary = 'Organic search visibility, keyword ranking optimization, generative AI search alignment, and technical indexation.';
     }
-    if (tier.includes('standard')) {
-      return '25 Target Keywords, GEO (Generative Engine Optimization), Technical SEO Audit, Quality Backlink Strategy & Monthly Growth Report.';
-    }
-    if (tier.includes('business')) {
-      return '50+ Target Keywords, International SEO, AI Search Engine Optimization (AEO), E-Commerce SEO, Competitor Analysis & Guaranteed Growth.';
-    }
-    return 'Organic search visibility, keyword ranking optimization, generative AI search alignment, and technical indexation.';
   }
 
-  if (cat.includes('shoot') || cat.includes('product')) {
+  else if (cat.includes('shoot') || cat.includes('product')) {
     if (tier.includes('basic')) {
-      return 'Up to 5 Products Studio Photos (15 High-Res Photos / 3 per Product), White Background Shots, Basic Retouching, 7 Days Delivery.';
+      summary = 'Up to 5 Products Studio Photos (15 High-Res Photos / 3 per Product), White Background Shots, Basic Retouching, 7 Days Delivery.';
+    } else if (tier.includes('standard')) {
+      summary = 'Up to 10 Products Studio Photos (50 High-Res Photos / 5 per Product), 1 Short Product Video, Advanced Editing & Compositing, 5 Days Delivery.';
+    } else if (tier.includes('premium')) {
+      summary = 'Up to 25 Products Multi-Angle Photos (200 Photos / 8 per Product), 3 Product Videos, 360° View, Lifestyle Shots & Model Add-on, 3 Days Delivery.';
+    } else {
+      summary = 'Professional product photography, lifestyle commercial shoots, high-definition post-processing, and video production.';
     }
-    if (tier.includes('standard')) {
-      return 'Up to 10 Products Studio Photos (50 High-Res Photos / 5 per Product), 1 Short Product Video, Advanced Editing & Compositing, 5 Days Delivery.';
-    }
-    if (tier.includes('premium')) {
-      return 'Up to 25 Products Multi-Angle Photos (200 Photos / 8 per Product), 3 Product Videos, 360° View, Lifestyle Shots & Model Add-on, 3 Days Delivery.';
-    }
-    return 'Professional product photography, lifestyle commercial shoots, high-definition post-processing, and video production.';
   }
 
-  if (cat.includes('google') || cat.includes('gmb') || cat.includes('business')) {
+  else if (cat.includes('google') || cat.includes('gmb') || cat.includes('business')) {
     if (tier.includes('starter')) {
-      return 'Google Business Profile Verification (1 Attempt), Local Keyword Optimization, NAP Consistency, Google Maps Integration, 10 High-Res Photos.';
+      summary = 'Google Business Profile Verification (1 Attempt), Local Keyword Optimization, NAP Consistency, Google Maps Integration, 10 High-Res Photos.';
+    } else if (tier.includes('business')) {
+      summary = 'Complete 3-Pack Map Domination, 8 Ad Post Designs/mo, GEO Optimization, Review Generation Strategy, Weekly Geo-Tagged Posts & Citation Building.';
+    } else {
+      summary = 'Google Business Profile optimization, local search dominance, map ranking, and localized customer engagement.';
     }
-    if (tier.includes('business')) {
-      return 'Complete 3-Pack Map Domination, 8 Ad Post Designs/mo, GEO Optimization, Review Generation Strategy, Weekly Geo-Tagged Posts & Citation Building.';
-    }
-    return 'Google Business Profile optimization, local search dominance, map ranking, and localized customer engagement.';
+  } else {
+    summary = 'Official full-suite creative deliverables, commercial production, and strategic execution as agreed.';
   }
 
-  return 'Official full-suite creative deliverables, commercial production, and strategic execution as agreed.';
+  // Adjust summary for Annual billing
+  if (packageInfo.billingCycle === 'annual') {
+    summary = summary.replace(/(\d+)\s*Creative Graphics\/mo/gi, (match, p1) => `${parseInt(p1) * 12} Creative Graphics/yr`);
+    summary = summary.replace(/(\d+)\s*Engagement Reels/gi, (match, p1) => `${parseInt(p1) * 12} Engagement Reels/yr`);
+    summary = summary.replace(/(\d+)\s*High-Impact Reels/gi, (match, p1) => `${parseInt(p1) * 12} High-Impact Reels/yr`);
+    summary = summary.replace(/(\d+)\s*Carousels\/mo/gi, (match, p1) => `${parseInt(p1) * 12} Carousels/yr`);
+    summary = summary.replace(/(\d+)\s*Premium Creatives\/mo/gi, (match, p1) => `${parseInt(p1) * 12} Premium Creatives/yr`);
+    summary = summary.replace(/(\d+)\s*Studio Reels/gi, (match, p1) => `${parseInt(p1) * 12} Studio Reels/yr`);
+    summary = summary.replace(/(\d+)\s*Blogs\/mo/gi, (match, p1) => `${parseInt(p1) * 12} Blogs/yr`);
+    summary = summary.replace(/(\d+)\s*Ad Post Designs\/mo/gi, (match, p1) => `${parseInt(p1) * 12} Ad Post Designs/yr`);
+  }
+
+  return summary;
 };
 
 /**

@@ -1561,10 +1561,10 @@ ${AGENCY_DETAILS.website}`;
                           </div>
                         </div>
 
-                        {/* Advertiser's Details (Underline Form Style) */}
+                        {/* Company's Details (Underline Form Style) */}
                         <div className="space-y-2 text-xs">
                           <div className="flex items-center">
-                            <span className="font-semibold text-slate-700 whitespace-nowrap mr-1.5">Advertiser's Name:</span>
+                            <span className="font-semibold text-slate-700 whitespace-nowrap mr-1.5">Company Name:</span>
                             <span className="flex-1 border-b border-slate-400 px-1 font-semibold text-slate-900 min-h-[20px]">
                               {clientDisplayName}
                             </span>
@@ -1743,10 +1743,10 @@ ${AGENCY_DETAILS.website}`;
                               </div>
                             </div>
 
-                            {/* Advertiser Acknowledges Badge */}
+                            {/* Company Acknowledges Badge */}
                             <div>
                               <div className="inline-block bg-[#00adc8] text-white px-2 py-0.5 rounded text-[8.5px] font-bold tracking-wider uppercase mb-1">
-                                ADVERTISER ACKNOWLEDGES
+                                COMPANY ACKNOWLEDGES
                               </div>
                               <ul className="text-[7.2px] text-slate-600 space-y-0.5 pl-3 list-disc font-normal">
                                 <li>Invoice details and terms have been read and accepted.</li>
@@ -1754,6 +1754,18 @@ ${AGENCY_DETAILS.website}`;
                                 <li>All disputes subject to Delhi jurisdiction only.</li>
                                 <li>Standard GST rates apply as per prevailing Govt notifications.</li>
                               </ul>
+                              <div className="mt-8 space-y-1">
+                                <div className="text-[11px] text-slate-800 flex items-center">
+                                  <span className="font-semibold text-slate-700 mr-1.5">Name:</span>
+                                  <span className="font-bold">{formData.name || 'Authorized Signatory'}</span>
+                                </div>
+                                {formData.designation && (
+                                  <div className="text-[10px] text-slate-700 flex items-center">
+                                    <span className="font-semibold text-slate-700 mr-1.5">Designation:</span>
+                                    <span>{formData.designation}</span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
 
@@ -1873,7 +1885,7 @@ ${AGENCY_DETAILS.website}`;
                       <div className="w-12 border-b-2 border-[#00adc8]" />
                     </div>
                     <p className="text-[8px] text-slate-500 text-center mb-3 font-normal">
-                      By accepting this proforma invoice, the Advertiser agrees to be bound by the following terms.
+                      By accepting this proforma invoice, the Company agrees to be bound by the following terms.
                     </p>
 
                     {/* Dual Column Layout (16 Numbered Sections) */}

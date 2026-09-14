@@ -229,7 +229,7 @@ export default function AboutUsPage({
         {/* Back Link Bar & Breadcrumbs */}
         <div className="flex items-center justify-between gap-4 mb-8 sm:mb-12">
           <button
-            onClick={() => onNavigate ? onNavigate('#') : window.history.back()}
+            onClick={() => onNavigate ? onNavigate('/') : window.history.back()}
             className="inline-flex items-center gap-2 text-xs font-bold text-[#00afc8] hover:text-[#003E4D] dark:hover:text-white uppercase tracking-wider cursor-pointer group transition-all px-3 py-1.5 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 border border-transparent hover:border-black/5 dark:hover:border-white/10"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1.5 transition-transform" />

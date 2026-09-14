@@ -25,20 +25,20 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
   ];
 
   const quickLinks = [
-    { name: 'Home', href: '#hero' },
-    { name: 'Choose Your Stage', href: '#who-for' },
-    { name: 'Services', href: 'https://www.prittal.com/services' },
-    { name: 'Insights', href: '#work' },
+    { name: 'Home', href: '/' },
+    { name: 'Choose Your Stage', href: '/who-for' },
+    { name: 'Services', href: '/services' },
+    { name: 'Work', href: '/work' },
     { name: 'About Us', href: '/about-us' },
   ];
 
   const servicesList = [
-    { name: 'Brand & Design', href: '#services' },
-    { name: 'Digital Marketing', href: '#services' },
-    { name: 'Performance Marketing', href: '#services' },
-    { name: 'Video Production', href: '#services' },
-    { name: 'Events & Activations', href: '#services' },
-    { name: 'Marketplace Growth', href: '#services' },
+    { name: 'Brand & Design', href: '/services/brand-design' },
+    { name: 'Digital Marketing', href: '/services/best-digital-marketing-company-in-delhi' },
+    { name: 'Performance Marketing', href: '/services/performance-marketing' },
+    { name: 'Video Production', href: '/services/video-production-and-shoots' },
+    { name: 'Events & Activations', href: '/services/events-and-activations' },
+    { name: 'Marketplace Growth', href: '/services/marketplace-growth' },
   ];
 
   const offices = [
@@ -100,39 +100,53 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
   };
 
   const handleScrollTo = (href) => {
+    if (onNavigate) {
+      onNavigate(href);
+      return;
+    }
+
     if (href === '/package' || href === '/packages' || href === 'package' || href === 'packages' || href === '#package' || href === '#packages') {
-      if (onNavigate) {
-        onNavigate('/package');
-        return;
-      }
       window.history.pushState({ type: 'package' }, '', '/package');
       window.dispatchEvent(new PopStateEvent('popstate'));
       return;
     }
 
     if (href === '/portfolio' || href === '/portfolio/' || href === 'portfolio' || href === '#portfolio') {
-      if (onNavigate) {
-        onNavigate('/portfolio');
-        return;
-      }
       window.history.pushState({ type: 'portfolio' }, '', '/portfolio');
       window.dispatchEvent(new PopStateEvent('popstate'));
       return;
     }
 
     if (href === '/about-us' || href === '/about' || href === '#about-us' || href === '#about' || href === 'about-us' || href === 'about' || href === '/why-prittal' || href === '#why-prittal' || href === 'why-prittal' || href === 'who-we-are' || href === '/who-we-are') {
-      if (onNavigate) {
-        onNavigate('/about-us');
-        return;
-      }
       window.history.pushState({ type: 'about' }, '', '/about-us');
       window.dispatchEvent(new PopStateEvent('popstate'));
       return;
     }
-    if (onNavigate) {
-      onNavigate(href);
+
+    if (href === '/services' || href === '/services/' || href === 'services' || href === '#services') {
+      window.history.pushState({ type: 'services' }, '', '/services');
+      window.dispatchEvent(new PopStateEvent('popstate'));
       return;
     }
+
+    if (href === '/work' || href === '/work/' || href === 'work' || href === '#work') {
+      window.history.pushState({ type: 'work' }, '', '/work');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      return;
+    }
+
+    if (href === '/who-for' || href === '/who-for/' || href === 'who-for' || href === '#who-for') {
+      window.history.pushState({ type: 'who-for' }, '', '/who-for');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      return;
+    }
+
+    if (!href || href === '#' || href === '/') {
+      window.history.pushState(null, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      return;
+    }
+
     if (href.startsWith('#')) {
       const targetId = href.substring(1);
       const el = document.getElementById(targetId);

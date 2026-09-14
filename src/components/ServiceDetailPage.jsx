@@ -94,10 +94,7 @@ export default function ServiceDetailPage({
           className="flex items-center justify-between gap-4 mb-6 sm:mb-8"
         >
           <button
-            onClick={() => {
-              if (onNavigate) onNavigate('https://www.prittal.com/services');
-              else if (onBack) onBack();
-            }}
+            onClick={onBack}
             className={`inline-flex items-center gap-2 text-[11px] sm:text-xs font-bold text-[#00A9B9] ${
               isDark ? 'hover:text-white hover:bg-white/5 hover:border-white/10' : 'hover:text-[#003E4D] hover:bg-black/5 hover:border-black/5'
             } uppercase tracking-wider cursor-pointer group transition-all px-3 py-1.5 rounded-xl border border-transparent`}
@@ -108,17 +105,7 @@ export default function ServiceDetailPage({
 
           {/* Breadcrumb Indicator */}
           <div className={`hidden sm:flex items-center gap-2 text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'} font-medium font-mono`}>
-            <a 
-              href="https://www.prittal.com/services"
-              onClick={(e) => {
-                e.preventDefault();
-                if (onNavigate) onNavigate('https://www.prittal.com/services');
-                else if (onBack) onBack();
-              }}
-              className="hover:underline hover:text-[#00A9B9] transition-colors cursor-pointer"
-            >
-              Services
-            </a>
+            <span>Services</span>
             <span>/</span>
             <span className="text-[#00A9B9] font-bold truncate max-w-[220px]">{service.displayTitle || service.title}</span>
           </div>

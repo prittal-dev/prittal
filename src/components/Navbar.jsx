@@ -13,59 +13,62 @@ export default function Navbar({ onOpenContact, onReplayIntro, isDark, onToggleT
   const [currentSectionId, setCurrentSectionId] = useState('hero');
 
   const navLinks = [
-    { id: 'hero', name: 'Home', href: '#' },
-    { id: 'who-for', name: "Choose Your Stage", href: '#who-for' },
-    { id: 'services', name: 'Services', href: '#services' },
-    { id: 'work', name: 'Insights', href: '#work' },
+    { id: 'hero', name: 'Home', href: '/' },
+    { id: 'who-for', name: "Choose Your Stage", href: '/who-for' },
+    { id: 'services', name: 'Services', href: '/services' },
+    { id: 'work', name: 'Work', href: '/work' },
     { id: 'about-us', name: 'About Us', href: '/about-us' },
   ];
 
   const scrollToTarget = (href) => {
+    if (onNavigate) {
+      onNavigate(href);
+      return;
+    }
+
     if (href === '/package' || href === '/packages' || href === 'package' || href === 'packages' || href === '#package' || href === '#packages') {
-      if (onNavigate) {
-        onNavigate('/package');
-        return;
-      }
       window.history.pushState({ type: 'package' }, '', '/package');
       window.dispatchEvent(new PopStateEvent('popstate'));
       return;
     }
 
     if (href === '/portfolio' || href === '/portfolio/' || href === 'portfolio' || href === '#portfolio') {
-      if (onNavigate) {
-        onNavigate('/portfolio');
-        return;
-      }
       window.history.pushState({ type: 'portfolio' }, '', '/portfolio');
       window.dispatchEvent(new PopStateEvent('popstate'));
       return;
     }
 
     if (href === '/about-us' || href === '/about' || href === '#about-us' || href === '#about' || href === 'about-us' || href === 'about' || href === '/why-prittal' || href === '#why-prittal' || href === 'why-prittal' || href === 'who-we-are' || href === '/who-we-are') {
-      if (onNavigate) {
-        onNavigate('/about-us');
-        return;
-      }
       window.history.pushState({ type: 'about' }, '', '/about-us');
       window.dispatchEvent(new PopStateEvent('popstate'));
       return;
     }
 
-    if (onNavigate) {
-      onNavigate(href);
+    if (href === '/services' || href === '/services/' || href === 'services' || href === '#services') {
+      window.history.pushState({ type: 'services' }, '', '/services');
+      window.dispatchEvent(new PopStateEvent('popstate'));
       return;
     }
 
-    if (!href || href === '#') {
-      if (window.lenis) {
-        window.lenis.scrollTo(0, { duration: 1.0 });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+    if (href === '/work' || href === '/work/' || href === 'work' || href === '#work') {
+      window.history.pushState({ type: 'work' }, '', '/work');
+      window.dispatchEvent(new PopStateEvent('popstate'));
       return;
     }
 
-    const targetId = href.startsWith('#') ? href.substring(1) : href;
+    if (href === '/who-for' || href === '/who-for/' || href === 'who-for' || href === '#who-for') {
+      window.history.pushState({ type: 'who-for' }, '', '/who-for');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      return;
+    }
+
+    if (!href || href === '#' || href === '/') {
+      window.history.pushState(null, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      return;
+    }
+
+    const targetId = href.startsWith('#') ? href.substring(1) : href.startsWith('/') ? href.substring(1) : href;
     const el = document.getElementById(targetId);
 
     if (el) {

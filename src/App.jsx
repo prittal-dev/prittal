@@ -264,6 +264,105 @@ export default function App() {
     if (window.lenis) window.lenis.scrollTo(0, { duration: 0.8 });
   };
 
+  const navigateToServices = (push = true) => {
+    setSkipIntro(true);
+    setSelectedServicePage(null);
+    setSelectedBlogArticle(null);
+    setIsAboutPage(false);
+    setIsPortfolioPage(false);
+    setIsPackagePage(false);
+    setIsNotFoundPage(false);
+    setIsThankYouPage(false);
+    const path = '/services';
+
+    if (push && typeof window !== 'undefined' && window.location.pathname !== path) {
+      window.history.pushState({ type: 'services' }, '', path);
+    }
+
+    updateSEOTags({
+      title: 'Services — Prittal Creative Agency',
+      description: 'Explore our full range of brand strategy, UI/UX design, digital marketing, performance ads, video production, and marketplace growth services.',
+      path: path,
+      type: 'website'
+    });
+
+    setTimeout(() => {
+      const el = document.getElementById('services');
+      if (el) {
+        if (window.lenis) window.lenis.scrollTo(el, { offset: 0, duration: 0.8 });
+        else el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  const navigateToWork = (push = true) => {
+    setSkipIntro(true);
+    setSelectedServicePage(null);
+    setSelectedBlogArticle(null);
+    setIsAboutPage(false);
+    setIsPortfolioPage(false);
+    setIsPackagePage(false);
+    setIsNotFoundPage(false);
+    setIsThankYouPage(false);
+    const path = '/work';
+
+    if (push && typeof window !== 'undefined' && window.location.pathname !== path) {
+      window.history.pushState({ type: 'work' }, '', path);
+    }
+
+    updateSEOTags({
+      title: 'Work & Insights — Prittal Creative Agency',
+      description: 'Explore our client work, case studies, strategic insights, and proven performance growth results.',
+      path: path,
+      type: 'website'
+    });
+
+    setTimeout(() => {
+      const el = document.getElementById('work');
+      if (el) {
+        if (window.lenis) window.lenis.scrollTo(el, { offset: 0, duration: 0.8 });
+        else el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
+  const navigateToWhoFor = (push = true) => {
+    setSkipIntro(true);
+    setSelectedServicePage(null);
+    setSelectedBlogArticle(null);
+    setIsAboutPage(false);
+    setIsPortfolioPage(false);
+    setIsPackagePage(false);
+    setIsNotFoundPage(false);
+    setIsThankYouPage(false);
+    const path = '/who-for';
+
+    if (push && typeof window !== 'undefined' && window.location.pathname !== path) {
+      window.history.pushState({ type: 'who-for' }, '', path);
+    }
+
+    updateSEOTags({
+      title: 'Choose Your Stage — Prittal Creative Agency',
+      description: 'Whether starting from scratch, increasing visibility, or scaling up, find the exact strategic roadmap for your brand stage.',
+      path: path,
+      type: 'website'
+    });
+
+    setTimeout(() => {
+      const el = document.getElementById('who-for');
+      if (el) {
+        if (window.lenis) window.lenis.scrollTo(el, { offset: 0, duration: 0.8 });
+        else el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   const navigateToService = (service, push = true) => {
     setSkipIntro(true);
     setSelectedBlogArticle(null);
@@ -396,69 +495,81 @@ export default function App() {
       navigateToHome('#', true);
       return;
     }
-    let targetHref = typeof href === 'string' ? href.replace(/^https?:\/\/(www\.)?prittal\.com/, '') : href;
-
-    if (targetHref === '/thank-you' || targetHref === 'thank-you' || targetHref === '#thank-you' || targetHref.startsWith('/thank-you')) {
+    if (href === '/thank-you' || href === 'thank-you' || href === '#thank-you' || href.startsWith('/thank-you')) {
       navigateToThankYou(true);
       return;
     }
-    if (targetHref === '/404' || targetHref === '404' || targetHref === '#404') {
+    if (href === '/404' || href === '404' || href === '#404') {
       navigateToNotFound(true);
       return;
     }
     if (
-      targetHref === '/portfolio' ||
-      targetHref === '/portfolio/' ||
-      targetHref === '#portfolio' ||
-      targetHref === 'portfolio'
+      href === '/portfolio' ||
+      href === '/portfolio/' ||
+      href === '#portfolio' ||
+      href === 'portfolio'
     ) {
       navigateToPortfolio(true);
       return;
     }
     if (
-      targetHref === '/about-us' ||
-      targetHref === '/about' ||
-      targetHref === '#about-us' ||
-      targetHref === '#about' ||
-      targetHref === 'about-us' ||
-      targetHref === 'about' ||
-      targetHref === 'who-we-are' ||
-      targetHref === '/who-we-are' ||
-      targetHref === 'why-prittal' ||
-      targetHref === '/why-prittal' ||
-      targetHref === '#why-prittal'
+      href === '/about-us' ||
+      href === '/about' ||
+      href === '#about-us' ||
+      href === '#about' ||
+      href === 'about-us' ||
+      href === 'about' ||
+      href === 'who-we-are' ||
+      href === '/who-we-are' ||
+      href === 'why-prittal' ||
+      href === '/why-prittal' ||
+      href === '#why-prittal'
     ) {
       navigateToAbout(true);
       return;
     }
     if (
-      targetHref === '/package' ||
-      targetHref === '/packages' ||
-      targetHref === '/package/' ||
-      targetHref === '/packages/' ||
-      targetHref === 'package' ||
-      targetHref === 'packages' ||
-      targetHref === '#package' ||
-      targetHref === '#packages'
+      href === '/package' ||
+      href === '/packages' ||
+      href === '/package/' ||
+      href === '/packages/' ||
+      href === 'package' ||
+      href === 'packages' ||
+      href === '#package' ||
+      href === '#packages'
     ) {
       navigateToPackage(true);
       return;
     }
     if (
-      targetHref === '/services' ||
-      targetHref === '/services/' ||
-      targetHref === '#services' ||
-      targetHref === 'services'
+      href === '/services' ||
+      href === '/services/' ||
+      href === 'services' ||
+      href === '#services'
     ) {
-      navigateToHome('#services', true);
+      navigateToServices(true);
       return;
     }
-    if (targetHref.startsWith('/services/')) {
-      const slug = targetHref.replace('/services/', '').replace(/\/$/, '');
-      if (!slug) {
-        navigateToHome('#services', true);
-        return;
-      }
+    if (
+      href === '/work' ||
+      href === '/work/' ||
+      href === 'work' ||
+      href === '#work'
+    ) {
+      navigateToWork(true);
+      return;
+    }
+    if (
+      href === '/who-for' ||
+      href === '/who-for/' ||
+      href === 'who-for' ||
+      href === '#who-for'
+    ) {
+      navigateToWhoFor(true);
+      return;
+    }
+    if (href.startsWith('/services/')) {
+      const slug = href.replace('/services/', '').replace(/\/$/, '');
       const found = getServiceById(slug);
       if (found) {
         navigateToService(found, true);
@@ -468,8 +579,8 @@ export default function App() {
         return;
       }
     }
-    if (targetHref.startsWith('/insights/') || targetHref.startsWith('/blog/')) {
-      const identifier = targetHref.replace('/insights/', '').replace('/blog/', '').replace(/\/$/, '');
+    if (href.startsWith('/insights/') || href.startsWith('/blog/')) {
+      const identifier = href.replace('/insights/', '').replace('/blog/', '').replace(/\/$/, '');
       const found = blogPosts.find(
         b => (b.slug && b.slug.toLowerCase() === identifier.toLowerCase()) ||
              (b.title && slugify(b.title) === identifier.toLowerCase()) ||
@@ -483,18 +594,18 @@ export default function App() {
         return;
       }
     }
-    if (targetHref === '/' || targetHref === '#' || targetHref.startsWith('#')) {
-      navigateToHome(targetHref, true);
+    if (href === '/' || href === '#' || href.startsWith('#')) {
+      navigateToHome(href, true);
       return;
     }
 
     // Any other unrecognized route -> open 404 page
-    if (targetHref.startsWith('/')) {
+    if (href.startsWith('/')) {
       navigateToNotFound(true);
       return;
     }
 
-    navigateToHome(targetHref, true);
+    navigateToHome(href, true);
   };
 
   // Synchronize router state with browser URL & handle Back/Forward buttons
@@ -547,41 +658,27 @@ export default function App() {
         return;
       }
 
-      // Handle /services or /services/ route
+      // Handle /services route
       if (pathname === '/services' || pathname === '/services/') {
-        setIsNotFoundPage(false);
-        setIsThankYouPage(false);
-        setSelectedServicePage(null);
-        setSelectedBlogArticle(null);
-        setIsAboutPage(false);
-        setIsPortfolioPage(false);
-        setIsPackagePage(false);
+        navigateToServices(false);
+        return;
+      }
 
-        updateSEOTags({
-          title: 'Our Services — Prittal Creative Agency',
-          description: 'Explore Prittal\'s 6 core services: Brand & Design, Digital Marketing, Performance Marketing, Video Production, Events & Activations, and Marketplace Growth.',
-          path: '/services'
-        });
+      // Handle /work route
+      if (pathname === '/work' || pathname === '/work/') {
+        navigateToWork(false);
+        return;
+      }
 
-        setTimeout(() => {
-          const el = document.getElementById('services');
-          if (el) {
-            if (window.lenis) window.lenis.scrollTo(el, { offset: 0, duration: 0.8 });
-            else el.scrollIntoView({ behavior: 'smooth' });
-          } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        }, 150);
+      // Handle /who-for route
+      if (pathname === '/who-for' || pathname === '/who-for/') {
+        navigateToWhoFor(false);
         return;
       }
 
       // Handle /services/:slug route
       if (pathname.startsWith('/services/')) {
         const slug = pathname.replace('/services/', '').replace(/\/$/, '');
-        if (!slug) {
-          navigateToHome('#services', false);
-          return;
-        }
         const found = getServiceById(slug);
         if (found) {
           navigateToService(found, false);
@@ -833,7 +930,7 @@ export default function App() {
           service={selectedServicePage}
           onSelectService={(newService) => navigateToService(newService, true)}
           onNavigate={handleGlobalNavigation}
-          onBack={() => navigateToHome('#services', true)}
+          onBack={() => handleGlobalNavigation('/services')}
           onOpenContact={(serviceName) => handleOpenContact(serviceName)}
           isDark={isDark}
           onToggleTheme={toggleTheme}
@@ -859,7 +956,7 @@ export default function App() {
           allArticles={blogPosts}
           onSelectArticle={(newArticle) => navigateToArticle(newArticle, true)}
           onNavigate={handleGlobalNavigation}
-          onBack={() => navigateToHome('#work', true)}
+          onBack={() => handleGlobalNavigation('/work')}
           onOpenContact={() => setIsContactOpen(true)}
           isDark={isDark}
           onToggleTheme={toggleTheme}
@@ -895,19 +992,13 @@ export default function App() {
         {/* FOLD 1: Editorial Hero Section */}
         <HeroSection
           onOpenContact={(serviceName) => handleOpenContact(serviceName)}
-          onExploreWork={() => {
-            const el = document.getElementById('work');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
+          onExploreWork={() => handleGlobalNavigation('/work')}
         />
 
         {/* FOLD 2: Social Proof + "Who Is This For" Situation Cards */}
         <WhoIsThisForSection
           onOpenContact={(serviceName) => handleOpenContact(serviceName)}
-          onExploreWork={() => {
-            const el = document.getElementById('work');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
+          onExploreWork={() => handleGlobalNavigation('/work')}
         />
 
         {/* FOLD 3: Services Overview (6 Service Cards) */}

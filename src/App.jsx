@@ -396,54 +396,69 @@ export default function App() {
       navigateToHome('#', true);
       return;
     }
-    if (href === '/thank-you' || href === 'thank-you' || href === '#thank-you' || href.startsWith('/thank-you')) {
+    let targetHref = typeof href === 'string' ? href.replace(/^https?:\/\/(www\.)?prittal\.com/, '') : href;
+
+    if (targetHref === '/thank-you' || targetHref === 'thank-you' || targetHref === '#thank-you' || targetHref.startsWith('/thank-you')) {
       navigateToThankYou(true);
       return;
     }
-    if (href === '/404' || href === '404' || href === '#404') {
+    if (targetHref === '/404' || targetHref === '404' || targetHref === '#404') {
       navigateToNotFound(true);
       return;
     }
     if (
-      href === '/portfolio' ||
-      href === '/portfolio/' ||
-      href === '#portfolio' ||
-      href === 'portfolio'
+      targetHref === '/portfolio' ||
+      targetHref === '/portfolio/' ||
+      targetHref === '#portfolio' ||
+      targetHref === 'portfolio'
     ) {
       navigateToPortfolio(true);
       return;
     }
     if (
-      href === '/about-us' ||
-      href === '/about' ||
-      href === '#about-us' ||
-      href === '#about' ||
-      href === 'about-us' ||
-      href === 'about' ||
-      href === 'who-we-are' ||
-      href === '/who-we-are' ||
-      href === 'why-prittal' ||
-      href === '/why-prittal' ||
-      href === '#why-prittal'
+      targetHref === '/about-us' ||
+      targetHref === '/about' ||
+      targetHref === '#about-us' ||
+      targetHref === '#about' ||
+      targetHref === 'about-us' ||
+      targetHref === 'about' ||
+      targetHref === 'who-we-are' ||
+      targetHref === '/who-we-are' ||
+      targetHref === 'why-prittal' ||
+      targetHref === '/why-prittal' ||
+      targetHref === '#why-prittal'
     ) {
       navigateToAbout(true);
       return;
     }
     if (
-      href === '/package' ||
-      href === '/packages' ||
-      href === '/package/' ||
-      href === '/packages/' ||
-      href === 'package' ||
-      href === 'packages' ||
-      href === '#package' ||
-      href === '#packages'
+      targetHref === '/package' ||
+      targetHref === '/packages' ||
+      targetHref === '/package/' ||
+      targetHref === '/packages/' ||
+      targetHref === 'package' ||
+      targetHref === 'packages' ||
+      targetHref === '#package' ||
+      targetHref === '#packages'
     ) {
       navigateToPackage(true);
       return;
     }
-    if (href.startsWith('/services/')) {
-      const slug = href.replace('/services/', '').replace(/\/$/, '');
+    if (
+      targetHref === '/services' ||
+      targetHref === '/services/' ||
+      targetHref === '#services' ||
+      targetHref === 'services'
+    ) {
+      navigateToHome('#services', true);
+      return;
+    }
+    if (targetHref.startsWith('/services/')) {
+      const slug = targetHref.replace('/services/', '').replace(/\/$/, '');
+      if (!slug) {
+        navigateToHome('#services', true);
+        return;
+      }
       const found = getServiceById(slug);
       if (found) {
         navigateToService(found, true);
@@ -453,8 +468,8 @@ export default function App() {
         return;
       }
     }
-    if (href.startsWith('/insights/') || href.startsWith('/blog/')) {
-      const identifier = href.replace('/insights/', '').replace('/blog/', '').replace(/\/$/, '');
+    if (targetHref.startsWith('/insights/') || targetHref.startsWith('/blog/')) {
+      const identifier = targetHref.replace('/insights/', '').replace('/blog/', '').replace(/\/$/, '');
       const found = blogPosts.find(
         b => (b.slug && b.slug.toLowerCase() === identifier.toLowerCase()) ||
              (b.title && slugify(b.title) === identifier.toLowerCase()) ||
@@ -468,18 +483,18 @@ export default function App() {
         return;
       }
     }
-    if (href === '/' || href === '#' || href.startsWith('#')) {
-      navigateToHome(href, true);
+    if (targetHref === '/' || targetHref === '#' || targetHref.startsWith('#')) {
+      navigateToHome(targetHref, true);
       return;
     }
 
     // Any other unrecognized route -> open 404 page
-    if (href.startsWith('/')) {
+    if (targetHref.startsWith('/')) {
       navigateToNotFound(true);
       return;
     }
 
-    navigateToHome(href, true);
+    navigateToHome(targetHref, true);
   };
 
   // Synchronize router state with browser URL & handle Back/Forward buttons
@@ -532,9 +547,41 @@ export default function App() {
         return;
       }
 
+      // Handle /services or /services/ route
+      if (pathname === '/services' || pathname === '/services/') {
+        setIsNotFoundPage(false);
+        setIsThankYouPage(false);
+        setSelectedServicePage(null);
+        setSelectedBlogArticle(null);
+        setIsAboutPage(false);
+        setIsPortfolioPage(false);
+        setIsPackagePage(false);
+
+        updateSEOTags({
+          title: 'Our Services — Prittal Creative Agency',
+          description: 'Explore Prittal\'s 6 core services: Brand & Design, Digital Marketing, Performance Marketing, Video Production, Events & Activations, and Marketplace Growth.',
+          path: '/services'
+        });
+
+        setTimeout(() => {
+          const el = document.getElementById('services');
+          if (el) {
+            if (window.lenis) window.lenis.scrollTo(el, { offset: 0, duration: 0.8 });
+            else el.scrollIntoView({ behavior: 'smooth' });
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }, 150);
+        return;
+      }
+
       // Handle /services/:slug route
       if (pathname.startsWith('/services/')) {
         const slug = pathname.replace('/services/', '').replace(/\/$/, '');
+        if (!slug) {
+          navigateToHome('#services', false);
+          return;
+        }
         const found = getServiceById(slug);
         if (found) {
           navigateToService(found, false);

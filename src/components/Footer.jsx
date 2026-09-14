@@ -27,7 +27,7 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
   const quickLinks = [
     { name: 'Home', href: '#hero' },
     { name: 'Choose Your Stage', href: '#who-for' },
-    { name: 'Services', href: '#services' },
+    { name: 'Services', href: 'https://www.prittal.com/services' },
     { name: 'Insights', href: '#work' },
     { name: 'About Us', href: '/about-us' },
   ];

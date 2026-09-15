@@ -157,9 +157,9 @@ export const servicesData = [
   },
   {
     id: 'digital-marketing',
-    slug: 'best-digital-marketing-company-in-delhi',
-    metaTitle: 'Best Digital Marketing Company in Delhi | Strategy, Performance & Growth',
-    metaDescription: 'Prittal is a professional digital marketing company in India offering data-driven performance marketing, strategy and growth solutions for brands.',
+    slug: 'digital-marketing',
+    metaTitle: 'Best Digital Marketing Company | Strategy, Performance & Growth',
+    metaDescription: 'Prittal is a professional digital marketing company offering data-driven performance marketing, strategy and growth solutions for brands.',
     num: '02',
     eyebrow: 'Service 02',
     badge: 'Organic Engine & Presence',
@@ -199,35 +199,35 @@ export const servicesData = [
       },
       {
         icon: MessageCircle,
-        title: 'Community management',
-        desc: 'Real responses to real comments and DMs, so your channels feel active, not automated.',
-        tags: ['DM Responses', 'Comment Moderation', 'Audience Nurturing']
+        title: 'Copywriting and messaging',
+        desc: 'Clear, direct writing for landing pages, emails, and ads that turns interest into action.',
+        tags: ['Landing Page Copy', 'Email Sequences', 'Ad Copy Matrix']
       }
     ],
     process: [
       {
         num: '01',
         name: 'Audit',
-        desc: 'Review current channels, rankings and content performance to find quick wins.',
-        deliverable: 'Full Channel & Keyword Baseline Report'
+        desc: 'Review your current channels, content performance, search rankings and competitor presence.',
+        deliverable: 'Digital Presence Audit & Keyword Gap Matrix'
       },
       {
         num: '02',
         name: 'Plan',
-        desc: 'Set a content and SEO calendar tied to real business goals, not vanity metrics.',
-        deliverable: '90-Day Content Roadmap & SEO Strategy'
+        desc: 'Build a channel strategy, content themes, keyword priority list and posting cadence.',
+        deliverable: 'Content Strategy Deck & 90-Day SEO Roadmap'
       },
       {
         num: '03',
         name: 'Produce',
-        desc: 'Write, design and publish on a consistent cadence across every channel.',
-        deliverable: 'Weekly Batch Production & Publishing'
+        desc: 'Create on-brand posts, SEO articles, carousels, reels and copy every week.',
+        deliverable: 'Monthly Content Calendar & Production Assets'
       },
       {
         num: '04',
-        name: 'Report',
-        desc: 'Monthly reporting on traffic, rankings and engagement, in plain language.',
-        deliverable: 'Executive Dashboard & Iteration Plan'
+        name: 'Optimize',
+        desc: 'Track what ranks and converts, doubling down on winning topics and adjusting channel mix.',
+        deliverable: 'Monthly Performance Analytics & Rank Report'
       }
     ],
     closing: {
@@ -238,40 +238,30 @@ export const servicesData = [
       {
         id: 'dm-1',
         question: 'What does your Digital Marketing service include?',
-        answer: 'We provide SEO, social media marketing, content strategy, AEO optimization, and organic growth solutions to increase your brand’s online visibility.'
+        answer: 'Our digital marketing services include search engine optimization (SEO), social media strategy, content creation, brand copy, email marketing, and ongoing presence management.'
       },
       {
         id: 'dm-2',
-        question: 'How can digital marketing help my business grow?',
-        answer: 'Our strategy helps your brand reach the right audience, increase organic traffic, improve search visibility, and build a stronger online presence.'
+        question: 'How quickly can I expect results from SEO and digital marketing?',
+        answer: 'While paid ads bring fast traffic, organic digital marketing and SEO usually start showing noticeable growth in visibility and traffic within 3 to 6 months.'
       },
       {
         id: 'dm-3',
-        question: 'Do you provide both SEO and Social Media Marketing?',
-        answer: 'Yes. We combine SEO and social media strategies to create consistent visibility across search engines and social platforms.'
+        question: 'Which social media platforms do you manage?',
+        answer: 'We focus on the channels where your target audience is most active, including Instagram, LinkedIn, YouTube, Facebook, and emerging platforms.'
       },
       {
         id: 'dm-4',
-        question: 'How long does it take to see results from SEO?',
-        answer: 'SEO is a long-term growth strategy. Results can vary depending on your industry, competition, website authority, and current search performance.'
+        question: 'Do you create original content or just handle strategy?',
+        answer: 'We handle both. Our team creates original copy, graphics, articles, carousels, and video concepts in addition to developing the overall growth strategy.'
       },
       {
         id: 'dm-5',
-        question: 'Do you create content for social media and SEO?',
-        answer: 'Yes. We develop strategic content designed to improve engagement, search visibility, and consistent brand presence.'
+        question: 'Will I receive regular performance reports?',
+        answer: 'Yes. We provide clear, straightforward monthly reports tracking key metrics such as organic search rankings, reach, engagement, website traffic, and leads.'
       },
       {
         id: 'dm-6',
-        question: 'What is AEO and why is it important?',
-        answer: 'Answer Engine Optimization (AEO) helps your content appear in AI-powered answers and search experiences, making it easier for potential customers to discover your brand.'
-      },
-      {
-        id: 'dm-7',
-        question: 'How often will you publish content for my brand?',
-        answer: 'We create a consistent content schedule based on your goals and strategy, with regular social and SEO-focused content to maintain organic momentum.'
-      },
-      {
-        id: 'dm-8',
         question: 'Can you improve the rankings of my existing website?',
         answer: 'Yes. We can audit your existing website, identify SEO opportunities, and develop an optimization strategy to improve its search visibility and organic performance.'
       }
@@ -279,77 +269,77 @@ export const servicesData = [
   },
   {
     id: 'performance-marketing',
-    slug: 'performance-marketing-agency-in-india',
-    metaTitle: 'Performance Marketing Agency India | ROI-Driven Growth',
-    metaDescription: 'Prittal is a leading performance marketing agency in India, delivering Google Ads, paid media and ROI-driven strategies that drive measurable business growth.',
+    slug: 'performance-marketing',
+    metaTitle: 'Performance Marketing Agency | ROI-Driven Growth',
+    metaDescription: 'Prittal is a leading performance marketing agency, delivering Google Ads, paid media and ROI-driven strategies that drive measurable business growth.',
     num: '03',
     eyebrow: 'Service 03',
     badge: 'Paid Ads & High ROAS',
     icon: Target,
     title: 'Performance marketing',
     displayTitle: 'Performance Marketing',
-    desc: 'Paid ads that don\'t just run — they return. Every rupee tracked.',
-    lede: 'Paid ads that don\'t just run — they return. Every rupee tracked, every campaign built around a number you actually care about.',
+    desc: 'Google Ads, Meta Ads, funnel optimization — turned into actual revenue.',
+    lede: 'Google Ads, Meta Ads, funnel optimization — turned into actual revenue. We manage paid budgets with the discipline of a financial portfolio.',
     stats: [
-      { label: 'Average ROAS', value: '3.8x+' },
-      { label: 'Attribution Tracking', value: '100%' },
-      { label: 'Weekly Iterations', value: 'Active' }
+      { label: 'Avg ROAS', value: '4.2x+' },
+      { label: 'Ad Spend Managed', value: '₹10Cr+' },
+      { label: 'Conversion Lift', value: '+35%' }
     ],
     deliverables: [
-      'Meta & Google Paid Ads',
-      'High-ROAS Media Buying',
-      'Conversion Funnel Opt.'
+      'Google & Meta Ad Campaigns',
+      'Funnel & Conversion Audit',
+      'Creative Ad Testing'
     ],
     capabilities: [
       {
         icon: Megaphone,
-        title: 'Meta and Google paid ads',
-        desc: 'Campaign structures built for your funnel stage, not a generic template copied across every client.',
-        tags: ['Meta Ads (FB/IG)', 'Google Search & PMax', 'Creative Testing Matrix']
+        title: 'Paid search (Google Ads)',
+        desc: 'Search, Shopping, and Performance Max campaigns targeting buyers at the moment of intent.',
+        tags: ['Search & Shopping Ads', 'PMax Campaign Structure', 'Negative Keyword Lists']
       },
       {
         icon: BarChart3,
-        title: 'High-ROAS media buying',
-        desc: 'Budget allocated toward what\'s actually converting, reviewed and shifted weekly rather than set and forgotten.',
-        tags: ['Budget Optimization', 'Audience Retargeting', 'Scale Management']
+        title: 'Paid social (Meta & LinkedIn)',
+        desc: 'Full-funnel ad campaigns designed around testing angles, audiences, and creatives continuously.',
+        tags: ['Creative Testing Matrix', 'Audience Retargeting', 'Scale-up Campaign Builds']
       },
       {
         icon: Filter,
-        title: 'Conversion funnel optimization',
-        desc: 'Landing pages, offers and checkout flows tightened to close the gap between click and purchase.',
-        tags: ['Landing Page CRO', 'Offer Structuring', 'Drop-off Reduction']
+        title: 'Funnel and landing page optimization',
+        desc: 'Fixing leaky conversion paths so every dollar of ad spend yields higher returns.',
+        tags: ['CRO Audit', 'Landing Page Tweaks', 'Checkout Optimization']
       },
       {
         icon: Activity,
-        title: 'Attribution and tracking',
-        desc: 'Clean pixel and analytics setup so you know exactly which ad, not just which platform, drove the sale.',
-        tags: ['GA4 & CAPI Setup', 'Server-Side Pixels', 'Multi-Touch Tracking']
+        title: 'Analytics and attribution',
+        desc: 'Clear tracking setups so you know which campaign, creative, and channel actually drove the revenue.',
+        tags: ['GA4 & Pixel Setup', 'Custom Dashboard', 'Blended ROAS Tracking']
       }
     ],
     process: [
       {
         num: '01',
-        name: 'Baseline',
-        desc: 'Audit existing ad accounts, tracking and past performance.',
-        deliverable: 'Ad Account Audit & Pixel Health Check'
+        name: 'Audit',
+        desc: 'Deep-dive into existing ad accounts, conversion tracking, analytics and unit economics.',
+        deliverable: 'Ad Account & Conversion Tracking Audit'
       },
       {
         num: '02',
         name: 'Build',
-        desc: 'Structure campaigns around funnel stage, audience and creative angle.',
-        deliverable: 'Campaign Architecture & Creative Angles'
+        desc: 'Structure new campaign frameworks, conversion tracking, ad copy and creative direction.',
+        deliverable: 'Campaign Architecture & Ad Creative Suite'
       },
       {
         num: '03',
-        name: 'Launch',
-        desc: 'Go live with clear testing plans for creative, copy and audiences.',
-        deliverable: 'Live Campaigns & A/B Testing Grid'
+        name: 'Test',
+        desc: 'Run controlled tests across creatives, hooks, landing pages and target audiences.',
+        deliverable: 'Weekly Testing Matrix & ROAS Logs'
       },
       {
         num: '04',
         name: 'Scale',
-        desc: 'Double down on what\'s working, cut what isn\'t, weekly.',
-        deliverable: 'Weekly Optimization & Scaling Blueprint'
+        desc: 'Shift budget into winning ad angles and scale profitable campaigns systematically.',
+        deliverable: 'Scaling Playbook & ROAS Attribution Dashboard'
       }
     ],
     closing: {
@@ -360,50 +350,40 @@ export const servicesData = [
       {
         id: 'pm-1',
         question: 'What does your Performance Marketing service include?',
-        answer: 'We manage paid advertising campaigns across platforms like Google and Meta, covering strategy, campaign setup, audience targeting, optimization, retargeting, and performance tracking.'
+        answer: 'We manage paid advertising across Google Ads, Meta Ads (Instagram & Facebook), LinkedIn Ads, conversion rate optimization, creative testing, and attribution tracking.'
       },
       {
         id: 'pm-2',
-        question: 'Which advertising platforms do you work with?',
-        answer: 'We primarily work with platforms such as Google Ads and Meta Ads, selecting the channels that best match your audience and business goals.'
+        question: 'Which ad platforms do you specialize in?',
+        answer: 'We specialize in Google Search, Shopping, Performance Max, Meta Ads, and LinkedIn Ads, choosing the right mix based on your audience and business goals.'
       },
       {
         id: 'pm-3',
-        question: 'How do you measure the success of a paid advertising campaign?',
-        answer: 'We track key metrics such as ROAS, conversions, cost per acquisition, ad spend, revenue, and overall campaign performance.'
+        question: 'How do you measure campaign performance and ROAS?',
+        answer: 'We focus on metrics that directly impact your bottom line—such as cost per acquisition (CPA), return on ad spend (ROAS), conversion rate, and customer lifetime value (LTV).'
       },
       {
         id: 'pm-4',
-        question: 'Can you help improve the ROAS of my existing campaigns?',
-        answer: 'Yes. We audit your existing campaigns, identify areas of wasted spend, and continuously optimize targeting, creatives, bidding, and conversion paths to improve efficiency.'
+        question: 'Do you create the ad copy and visual creatives?',
+        answer: 'Yes. Our team develops the ad copy, visual assets, video hooks, and landing page messaging to ensure campaigns perform effectively.'
       },
       {
         id: 'pm-5',
-        question: 'Do you provide retargeting campaigns?',
-        answer: 'Yes. We build retargeting strategies to reconnect with people who have already interacted with your website, ads, or brand and move them further through the conversion funnel.'
+        question: 'What budget size do I need to start performance marketing?',
+        answer: 'We work with a variety of budget levels. During our initial discovery conversation, we help determine a recommended starting ad spend based on your goals and category competition.'
       },
       {
         id: 'pm-6',
-        question: 'How often do you optimize and test campaigns?',
-        answer: 'We monitor campaigns continuously and perform regular testing and optimization of audiences, creatives, budgets, placements, and bidding strategies.'
-      },
-      {
-        id: 'pm-7',
-        question: 'Do you track every rupee spent on advertising?',
-        answer: 'Yes. We use detailed tracking and attribution systems to monitor ad spend, conversions, and campaign performance so you can clearly understand where your budget is going.'
-      },
-      {
-        id: 'pm-8',
-        question: 'How quickly can I expect results from Performance Marketing?',
-        answer: 'Paid campaigns can generate data and traffic quickly, but meaningful results depend on your industry, budget, offer, audience, and conversion process. We use ongoing testing and optimization to improve performance over time.'
+        question: 'How often will I get campaign updates and performance reports?',
+        answer: 'You receive clear performance dashboards and regular updates tracking spend, conversions, cost per lead/sale, and ROAS improvements.'
       }
     ]
   },
   {
     id: 'video-production',
-    slug: 'ai-video-production-company-in-india',
-    metaTitle: 'AI Video Production Company in India | Creative Video Solutions',
-    metaDescription: 'Prittal is a leading AI video production agency in India, creating AI-powered videos, UGC content and creative visual solutions that help brands engage and grow.',
+    slug: 'video-production-and-shoots',
+    metaTitle: 'AI Video Production Company | Creative Video Solutions',
+    metaDescription: 'Prittal is a leading AI video production agency, creating AI-powered videos, UGC content and creative visual solutions that help brands engage and grow.',
     num: '04',
     eyebrow: 'Service 04',
     badge: 'Cinematic & High-Retention',
@@ -523,9 +503,9 @@ export const servicesData = [
   },
   {
     id: 'events-activations',
-    slug: 'event-management-company-india',
-    metaTitle: 'Top Event Management Company India | Experiential & Brand Activation',
-    metaDescription: 'Prittal is a professional event management and experiential marketing company in India, delivering strategic brand activations, corporate events and BTL experiences.',
+    slug: 'events-and-activations',
+    metaTitle: 'Top Event Management Company | Experiential & Brand Activation',
+    metaDescription: 'Prittal is a professional event management and experiential marketing company, delivering strategic brand activations, corporate events and BTL experiences.',
     num: '05',
     eyebrow: 'Service 05',
     badge: 'Experiential & PR Events',
@@ -535,7 +515,7 @@ export const servicesData = [
     desc: 'From brand launches to expos — we make your brand felt in a room.',
     lede: 'From brand launches to expos — we make your brand felt in a room. Experiential marketing, influencer PR campaigns, and on-ground activations that connect people to your brand in the real world.',
     stats: [
-      { label: 'Event Scale', value: 'Pan-India' },
+      { label: 'Event Scale', value: 'Global Scale' },
       { label: 'Creator Network', value: '500+ VIPs' },
       { label: 'Live Footprint', value: 'Turnkey' }
     ],
@@ -613,8 +593,8 @@ export const servicesData = [
       },
       {
         id: 'ea-3',
-        question: 'Can you manage events across India?',
-        answer: 'Yes. Our event solutions can be executed at a Pan-India scale, depending on the location, event size, and requirements.'
+        question: 'Can you manage multi-city events?',
+        answer: 'Yes. Our event solutions can be executed at scale, depending on the location, event size, and requirements.'
       },
       {
         id: 'ea-4',
@@ -645,9 +625,9 @@ export const servicesData = [
   },
   {
     id: 'marketplace-growth',
-    slug: 'marketplace-growth-agency-in-india',
-    metaTitle: 'Best Marketplace Growth Agency in India I Ecommerce Growth Consulting',
-    metaDescription: 'Prittal is a leading marketplace growth agency in India offering Amazon & Flipkart management, listing optimization, seller growth and ecommerce solutions.',
+    slug: 'marketplace-growth',
+    metaTitle: 'Best Marketplace Growth Agency | Ecommerce Growth Consulting',
+    metaDescription: 'Prittal is a leading marketplace growth agency offering Amazon & Flipkart management, listing optimization, seller growth and ecommerce solutions.',
     num: '06',
     eyebrow: 'Service 06',
     badge: 'E-Commerce & Q-Commerce',

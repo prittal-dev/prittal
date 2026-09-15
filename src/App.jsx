@@ -45,11 +45,11 @@ export default function App() {
   });
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
-      const version = localStorage.getItem('prittal-theme-default-v4');
+      const version = localStorage.getItem('prittal-theme-default-v5');
       if (!version) {
         localStorage.setItem('prittal-theme', 'dark');
         localStorage.setItem('portfolio-theme', 'dark');
-        localStorage.setItem('prittal-theme-default-v4', 'true');
+        localStorage.setItem('prittal-theme-default-v5', 'true');
         return true;
       }
       const saved = localStorage.getItem('prittal-theme');
@@ -254,7 +254,7 @@ export default function App() {
     }
 
     updateSEOTags({
-      title: 'Digital Marketing & Brand Growth Solutions in India',
+      title: 'Digital Marketing & Brand Growth Solutions',
       description: 'Prittal is a brand growth partner delivering strategic branding, and digital marketing solutions for ambitious brands, including Nokia, OYO, Cambridge & Oxford.',
       path: path,
       type: 'website'
@@ -468,7 +468,7 @@ export default function App() {
     }
 
     updateSEOTags({
-      title: 'Best Branding Agency in Delhi | Prittal Creative',
+      title: 'Best Branding Agency | Prittal Creative',
       description: 'Looking for the Brand Growth Partner? We craft powerful brand identities & strategies that drive growth. For Nokia, OYO, CAMBRIDGE OXFORD',
       path: '/'
     });
@@ -723,7 +723,7 @@ export default function App() {
         setIsPackagePage(false);
 
         updateSEOTags({
-          title: 'Best Branding Agency in Delhi | Prittal Creative',
+          title: 'Best Branding Agency | Prittal Creative',
           description: 'Looking for the Brand Growth Partner? We craft powerful brand identities & strategies that drive growth. For Nokia, OYO, CAMBRIDGE OXFORD',
           path: '/',
           noIndex: hasQuery

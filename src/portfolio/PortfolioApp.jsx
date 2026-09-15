@@ -41,11 +41,11 @@ export default function PortfolioApp({ onNavigateHome, onNavigate, isDarkTheme =
 
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
-      const version = localStorage.getItem('prittal-theme-default-v4');
+      const version = localStorage.getItem('prittal-theme-default-v5');
       if (!version) {
         localStorage.setItem('portfolio-theme', 'dark');
         localStorage.setItem('prittal-theme', 'dark');
-        localStorage.setItem('prittal-theme-default-v4', 'true');
+        localStorage.setItem('prittal-theme-default-v5', 'true');
         return 'dark';
       }
       const saved = localStorage.getItem('portfolio-theme') || localStorage.getItem('prittal-theme');

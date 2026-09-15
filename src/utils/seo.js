@@ -13,7 +13,7 @@ export function slugify(text) {
 }
 
 export function updateSEOTags({
-  title = 'Best Branding Agency in Delhi | Prittal Creative',
+  title = 'Best Branding Agency | Prittal Creative',
   description = 'Looking for the Brand Growth Partner? We craft powerful brand identities & strategies that drive growth. For Nokia, OYO, CAMBRIDGE OXFORD',
   path = '/',
   type = 'website',

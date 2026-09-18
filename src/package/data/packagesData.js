@@ -317,6 +317,59 @@ export const packagesData = [
         ]
       }
     ],
-    footerNote: 'GST applicable as per norms'
+    
+  },
+  {
+    id: 'branding-packages',
+    title: 'BRANDING PACKAGES',
+    shortTitle: 'BRANDING',
+    subtitle: 'Identity systems built for how your business actually grows',
+    tagline: 'Pick the package that matches where you are today — every tier scales into the next.',
+    basePrice: 25000,
+    tiers: [
+      {
+        id: 'basic',
+        name: 'Basic',
+        tagline: 'A clean starting identity for new businesses and solo founders.',
+        price: 25000,
+        ctaText: 'Choose Basic'
+      },
+      {
+        id: 'standard',
+        name: 'Standard',
+        isPopular: true,
+        tagline: 'Complete brand identity and stationery for growing businesses.',
+        price: 50000,
+        ctaText: 'Choose Standard'
+      },
+      {
+        id: 'premium',
+        name: 'Premium',
+        tagline: 'Full enterprise identity system with every touchpoint covered.',
+        price: 100000,
+        ctaText: 'Choose Premium'
+      }
+    ],
+    featureGroups: [
+      {
+        groupName: 'INCLUDED IN PACKAGE',
+        features: [
+          { name: 'Logo Design', values: { basic: '2 concepts, 1 revision', standard: '2-3 concepts, 2 revisions', premium: '5-6 concepts & 4 revisions' }, isHighlight: true },
+          { name: 'Brand Guideline', values: { basic: 'Add-on (Mini)', standard: true, premium: true } },
+          { name: 'Business Card Design', values: { basic: true, standard: true, premium: true } },
+          { name: 'Envelope Design', values: { basic: 'Add-on', standard: false, premium: true } },
+          { name: 'Letterhead Design', values: { basic: true, standard: true, premium: true } },
+          { name: 'Product/Service Catalogue', values: { basic: false, standard: false, premium: 'up to 20 pages' } },
+          { name: 'Company Profile', values: { basic: 'Add-on', standard: 'Add-on', premium: 'up to 15 pages' } },
+          { name: 'Extra Catalogue Pages', values: { basic: false, standard: 'Add-on (x5)', premium: false } },
+          { name: 'Social Media Kit', values: { basic: false, standard: false, premium: true } },
+          { name: 'Email Signature Design', values: { basic: false, standard: true, premium: true } },
+          { name: 'Priority Support & Dedicated Designer', values: { basic: false, standard: false, premium: true } },
+          { name: 'Packaging / Label Design', values: { basic: false, standard: false, premium: 'Add-on' } },
+          { name: 'Signage Design', values: { basic: false, standard: false, premium: 'Add-on' } }
+        ]
+      }
+    ],
+    footerNote: 'All packages include source files and two rounds of client feedback. GST applies additionally on all listed prices.'
   }
 ];

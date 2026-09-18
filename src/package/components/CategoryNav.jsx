@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, Search, Share2, Target, Camera, MapPin } from 'lucide-react';
+import { Globe, Search, Share2, Target, Camera, MapPin, Palette } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 export const CategoryNav = ({
@@ -23,6 +23,9 @@ export const CategoryNav = ({
         return <Camera className="w-4 h-4" />;
       case 'google-my-business':
         return <MapPin className="w-4 h-4" />;
+      case 'branding-packages':
+      case 'branding':
+        return <Palette className="w-4 h-4" />;
       default:
         return <Globe className="w-4 h-4" />;
     }

@@ -75,7 +75,7 @@ export const ProjectModal = ({
       let pkg = initialPackage || defaultPkg;
       
       const catId = (pkg.categoryId || '').toLowerCase();
-      const isOneTime = catId === 'websites' || catId === 'product-shoots' || catId === 'product_shoot' || catId === 'google-my-business' || catId === 'google_my_business';
+      const isOneTime = catId === 'websites' || catId === 'product-shoots' || catId === 'product_shoot' || catId === 'google-my-business' || catId === 'google_my_business' || catId === 'branding-packages' || catId === 'branding';
       if (isOneTime && pkg.billingCycle !== 'one-time') {
         pkg = { ...pkg, billingCycle: 'one-time' };
       }
@@ -83,6 +83,12 @@ export const ProjectModal = ({
       setSelectedPkg(pkg);
       setCheckedServices(getInitialCheckedServices(pkg));
       setSelectedAddons([]);
+      setFormData((prev) => ({
+        ...prev,
+        clientRemark: pkg.clientRemark || pkg.notes || '',
+        notes: pkg.notes || pkg.clientRemark || '',
+        gstRate: pkg.gstRate !== undefined ? pkg.gstRate : 18
+      }));
     }
   }, [isOpen, initialPackage, defaultPkg]);
 
@@ -99,7 +105,7 @@ export const ProjectModal = ({
     const catId = (category.id || '').toLowerCase();
     const tId = (tier.id || '').toLowerCase();
 
-    const isOneTime = catId === 'websites' || catId === 'product-shoots' || catId === 'product_shoot' || catId === 'google-my-business' || catId === 'google_my_business';
+    const isOneTime = catId === 'websites' || catId === 'product-shoots' || catId === 'product_shoot' || catId === 'google-my-business' || catId === 'google_my_business' || catId === 'branding-packages' || catId === 'branding';
     const cycle = isOneTime ? 'one-time' : billingCycle;
     
     // Monthly prices map (Indian Standard Numbering)
@@ -113,7 +119,9 @@ export const ProjectModal = ({
       'product-shoots': { basic: '₹10,000', standard: '₹20,000', premium: '₹50,000' },
       product_shoot: { basic: '₹10,000', standard: '₹20,000', premium: '₹50,000' },
       'google-my-business': { starter: '₹10,000', business: '₹25,000' },
-      google_my_business: { starter: '₹10,000', business: '₹25,000' }
+      google_my_business: { starter: '₹10,000', business: '₹25,000' },
+      'branding-packages': { basic: '₹25,000', standard: '₹50,000', premium: '₹1,00,000' },
+      branding: { basic: '₹25,000', standard: '₹50,000', premium: '₹1,00,000' }
     };
 
     // Annual prices map
@@ -163,10 +171,16 @@ export const ProjectModal = ({
 
   // List of active services currently sold
   const activeSoldServices = useMemo(() => {
+    if (selectedPkg?.selectedALaCarteItems && selectedPkg.selectedALaCarteItems.length > 0) {
+      return selectedPkg.selectedALaCarteItems.map(item => typeof item === 'string' ? item : item.name);
+    }
+    if (selectedPkg?.activeDetails && selectedPkg.activeDetails.length > 0) {
+      return selectedPkg.activeDetails;
+    }
     return Object.entries(checkedServices)
       .filter(([_, isChecked]) => isChecked)
       .map(([name]) => name);
-  }, [checkedServices]);
+  }, [checkedServices, selectedPkg]);
 
   // Only categories that have at least one active checked service
   const activeCategoriesWithServices = useMemo(() => {
@@ -175,6 +189,12 @@ export const ProjectModal = ({
 
   // List of all individual service inclusions/deliverables written on this plan
   const planFeaturesList = useMemo(() => {
+    if (selectedPkg?.selectedALaCarteItems && selectedPkg.selectedALaCarteItems.length > 0) {
+      return selectedPkg.selectedALaCarteItems.map(item => typeof item === 'string' ? item : item.name);
+    }
+    if (selectedPkg?.activeDetails && selectedPkg.activeDetails.length > 0) {
+      return selectedPkg.activeDetails;
+    }
     return getPlanFeaturesList(selectedPkg, packagesData);
   }, [selectedPkg]);
 
@@ -230,10 +250,11 @@ export const ProjectModal = ({
     pinCode: '',
     gstin: '',
     tanNo: '',
-    paymentMode: 'UPI / IMPS',
+    paymentMode: 'NEET/RTGS',
     paymentStatus: 'Full Payment Pending', // 'Full Payment Pending' | 'Partial Received' | 'Full Payment Received'
     receivedAmount: '', // amount when partial received
     discountAmount: '', // Discount entered in ₹ or %
+    gstRate: 18,
     clientRemark: '', // Client remark / special instruction
     notes: '',
   });
@@ -241,9 +262,12 @@ export const ProjectModal = ({
   // Financial & Package Calculation Logic
   const getPackageFinancials = (pkg = selectedPkg) => {
     // Check if custom budget is passed
-    let originalBase = 50000;
+    let originalBase = 25000;
     if (pkg?.userBudget && Number(pkg.userBudget) > 0) {
       originalBase = Number(pkg.userBudget);
+    } else if (pkg?.selectedALaCarteItems && pkg.selectedALaCarteItems.length > 0) {
+      const aLaCarteSum = pkg.selectedALaCarteItems.reduce((sum, item) => sum + (item.price || 0), 0);
+      originalBase = aLaCarteSum > 0 ? aLaCarteSum : 10000;
     } else {
       const rawPriceText = pkg?.priceInfo?.priceText || pkg?.priceText || '';
       const numericMatch = rawPriceText.replace(/,/g, '').match(/\d+/);
@@ -286,7 +310,8 @@ export const ProjectModal = ({
     originalBase += addonsTotal;
 
     const baseAfterDiscount = Math.max(0, originalBase - discount);
-    const gst = Math.round(baseAfterDiscount * 0.18);
+    const gstRate = formData.gstRate !== undefined ? Number(formData.gstRate) : 18;
+    const gst = Math.round(baseAfterDiscount * (gstRate / 100));
     const total = baseAfterDiscount + gst;
 
     // Calculate dynamic received and balance amounts based on paymentStatus
@@ -304,14 +329,14 @@ export const ProjectModal = ({
     const balance = Math.max(total - received, 0);
 
     return {
-      originalBaseAmount: originalBase,
+      baseAmount: originalBase,
       discountAmount: discount,
-      baseAmount: baseAfterDiscount,
+      baseAfterDiscount,
+      gstRate,
       gstAmount: gst,
       totalAmount: total,
       receivedAmount: received,
-      balanceAmount: balance,
-      paymentStatus: formData.paymentStatus,
+      balanceAmount: balance
     };
   };
 
@@ -598,7 +623,7 @@ Date: ${new Date().toLocaleDateString('en-GB')}
 
 *Client / Advertiser:* ${companyTitle}
 *Scope:* ${selectedPkg?.categoryTitle || 'Digital Retainer'} (${selectedPkg?.tierName || 'Custom Scope'})
-*Total Amount:* ₹${formatINR(financialData.totalAmount)} (Incl. 18% GST)
+*Total Amount:* ₹${formatINR(financialData.totalAmount)} (Incl. ${financialData.gstRate}% GST)
 *Status:* ${formData.paymentStatus}
 
 *Beneficiary Bank Details:*
@@ -643,7 +668,7 @@ Please review and approve the following Proforma Invoice for client negotiation 
 ━━━━━━━━ FINANCIAL BREAKDOWN ━━━━━━━━
 
   Base Amount:     ₹${formatINR(financialData.baseAmount)}
-  GST (18%):       ₹${formatINR(financialData.gstAmount)}
+  GST (${financialData.gstRate}%):       ₹${formatINR(financialData.gstAmount)}
   ─────────────────────────
   TOTAL:           ₹${formatINR(financialData.totalAmount)}
 
@@ -846,17 +871,6 @@ ${AGENCY_DETAILS.website}`;
                   <Printer className="w-3.5 h-3.5 flex-shrink-0" />
                   <span>Print</span>
                 </button>
-
-                {/* Direct Download PDF Button */}
-                <button
-                  type="button"
-                  onClick={handleDirectDownloadPDF}
-                  className="px-3 py-1.5 rounded-xl text-xs font-extrabold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-colors flex items-center space-x-1.5 cursor-pointer"
-                  title="Directly Download Official A4 PDF"
-                >
-                  <Download className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>Download PDF</span>
-                </button>
               </div>
             )}
 
@@ -960,7 +974,7 @@ ${AGENCY_DETAILS.website}`;
                   </div>
 
                   <div className="text-left sm:text-right flex-shrink-0">
-                    <span className="text-[10px] font-bold text-slate-400 block uppercase">Total with 18% GST</span>
+                    <span className="text-[10px] font-bold text-slate-400 block uppercase">Total with {financialData.gstRate}% GST</span>
                     <span className="text-xl sm:text-2xl font-black text-[#11b1d0]">
                       ₹{formatINR(financialData.totalAmount)}
                     </span>
@@ -1333,15 +1347,28 @@ ${AGENCY_DETAILS.website}`;
                     </label>
                     <select
                       value={formData.paymentMode}
-                      onChange={(e) => setFormData({ ...formData, paymentMode: e.target.value })}
+                      onChange={(e) => {
+                        const newMode = e.target.value;
+                        setFormData((prev) => {
+                          const isZeroGstMode = newMode === 'm-upi' || newMode === 'm-cash';
+                          return {
+                            ...prev,
+                            paymentMode: newMode,
+                            gstRate: isZeroGstMode ? 0 : prev.gstRate
+                          };
+                        });
+                      }}
                       className={`w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] cursor-pointer ${
                         isDark ? 'bg-[#0c121e] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
                       }`}
                     >
-                      <option value="Bank Transfer / RTGS / NEFT">Bank Transfer / RTGS / NEFT</option>
-                      <option value="UPI / IMPS">UPI / IMPS</option>
-                      <option value="Cheque / DD">A/C Payee Cheque / DD</option>
-                      <option value="Credit / Debit Card">Credit / Debit Card</option>
+                      <option value="NEET/RTGS">NEET/RTGS</option>
+                      <option value="cheque">cheque</option>
+                      <option value="p-upi">p-upi</option>
+                      <option value="p-cash">p-cash</option>
+                      <option value="creadit/debit">creadit/debit</option>
+                      <option value="m-upi">m-upi</option>
+                      <option value="m-cash">m-cash</option>
                     </select>
                   </div>
                 </div>
@@ -1430,6 +1457,27 @@ ${AGENCY_DETAILS.website}`;
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* GST Selection Dropdown */}
+                    <div>
+                      <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
+                        isDark ? 'text-slate-300' : 'text-slate-700'
+                      }`}>
+                        GST Rate (%) *
+                      </label>
+                      <select
+                        value={formData.gstRate}
+                        onChange={(e) => setFormData({ ...formData, gstRate: Number(e.target.value) })}
+                        className={`w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] cursor-pointer ${
+                          isDark ? 'bg-[#131b2c] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
+                        }`}
+                      >
+                        <option value="0">0%</option>
+                        <option value="5">5%</option>
+                        <option value="18">18%</option>
+                        <option value="40">40%</option>
+                      </select>
+                    </div>
+
                     {/* Payment Status Dropdown */}
                     <div>
                       <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
@@ -1777,12 +1825,12 @@ ${AGENCY_DETAILS.website}`;
                           </div>
 
                           {/* Client Remark Display */}
-                          <div className="text-[8.5px] sm:text-[9px] text-slate-700 leading-relaxed font-normal bg-[#f0fdfa] p-2.5 sm:p-3 rounded border border-[#00adc8]/30 mb-2.5">
+                          <div className="text-[7.5px] sm:text-[8px] text-slate-700 leading-tight font-normal bg-[#f0fdfa] p-1.5 sm:p-2 rounded border border-[#00adc8]/30 mb-1.5">
                             <strong className="font-semibold text-[#008ba3]">Client Remark:</strong> {formData.clientRemark?.trim() || 'No special remarks recorded (Standard SLA execution)'}
                           </div>
 
                           {/* Execution Notes & Briefing Terms */}
-                          <div className="text-[8.5px] sm:text-[9px] text-slate-600 leading-relaxed font-normal bg-slate-50 p-2.5 sm:p-3 rounded border border-slate-200">
+                          <div className="text-[7.5px] sm:text-[8px] text-slate-600 leading-tight font-normal bg-slate-50 p-1.5 sm:p-2 rounded border border-slate-200">
                             <strong className="font-semibold text-slate-800">Execution Terms:</strong> Production onboarding, creative briefing, and asset deployment commence immediately upon clearance of advance payment and brief sign-off. All deliverables specified above will be executed in accordance with Prittal's commercial service standards.
                           </div>
                         </div>
@@ -1886,7 +1934,7 @@ ${AGENCY_DETAILS.website}`;
                                   </div>
                                 )}
                                 <div className="flex justify-between px-2.5 py-1.5 text-[10.5px] font-normal text-slate-700">
-                                  <span>GST ( 18% )</span>
+                                  <span>GST ( {financialData.gstRate}% )</span>
                                   <span className="font-semibold text-rose-600">+ ₹{formatINR(financialData.gstAmount)}</span>
                                 </div>
                                 <div className="flex justify-between px-2.5 py-1.5 text-[10.5px] font-bold bg-slate-50 text-[#00adc8]">
@@ -2081,14 +2129,7 @@ ${AGENCY_DETAILS.website}`;
                     <span>WhatsApp</span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={handlePrint}
-                    className="w-full sm:w-auto py-2.5 sm:py-3 px-4 sm:px-5 rounded-xl text-xs font-extrabold text-white bg-[#11b1d0] hover:bg-[#0fa1be] shadow-md transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
-                  >
-                    <Printer className="w-4 h-4 flex-shrink-0" />
-                    <span>Print / Save PDF</span>
-                  </button>
+                  {/* Print / Save PDF Button Removed */}
 
                   <button
                     type="button"
@@ -2243,13 +2284,7 @@ ${AGENCY_DETAILS.website}`;
                     <span className="text-[9.5px] text-slate-400">Save PDF to attach in Gmail</span>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={handlePrint}
-                  className="px-2.5 py-1 rounded-lg text-[10.5px] font-bold text-[#11b1d0] bg-[#11b1d0]/10 hover:bg-[#11b1d0]/20 transition-colors flex-shrink-0"
-                >
-                  Download / Print
-                </button>
+                {/* Download / Print button removed */}
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FeatureCheck } from './FeatureCheck';
 import { CustomBuilderDrawer } from './CustomBuilderDrawer';
+import { ALaCarteDrawer } from './ALaCarteDrawer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import { 
@@ -17,7 +18,8 @@ import {
   Plus, 
   Minus,
   Settings,
-  Wrench
+  Wrench,
+  ShoppingBag
 } from 'lucide-react';
 
 export const CategorySection = ({
@@ -34,6 +36,7 @@ export const CategorySection = ({
   );
   const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'comparison'
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isALaCarteOpen, setIsALaCarteOpen] = useState(false);
 
   // Manage background scroll lock and Lenis lifecycle when Custom Builder drawer is open
   useEffect(() => {
@@ -248,7 +251,9 @@ export const CategorySection = ({
       'product-shoots': { basic: '₹10,000', standard: '₹20,000', premium: '₹50,000' },
       product_shoot: { basic: '₹10,000', standard: '₹20,000', premium: '₹50,000' },
       'google-my-business': { starter: '₹10,000', business: '₹25,000' },
-      google_my_business: { starter: '₹10,000', business: '₹25,000' }
+      google_my_business: { starter: '₹10,000', business: '₹25,000' },
+      'branding-packages': { basic: '₹25,000', standard: '₹50,000', premium: '₹1,00,000' },
+      branding: { basic: '₹25,000', standard: '₹50,000', premium: '₹1,00,000' }
     };
 
     // Annual prices map (with discount, original strikethrough & green savings offer in percentage)
@@ -280,7 +285,7 @@ export const CategorySection = ({
       }
     };
 
-    const isOneTime = categoryId === 'websites' || categoryId === 'product-shoots' || categoryId === 'product_shoot' || categoryId === 'google-my-business' || categoryId === 'google_my_business';
+    const isOneTime = categoryId === 'websites' || categoryId === 'product-shoots' || categoryId === 'product_shoot' || categoryId === 'google-my-business' || categoryId === 'google_my_business' || categoryId === 'branding-packages' || categoryId === 'branding';
 
     if (isOneTime) {
       const catPrices = monthlyPrices[categoryId] || { basic: '₹10,000', standard: '₹20,000', premium: '₹50,000', starter: '₹10,000', business: '₹25,000' };
@@ -370,7 +375,7 @@ export const CategorySection = ({
           </p>
 
           {/* Monthly / Annual Billing Toggle Switch with Framer Motion Spring Pill */}
-          {!(category.id === 'websites' || category.id === 'product-shoots' || category.id === 'product_shoot' || category.id === 'google-my-business' || category.id === 'google_my_business') && (
+          {!(category.id === 'websites' || category.id === 'product-shoots' || category.id === 'product_shoot' || category.id === 'google-my-business' || category.id === 'google_my_business' || category.id === 'branding-packages' || category.id === 'branding') && (
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-4 select-none">
               {/* Left Label: Monthly Pricing */}
               <button
@@ -465,8 +470,8 @@ export const CategorySection = ({
             </div>
           )}
 
-          {/* Mobile Only: Custom Builder Launcher Button */}
-          <div className="md:hidden mt-4">
+          {/* Mobile Only: Custom Builder & À La Carte Launcher Buttons */}
+          <div className="md:hidden mt-4 flex flex-wrap items-center justify-center gap-2">
             <button
               onClick={() => setIsDrawerOpen(true)}
               className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-[#11b1d0] text-white shadow-md shadow-[#11b1d0]/20"
@@ -474,6 +479,16 @@ export const CategorySection = ({
               <Wrench className="w-3.5 h-3.5" />
               <span>CUSTOM BUILDER </span>
             </button>
+
+            {(category.id === 'branding-packages' || category.id === 'branding') && (
+              <button
+                onClick={() => setIsALaCarteOpen(true)}
+                className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-[#11b1d0]/15 text-[#11b1d0] border border-[#11b1d0]/40 shadow-sm"
+              >
+                <ShoppingBag className="w-3.5 h-3.5" />
+                <span>À LA CARTE</span>
+              </button>
+            )}
           </div>
         </motion.div>
 
@@ -516,6 +531,17 @@ export const CategorySection = ({
               <Wrench className="w-3.5 h-3.5" />
               <span>CUSTOM BUILDER </span>
             </button>
+
+            {/* 5th Chip (Just for BRANDING PACKAGES): À LA CARTE Button */}
+            {(category.id === 'branding-packages' || category.id === 'branding') && (
+              <button
+                onClick={() => setIsALaCarteOpen(true)}
+                className="relative flex-shrink-0 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-extrabold uppercase tracking-wider bg-[#11b1d0]/15 dark:bg-[#11b1d0]/20 text-[#11b1d0] border border-[#11b1d0]/40 hover:bg-[#11b1d0] hover:text-white transition-all duration-300 flex items-center space-x-1.5 shadow-sm"
+              >
+                <ShoppingBag className="w-3.5 h-3.5" />
+                <span>À LA CARTE</span>
+              </button>
+            )}
           </div>
 
           {/* View Toggle (Cards vs Comparison Matrix) */}
@@ -647,10 +673,18 @@ export const CategorySection = ({
 
                     category.featureGroups.forEach((group) => {
                       group.features.forEach((feature) => {
-                        const val = feature.values[tier.id];
+                        const val = typeof feature.values[tier.id] === 'function' 
+                          ? feature.values[tier.id](billingCycle) 
+                          : feature.values[tier.id];
                         if (val === false || val === '-' || val === undefined) return;
-                        if (typeof val === 'string' && val.startsWith('₹')) {
-                          additionalList.push({ name: feature.name, price: val });
+                        if (typeof val === 'string' && (val.startsWith('₹') || val.toLowerCase().includes('add-on'))) {
+                          let displayName = feature.name;
+                          const parentheticalMatch = val.match(/\(([^)]+)\)/);
+                          if (parentheticalMatch) {
+                            displayName = `${feature.name} (${parentheticalMatch[1]})`;
+                          }
+                          let priceTag = val.startsWith('₹') ? val : null;
+                          additionalList.push({ name: displayName, price: priceTag, val });
                         } else {
                           includedList.push({ name: feature.name, val });
                         }
@@ -672,8 +706,8 @@ export const CategorySection = ({
                                 <span>
                                   {item.name}
                                   {typeof item.val === 'string' && item.val !== 'true' && (
-                                    <span className={`ml-1 font-extrabold ${
-                                      isDark ? 'text-white' : 'text-slate-900'
+                                    <span className={`ml-1 font-normal opacity-90 ${
+                                      isDark ? 'text-slate-300' : 'text-slate-600'
                                     }`}>({item.val})</span>
                                   )}
                                 </span>
@@ -686,7 +720,7 @@ export const CategorySection = ({
                           <div className={`pt-2.5 mt-2.5 border-t border-dashed ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
                             <div className="text-[10px] font-black uppercase tracking-wider text-[#11b1d0] mb-1.5 flex items-center gap-1">
                               <Plus className="w-3 h-3 stroke-[2.5]" />
-                              <span>Additional Services (Add-ons):</span>
+                              <span>+ ADD-ONS AVAILABLE</span>
                             </div>
                             <ul className="space-y-1.5 text-xs">
                               {additionalList.map((item, idx) => (
@@ -695,11 +729,13 @@ export const CategorySection = ({
                                     <span className="w-1.5 h-1.5 rounded-full bg-[#11b1d0]/60 flex-shrink-0" />
                                     {item.name}
                                   </span>
-                                  <span className={`font-bold px-1.5 py-0.5 rounded text-[10px] font-mono ${
-                                    isDark ? 'bg-[#11b1d0]/10 text-[#11b1d0]' : 'bg-slate-100 text-[#0f8da7]'
-                                  }`}>
-                                    {item.price}
-                                  </span>
+                                  {item.price && (
+                                    <span className={`font-bold px-1.5 py-0.5 rounded text-[10px] font-mono ${
+                                      isDark ? 'bg-[#11b1d0]/10 text-[#11b1d0]' : 'bg-slate-100 text-[#0f8da7]'
+                                    }`}>
+                                      {item.price}
+                                    </span>
+                                  )}
                                 </li>
                               ))}
                             </ul>
@@ -730,7 +766,7 @@ export const CategorySection = ({
                           : 'bg-slate-900 hover:bg-[#11b1d0] text-white border border-slate-900 hover:border-[#11b1d0]'
                     }`}
                   >
-                    <span>Get Started</span>
+                    <span>{tier.ctaText || 'Get Started'}</span>
                   </button>
                 </div>
               </motion.div>
@@ -852,10 +888,18 @@ export const CategorySection = ({
 
                       category.featureGroups.forEach((group) => {
                         group.features.forEach((feature) => {
-                          const val = feature.values[tier.id];
+                          const val = typeof feature.values[tier.id] === 'function'
+                            ? feature.values[tier.id](billingCycle)
+                            : feature.values[tier.id];
                           if (val === false || val === '-' || val === undefined) return;
-                          if (typeof val === 'string' && val.startsWith('₹')) {
-                            additionalList.push({ name: feature.name, price: val });
+                          if (typeof val === 'string' && (val.startsWith('₹') || val.toLowerCase().includes('add-on'))) {
+                            let displayName = feature.name;
+                            const parentheticalMatch = val.match(/\(([^)]+)\)/);
+                            if (parentheticalMatch) {
+                              displayName = `${feature.name} (${parentheticalMatch[1]})`;
+                            }
+                            let priceTag = val.startsWith('₹') ? val : null;
+                            additionalList.push({ name: displayName, price: priceTag, val });
                           } else {
                             includedList.push({ name: feature.name, val });
                           }
@@ -876,7 +920,7 @@ export const CategorySection = ({
                                   <span className={`font-semibold leading-relaxed ${isDark ? 'text-slate-100' : 'text-slate-800'}`}>
                                     {item.name}
                                     {typeof item.val === 'string' && item.val !== 'true' && (
-                                      <span className={`ml-1 font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                                      <span className={`ml-1 font-normal opacity-90 ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                                         ({item.val})
                                       </span>
                                     )}
@@ -891,7 +935,7 @@ export const CategorySection = ({
                             <div className={`pt-3.5 mt-3.5 border-t border-dashed ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
                               <div className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#11b1d0] mb-2.5 flex items-center gap-1.5">
                                 <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
-                                <span>Additional Services (Add-ons):</span>
+                                <span>+ ADD-ONS AVAILABLE</span>
                               </div>
                               <ul className="space-y-2 text-xs sm:text-sm">
                                 {additionalList.map((item, idx) => (
@@ -900,11 +944,13 @@ export const CategorySection = ({
                                       <span className="w-1.5 h-1.5 rounded-full bg-[#11b1d0]/60 flex-shrink-0" />
                                       {item.name}
                                     </span>
-                                    <span className={`font-bold px-2 py-0.5 rounded text-[11px] font-mono whitespace-nowrap ${
-                                      isDark ? 'bg-[#11b1d0]/10 text-[#11b1d0]' : 'bg-slate-100 text-[#0f8da7]'
-                                    }`}>
-                                      {item.price}
-                                    </span>
+                                    {item.price && (
+                                      <span className={`font-bold px-2 py-0.5 rounded text-[11px] font-mono whitespace-nowrap ${
+                                        isDark ? 'bg-[#11b1d0]/10 text-[#11b1d0]' : 'bg-slate-100 text-[#0f8da7]'
+                                      }`}>
+                                        {item.price}
+                                      </span>
+                                    )}
                                   </li>
                                 ))}
                               </ul>
@@ -935,7 +981,7 @@ export const CategorySection = ({
                             : 'bg-slate-900 hover:bg-[#11b1d0] text-white border border-slate-900 hover:border-[#11b1d0]'
                       }`}
                     >
-                      <span>Get Started</span>
+                      <span>{tier.ctaText || 'Get Started'}</span>
                     </button>
                   </div>
                 </motion.div>
@@ -1175,6 +1221,14 @@ export const CategorySection = ({
             </div>
           </div>
         )}
+
+        {category.footerNote && (
+          <div className={`mt-8 text-center text-xs sm:text-sm font-medium max-w-3xl mx-auto px-4 ${
+            isDark ? 'text-slate-400' : 'text-slate-500'
+          }`}>
+            {category.footerNote}
+          </div>
+        )}
       </div>
 
       {/* INTERACTIVE SLIDE-OUT CUSTOM BUILDER DRAWER */}
@@ -1185,6 +1239,16 @@ export const CategorySection = ({
         billingCycle={billingCycle}
         onSelectTier={onSelectTier}
       />
+
+      {/* INTERACTIVE À LA CARTE DRAWER (Branding Packages Only) */}
+      {(category.id === 'branding-packages' || category.id === 'branding') && (
+        <ALaCarteDrawer
+          isOpen={isALaCarteOpen}
+          onClose={() => setIsALaCarteOpen(false)}
+          category={category}
+          onSelectTier={onSelectTier}
+        />
+      )}
     </section>
   );
 };

@@ -31,6 +31,7 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate, onSta
     { name: 'Paid Campaigns', href: '#paid-campaigns' },
     { name: 'Product Shoots', href: '#product-shoots' },
     { name: 'Google My Business', href: '#google-my-business' },
+    { name: 'Branding Packages', href: '#branding-packages' },
   ];
 
   const offices = [

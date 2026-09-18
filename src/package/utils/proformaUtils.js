@@ -436,6 +436,15 @@ export const getDeliverablesSummary = (packageInfo) => {
 
   let summary = '';
 
+  if (packageInfo.selectedALaCarteItems && packageInfo.selectedALaCarteItems.length > 0) {
+    const names = packageInfo.selectedALaCarteItems.map(i => typeof i === 'string' ? i : i.name).join(', ');
+    return `À La Carte Standalone Branding Deliverables (${packageInfo.selectedALaCarteItems.length} Service${packageInfo.selectedALaCarteItems.length > 1 ? 's' : ''}): ${names}. Vector source files, brand guidelines, and official deliverables included.`;
+  }
+
+  if (packageInfo.activeDetails && packageInfo.activeDetails.length > 0) {
+    return `Custom Scope Deliverables (${packageInfo.activeDetails.length} Services): ${packageInfo.activeDetails.join(', ')}.`;
+  }
+
   if (packageInfo.isCustom || packageInfo.tierId === 'custom') {
     if (packageInfo.customSummary) {
       return `Custom Scope (${packageInfo.activeCount || 'Multiple'} Deliverables): ${packageInfo.customSummary}`;

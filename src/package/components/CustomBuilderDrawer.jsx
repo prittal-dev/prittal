@@ -194,7 +194,7 @@ export const CustomBuilderDrawer = ({
 
   const getPresetPrice = (cat, tierScope, cycle) => {
     const catId = (cat?.id || '').toLowerCase();
-    const isOneTime = catId === 'websites' || catId === 'product-shoots' || catId === 'product_shoot' || catId === 'google-my-business' || catId === 'google_my_business';
+    const isOneTime = catId === 'websites' || catId === 'product-shoots' || catId === 'product_shoot' || catId === 'google-my-business' || catId === 'google_my_business' || catId === 'branding-packages' || catId === 'branding';
 
     const monthlyPrices = {
       websites: { basic: 25000, standard: 50000, premium: 100000 },
@@ -206,7 +206,9 @@ export const CustomBuilderDrawer = ({
       'product-shoots': { basic: 10000, standard: 20000, premium: 50000 },
       product_shoot: { basic: 10000, standard: 20000, premium: 50000 },
       'google-my-business': { basic: 10000, standard: 25000, premium: 25000 },
-      google_my_business: { basic: 10000, standard: 25000, premium: 25000 }
+      google_my_business: { basic: 10000, standard: 25000, premium: 25000 },
+      'branding-packages': { basic: 25000, standard: 50000, premium: 100000 },
+      branding: { basic: 25000, standard: 50000, premium: 100000 }
     };
 
     const annualPrices = {
@@ -297,6 +299,7 @@ export const CustomBuilderDrawer = ({
 
   // Budget & GST State
   const [userBudget, setUserBudget] = useState('');
+  const [gstRate, setGstRate] = useState(18);
 
   // Indian currency formatting
   const formatIndianNumber = (num) => {
@@ -342,10 +345,10 @@ export const CustomBuilderDrawer = ({
     const budgetNum = Number(userBudget);
     const defaultBase = billingCycle === 'annual' ? 150000 : 25000;
     const baseAmount = budgetNum > 0 ? budgetNum : defaultBase;
-    const totalAmount = baseAmount + Math.round(baseAmount * 0.18);
+    const totalAmount = baseAmount + Math.round(baseAmount * (gstRate / 100));
 
     const budgetSummary = budgetNum > 0
-      ? ` | Budget: ₹${formatIndianNumber(budgetNum)} + 18% GST = Total ₹${formatIndianNumber(totalAmount)}`
+      ? ` | Budget: ₹${formatIndianNumber(budgetNum)} + ${gstRate}% GST = Total ₹${formatIndianNumber(totalAmount)}`
       : '';
 
     const compiledScopeString = `CUSTOM BUILD (${activeTogglesCount} Services Included: ${activeDetails.join(', ')}${budgetSummary})`;
@@ -358,7 +361,8 @@ export const CustomBuilderDrawer = ({
         userBudget: budgetNum > 0 ? budgetNum : null,
         totalWithGst: totalAmount,
         billingCycle: billingCycle,
-        summaryString: compiledScopeString
+        summaryString: compiledScopeString,
+        gstRate
       });
     } else if (onSelectTier) {
       onSelectTier(category?.title, compiledScopeString, {
@@ -366,15 +370,16 @@ export const CustomBuilderDrawer = ({
         categoryTitle: category?.title,
         categorySubtitle: category?.subtitle,
         tierId: 'custom',
-        tierName: 'CUSTOM BUILD',
+        tierName: 'Custom Build',
         billingCycle: billingCycle,
         priceText: `₹${formatIndianNumber(baseAmount)}`,
+        userBudget: baseAmount,
         activeDetails,
         activeCount: activeTogglesCount,
-        userBudget: budgetNum > 0 ? budgetNum : null,
         totalWithGst: totalAmount,
         isCustom: true,
-        customSummary: activeDetails.join(', ')
+        customSummary: activeDetails.join(', '),
+        gstRate
       });
     }
   };
@@ -666,89 +671,81 @@ export const CustomBuilderDrawer = ({
               </div>
             </div>
 
-            {/* 4. Drawer Fixed Footer with Budget & 18% GST Calculator */}
+            {/* 4. Drawer Fixed Footer with Budget & GST Calculator */}
             <div 
-              className={`flex-shrink-0 p-4 sm:p-5 border-t z-20 transition-colors shadow-2xl ${
+              className={`flex-shrink-0 p-3.5 sm:p-4 border-t z-20 transition-colors shadow-2xl ${
                 isDark ? 'border-slate-800 bg-[#0c121e]' : 'border-slate-200 bg-white'
               }`}
               style={{ backgroundColor: isDark ? '#0c121e' : '#ffffff' }}
             >
-              {/* Custom Budget Entry & 18% GST Calculation Box */}
+              {/* Custom Budget Entry & GST Calculation Box */}
               <div 
-                className={`p-3.5 sm:p-4 rounded-2xl border mb-4 space-y-2.5 transition-colors ${
+                className={`p-2.5 sm:p-3 rounded-xl border mb-2.5 transition-colors ${
                   isDark ? 'bg-[#131b2c] border-slate-800' : 'bg-slate-50 border-slate-200'
                 }`}
                 style={{ backgroundColor: isDark ? '#131b2c' : '#f8fafc' }}
               >
-                <div className="flex items-center justify-between">
-                  <span className={`text-xs font-extrabold ${
-                    isDark ? 'text-slate-300' : 'text-slate-700'
-                  }`}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className={`text-[11px] font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
                     Estimated Budget (Optional):
                   </span>
-                  <span className="text-[10px] font-black text-rose-500 uppercase tracking-wider">
-                    + 18% GST Additional
-                  </span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[9px] font-bold text-rose-400 uppercase">+</span>
+                    <select
+                      value={gstRate}
+                      onChange={(e) => setGstRate(Number(e.target.value))}
+                      className="bg-transparent text-[9px] font-bold text-rose-400 uppercase border-none outline-none cursor-pointer p-0 m-0"
+                    >
+                      <option value="0">0%</option>
+                      <option value="5">5%</option>
+                      <option value="18">18%</option>
+                      <option value="40">40%</option>
+                    </select>
+                    <span className="text-[9px] font-bold text-rose-400 uppercase">GST</span>
+                  </div>
                 </div>
 
                 <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-extrabold text-xs sm:text-sm">
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 font-extrabold text-xs">
                     ₹
                   </span>
                   <input
                     type="number"
                     min="0"
-                    placeholder="Enter your target budget (e.g. 50,000)"
+                    placeholder="Enter your target budget (e.g. 50000)"
                     value={userBudget}
                     onChange={(e) => setUserBudget(e.target.value)}
-                    className={`w-full pl-8 pr-3 py-2 rounded-xl font-extrabold text-xs sm:text-sm border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] ${
+                    className={`w-full pl-6 pr-2 py-1 rounded-lg font-bold text-xs border focus:outline-none focus:ring-1 focus:ring-[#11b1d0] ${
                       isDark ? 'bg-[#0c121e] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
                     }`}
                     style={{ backgroundColor: isDark ? '#0c121e' : '#ffffff' }}
                   />
                 </div>
 
-                {/* Real-time 18% GST breakdown when budget is entered */}
                 {userBudget && Number(userBudget) > 0 ? (
-                  <div className="pt-2 border-t border-slate-200 dark:border-slate-700/60 space-y-1.5 text-xs">
-                    <div className="flex justify-between font-semibold text-slate-600 dark:text-slate-400">
-                      <span>Base Amount:</span>
-                      <span className="font-bold text-slate-900 dark:text-white">
-                        ₹{formatIndianNumber(userBudget)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between font-semibold text-rose-500">
-                      <span>+ 18% GST (Additional):</span>
-                      <span className="font-bold">
-                        + ₹{formatIndianNumber(Math.round(Number(userBudget) * 0.18))}
-                      </span>
-                    </div>
-                    <div className="flex justify-between font-extrabold text-[#11b1d0] text-sm pt-1 border-t border-slate-200 dark:border-slate-700">
-                      <span>Total (Incl. 18% GST):</span>
-                      <span>
-                        ₹{formatIndianNumber(Number(userBudget) + Math.round(Number(userBudget) * 0.18))}
-                      </span>
-                    </div>
+                  <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold mt-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-700/60 text-[#11b1d0]">
+                    <span>Total (Incl. {gstRate}% GST):</span>
+                    <span>₹{formatIndianNumber(Number(userBudget) + Math.round(Number(userBudget) * (gstRate / 100)))}</span>
                   </div>
                 ) : (
-                  <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 flex items-center justify-between pt-0.5">
-                    <span>* GST @ 18% additional on all quotes</span>
-                    <span className="text-[#11b1d0] font-extrabold">18% GST Applicable</span>
+                  <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-bold text-slate-400 mt-1.5 pt-1.5 border-t border-slate-200 dark:border-slate-700/60">
+                    <span>No Budget Provided</span>
+                    <span className="text-[#11b1d0]">{gstRate}% GST Applicable</span>
                   </div>
                 )}
               </div>
 
               {/* 5. Real-Time Counter & CTA Handoff */}
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2">
                 <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 block">
+                  <span className="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 block">
                     CUSTOM SCOPE
                   </span>
-                  <span className="text-lg font-extrabold text-[#11b1d0]">
+                  <span className="text-xs sm:text-sm font-extrabold text-[#11b1d0]">
                     Bespoke Custom Proposal
                   </span>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#11b1d0]/20 text-[#11b1d0]">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#11b1d0]/20 text-[#11b1d0]">
                   {activeTogglesCount} Services Included
                 </span>
               </div>
@@ -756,14 +753,14 @@ export const CustomBuilderDrawer = ({
               <button
                 type="button"
                 onClick={handleHandoff}
-                className="w-full py-4 px-6 rounded-2xl text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-[#11b1d0] hover:bg-[#0fa1be] text-white shadow-xl shadow-[#11b1d0]/25 transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-xl text-xs font-extrabold uppercase tracking-wider bg-[#11b1d0] hover:bg-[#0fa1be] text-white shadow-md shadow-[#11b1d0]/25 transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
               >
                 <span>
                   {userBudget && Number(userBudget) > 0 
-                    ? `Request Quote (₹${formatIndianNumber(Number(userBudget) + Math.round(Number(userBudget) * 0.18))} incl. GST)`
-                    : 'Request Custom Quote'}
+                    ? `Request Quote (₹${formatIndianNumber(Number(userBudget) + Math.round(Number(userBudget) * (gstRate / 100)))} incl. GST)`
+                    : 'Request Quote for Selected'}
                 </span>
-                <ArrowUpRight className="w-4 h-4" />
+                <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </div>
           </motion.div>

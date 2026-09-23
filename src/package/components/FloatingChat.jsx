@@ -1,5 +1,5 @@
 import React from 'react';
-import FloatingWhatsApp from '../../components/FloatingWhatsApp';
+import FloatingWhatsApp from './FloatingWhatsApp';
 
 /**
  * FloatingChat component now uses the exact same FloatingWhatsApp Quick Connect

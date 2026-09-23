@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { syncInquiryToCrm } from '../../utils/crmApi';
 
 export default function ProjectInquiryModal({ isOpen, onClose, isDark, onNavigate }) {
   // Determine dark mode preference accurately
@@ -48,7 +49,21 @@ export default function ProjectInquiryModal({ isOpen, onClose, isDark, onNavigat
     };
 
     try {
-      // Primary AJAX HTTP POST via Fetch API (JSON)
+      // 1. Sync directly to CRM Leads pipeline
+      try {
+        await syncInquiryToCrm({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          projectType: formData.primaryService,
+          service: formData.specificRequirement,
+          message: formData.details
+        });
+      } catch (crmErr) {
+        console.warn('CRM inquiry notice:', crmErr);
+      }
+
+      // 2. Primary AJAX HTTP POST via Fetch API (JSON)
       let response = await fetch('https://formsubmit.co/ajax/sales@prittal.com', {
         method: 'POST',
         headers: {

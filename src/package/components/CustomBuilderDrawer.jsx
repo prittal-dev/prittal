@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import { 
@@ -384,7 +385,7 @@ export const CustomBuilderDrawer = ({
     }
   };
 
-  return (
+  const drawerContent = (
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -392,7 +393,7 @@ export const CustomBuilderDrawer = ({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
-          className={`fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex justify-end ${isDark ? 'dark' : ''}`}
+          className={`fixed inset-0 z-[999999] bg-black/70 backdrop-blur-md flex justify-end ${isDark ? 'dark' : ''}`}
         >
           {/* Overlay backdrop click to close */}
           <div
@@ -409,7 +410,7 @@ export const CustomBuilderDrawer = ({
             data-lenis-prevent="true"
             onWheel={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
-            className={`relative z-10 w-full max-w-xl h-full shadow-2xl flex flex-col border-l font-sans transition-colors overflow-hidden ${
+            className={`relative z-10 w-full max-w-full sm:max-w-xl h-full shadow-2xl flex flex-col border-l font-sans transition-colors overflow-hidden ${
               isDark ? 'bg-[#0c121e] border-slate-800 text-white' : 'bg-white border-slate-200 text-slate-900'
             }`}
             style={{ backgroundColor: isDark ? '#0c121e' : '#ffffff' }}
@@ -655,7 +656,10 @@ export const CustomBuilderDrawer = ({
                                         }`}
                                         style={!isPlatActive ? { backgroundColor: isDark ? '#1e293b' : '#f1f5f9' } : {}}
                                       >
-                                        {isPlatActive ? `✓ ${plat}` : `+ ${plat}`}
+                                        <span className="flex items-center gap-1">
+                                          {isPlatActive ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                                          <span>{plat}</span>
+                                        </span>
                                       </button>
                                     );
                                   })}
@@ -768,4 +772,7 @@ export const CustomBuilderDrawer = ({
       )}
     </AnimatePresence>
   );
+
+  if (typeof document === 'undefined') return null;
+  return ReactDOM.createPortal(drawerContent, document.body);
 };

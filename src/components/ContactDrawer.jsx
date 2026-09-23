@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, CheckCircle2, Mail, MapPin, Loader2, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Turnstile } from '@marsidev/react-turnstile';
+import { syncInquiryToCrm } from '../utils/crmApi';
 
 export default function ContactDrawer({ isOpen, onClose, initialService, isDark: isDarkProp, onNavigate }) {
 
@@ -122,6 +123,23 @@ export default function ContactDrawer({ isOpen, onClose, initialService, isDark:
     setIsSubmitting(true);
 
     try {
+      const inquiryPayload = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || 'Not provided',
+        projectType: formData.projectType,
+        specificService: formData.specificService,
+        message: formData.message,
+      };
+
+      // 1. Sync directly to CRM Leads
+      try {
+        await syncInquiryToCrm(inquiryPayload);
+      } catch (crmErr) {
+        console.warn('CRM inquiry notice:', crmErr);
+      }
+
+      // 2. FormSubmit email notification
       const response = await fetch('https://formsubmit.co/ajax/sales@prittal.com', {
         method: 'POST',
         headers: {
@@ -129,12 +147,7 @@ export default function ContactDrawer({ isOpen, onClose, initialService, isDark:
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone || 'Not provided',
-          projectType: formData.projectType,
-          specificService: formData.specificService,
-          message: formData.message,
+          ...inquiryPayload,
           _subject: `New Project Inquiry: ${formData.projectType} - ${formData.name}`,
           _template: 'table'
         })

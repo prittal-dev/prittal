@@ -70,7 +70,16 @@ export const ThemeProvider = ({ children, isDark, onToggleTheme }) => {
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    const isDark = typeof document !== 'undefined' && (
+      document.documentElement.classList.contains('dark') ||
+      document.documentElement.getAttribute('data-theme') === 'dark' ||
+      localStorage.getItem('prittal-theme') === 'dark'
+    );
+    return {
+      theme: isDark ? 'dark' : 'light',
+      isDark: Boolean(isDark),
+      toggleTheme: () => {}
+    };
   }
   return context;
 };

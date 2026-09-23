@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import { 
@@ -8,18 +9,18 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 
-const A_LA_CARTE_SERVICES = [
-  { id: 'logo-design', name: 'Logo Design', desc: 'Custom logo design with 2-3 concepts, source files (AI, EPS, PNG, PDF) & revisions.' },
-  { id: 'brand-guideline', name: 'Brand Guideline', desc: 'Complete brand identity guide covering logo usage, typography & core color palette.' },
-  { id: 'company-profile', name: 'Company Profile', desc: 'Up to 10-page corporate profile brochure tailored for pitch decks & clients.' },
-  { id: 'catalogue-design', name: 'Product/Service Catalogue', desc: 'Up to 8-page high-res product or service catalogue layout.' },
-  { id: 'business-card', name: 'Business Card Design', desc: 'Print-ready front & back business card design in vector formats.' },
-  { id: 'letterhead', name: 'Letterhead Design', desc: 'Official corporate letterhead design for digital & print use.' },
-  { id: 'envelope', name: 'Envelope Design', desc: 'Standard business envelope artwork layout.' },
-  { id: 'social-media-kit', name: 'Social Media Kit', desc: 'Social media profile kit including avatars, cover banners & grid templates.' },
-  { id: 'email-signature', name: 'Email Signature Design', desc: 'Professional HTML & image email signature for company teams.' },
-  { id: 'packaging-label', name: 'Packaging / Label Design', desc: '3D packaging or box label layout for retail and e-commerce products.' },
-  { id: 'signage-design', name: 'Signage Design', desc: 'Indoor & outdoor store signage, hoardings, or flex banner layout.' }
+export const A_LA_CARTE_SERVICES = [
+  { id: 'logo-design', name: 'Logo Design', desc: 'Custom logo design with 2-3 concepts, source files (AI, EPS, PNG, PDF) & revisions.', price: 5000 },
+  { id: 'brand-guideline', name: 'Brand Guideline', desc: 'Complete brand identity guide covering logo usage, typography & core color palette.', price: 10000 },
+  { id: 'company-profile', name: 'Company Profile', desc: 'Up to 10-page corporate profile brochure tailored for pitch decks & clients.', price: 12000 },
+  { id: 'catalogue-design', name: 'Product/Service Catalogue', desc: 'Up to 8-page high-res product or service catalogue layout.', price: 10000 },
+  { id: 'business-card', name: 'Business Card Design', desc: 'Print-ready front & back business card design in vector formats.', price: 2500 },
+  { id: 'letterhead', name: 'Letterhead Design', desc: 'Official corporate letterhead design for digital & print use.', price: 2500 },
+  { id: 'envelope', name: 'Envelope Design', desc: 'Standard business envelope artwork layout.', price: 2500 },
+  { id: 'social-media-kit', name: 'Social Media Kit', desc: 'Social media profile kit including avatars, cover banners & grid templates.', price: 8000 },
+  { id: 'email-signature', name: 'Email Signature Design', desc: 'Professional HTML & image email signature for company teams.', price: 2500 },
+  { id: 'packaging-label', name: 'Packaging / Label Design', desc: '3D packaging or box label layout for retail and e-commerce products.', price: 15000 },
+  { id: 'signage-design', name: 'Signage Design', desc: 'Indoor & outdoor store signage, hoardings, or flex banner layout.', price: 8000 }
 ];
 
 export const ALaCarteDrawer = ({
@@ -116,10 +117,10 @@ export const ALaCarteDrawer = ({
     onClose();
   };
 
-  return (
+  const drawerContent = (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden select-none">
+        <div className="fixed inset-0 z-[999999] overflow-hidden select-none">
           {/* Backdrop Blur Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -130,7 +131,7 @@ export const ALaCarteDrawer = ({
             className="absolute inset-0 bg-black/75 backdrop-blur-md"
           />
 
-          <div className="fixed inset-y-0 right-0 max-w-full flex pl-6 sm:pl-10">
+          <div className="fixed inset-y-0 right-0 w-full sm:w-auto max-w-full flex pl-0 sm:pl-10">
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -337,4 +338,7 @@ export const ALaCarteDrawer = ({
       )}
     </AnimatePresence>
   );
+
+  if (typeof document === 'undefined') return null;
+  return ReactDOM.createPortal(drawerContent, document.body);
 };

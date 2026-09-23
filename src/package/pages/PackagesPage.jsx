@@ -5,7 +5,7 @@ import { CategoryNav } from '../components/CategoryNav';
 import { CategorySection } from '../components/CategorySection';
 import { Footer } from '../components/Footer';
 import FloatingWhatsApp from '../../components/FloatingWhatsApp';
-import { ProjectModal } from '../components/ProjectModal';
+import { DocumentPreviewDrawer } from '../components/DocumentPreviewDrawer';
 import { packagesData } from '../data/packagesData';
 import { useTheme } from '../context/ThemeContext';
 
@@ -64,14 +64,14 @@ export const PackagesPage = ({ onNavigateHome, onNavigate }) => {
       {/* Footer */}
       <Footer onStartProject={() => handleOpenModal()} onNavigateHome={onNavigateHome} onNavigate={onNavigate} />
 
-      {/* Floating Quick Connect Widget (Same as Main Website) */}
+      {/* Floating Quick Connect Widget */}
       <FloatingWhatsApp
         onOpenContact={() => handleOpenModal()}
         whatsappMessage="Hi Prittal Team, I am interested in your packages and services."
       />
 
-      {/* Project & Inquiry Modal */}
-      <ProjectModal
+      {/* DocumentPreviewDrawer / Proforma Invoice Modal */}
+      <DocumentPreviewDrawer
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         initialPackage={selectedPackage}
@@ -80,3 +80,5 @@ export const PackagesPage = ({ onNavigateHome, onNavigate }) => {
     </div>
   );
 };
+
+export default PackagesPage;

@@ -65,3 +65,36 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Form Input & Select Borders (Fixes borderless inputs) */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+select,
+textarea {
+  border: 1px solid #cbd5e1 !important;
+  border-style: solid !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Dark mode input borders */
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="tel"],  
+.dark input[type="number"],
+.dark select,
+.dark textarea {
+  border-color: #334155 !important;
+  background-color: #0c121e !important;
+  color: #ffffff !important;
+}
+
+/* Focus state border glow */
+input:focus, select:focus, textarea:focus {
+  border-color: #11b1d0 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(17, 177, 208, 0.15) !important;
+}
+

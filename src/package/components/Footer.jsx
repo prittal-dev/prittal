@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import prittalLogo from '../../../assets/Prittal_logo.png';
+const prittalLogo = '/assets/Prittal_logo.png';
 import { 
   Facebook, 
   Linkedin, 

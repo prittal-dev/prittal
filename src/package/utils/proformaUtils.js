@@ -599,11 +599,11 @@ COMMERCIAL BREAKDOWN & TAX SPECIFICATIONS
 ============================================================
 • Payment Status: ${clientData.paymentStatus || 'Full Payment Pending'}
 ${financialData.discountAmount > 0 ? `• Package Standard Price: ₹${formatINR(financialData.originalBaseAmount || (financialData.baseAmount + financialData.discountAmount))}\n• Special Discount / Offer: - ₹${formatINR(financialData.discountAmount)}\n• Net Taxable Amount: ₹${formatINR(financialData.baseAmount)}` : `• Base Taxable Amount: ₹${formatINR(financialData.baseAmount)}`}
-• GST (18% Applicable): + ₹${formatINR(financialData.gstAmount)}
+• GST (${financialData.gstRate || 18}% Applicable): + ₹${formatINR(financialData.gstAmount)}
 ------------------------------------------------------------
-• GRAND TOTAL (Incl. 18% GST): ₹${formatINR(financialData.totalAmount)}
-• Advance / Received Amount: ₹${formatINR(financialData.receivedAmount || 0)}
-• Balance Outstanding: ₹${formatINR(financialData.balanceAmount !== undefined ? financialData.balanceAmount : financialData.totalAmount)}
+• GRAND TOTAL (Incl. GST): ₹${formatINR(financialData.totalAmount)}
+${financialData.tdsAmount > 0 ? `• Less: TDS Deductible (${financialData.tdsRate}%): - ₹${formatINR(financialData.tdsAmount)}\n• Net Receivable (Payable): ₹${formatINR(financialData.netReceivable)}\n` : ''}• Advance / Received Amount: ₹${formatINR(financialData.receivedAmount || 0)}
+• Balance Outstanding: ₹${formatINR(financialData.balanceAmount !== undefined ? financialData.balanceAmount : (financialData.netReceivable || financialData.totalAmount))}
 ------------------------------------------------------------
 • Preferred Payment Mode: ${clientData.paymentMode || 'Bank Transfer / RTGS / NEFT'}
 

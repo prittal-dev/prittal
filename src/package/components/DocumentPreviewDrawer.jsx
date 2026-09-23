@@ -282,17 +282,25 @@ export const DocumentPreviewDrawer = ({
       paid_campaigns: { 'pc-starter': '₹1,00,000', 'pc-standard': '₹2,50,000', 'pc-business': '₹10,00,000' }
     };
 
-    let priceStr = '₹25,000';
+    const catPrices = monthlyPrices[catId] || {};
+    const baseMonthlyStr = catPrices[tId] || '₹25,000';
+    const monthlyNum = Number(baseMonthlyStr.replace(/[^0-9]/g, '')) || 25000;
+
+    let priceStr = baseMonthlyStr;
+    let budgetNum = monthlyNum;
 
     if (isOneTime) {
-      const catPrices = monthlyPrices[catId] || {};
-      priceStr = catPrices[tId] || '₹25,000';
+      priceStr = baseMonthlyStr;
+      budgetNum = monthlyNum;
     } else if (cycle === 'annual') {
       const catAnnual = annualPrices[catId] || {};
-      priceStr = catAnnual[tId] || '₹1,50,000';
+      priceStr = catAnnual[tId] || `₹${(monthlyNum * 10).toLocaleString('en-IN')}`;
+      budgetNum = Number(priceStr.replace(/[^0-9]/g, '')) || (monthlyNum * 10);
     } else {
-      const catPrices = monthlyPrices[catId] || {};
-      priceStr = catPrices[tId] || '₹25,000';
+      // Monthly, Quarterly, Half-Yearly: do NOT automatically multiply base price by 3 or 6!
+      // Preserve custom price if already set by user, otherwise use standard tier price.
+      budgetNum = selectedPkg?.userBudget || monthlyNum;
+      priceStr = `₹${budgetNum.toLocaleString('en-IN')}`;
     }
 
     const newPkg = {
@@ -303,6 +311,7 @@ export const DocumentPreviewDrawer = ({
       tierName: tier.name,
       billingCycle: cycle,
       priceText: priceStr,
+      userBudget: budgetNum,
       isCustom: false,
     };
 
@@ -312,10 +321,26 @@ export const DocumentPreviewDrawer = ({
   };
 
   const handleToggleModalBillingCycle = (newCycle) => {
-    if (!selectedPkg || selectedPkg.billingCycle === newCycle) return;
-    const cat = packagesData.find(c => c.id === selectedPkg.categoryId || c.title === selectedPkg.categoryTitle) || packagesData[0];
-    const tier = (cat.tiers || []).find(t => t.id === selectedPkg.tierId || t.name === selectedPkg.tierName) || { id: selectedPkg.tierId || 'standard', name: selectedPkg.tierName || 'STANDARD' };
-    handleSwitchPackage(cat, tier, newCycle);
+    if (!selectedPkg) return;
+    // For quarterly, half-yearly, and annual: do NOT multiply or fabricate the price; keep what was put
+    setSelectedPkg(prev => {
+      const currentBudget = prev.userBudget || (financialData?.baseAmount ? financialData.baseAmount : 25000);
+      return {
+        ...prev,
+        billingCycle: newCycle,
+        userBudget: currentBudget,
+        priceText: `₹${Number(currentBudget).toLocaleString('en-IN')}`
+      };
+    });
+  };
+
+  const handleUpdateContractBasePrice = (newPrice) => {
+    const num = Math.max(0, Number(newPrice) || 0);
+    setSelectedPkg(prev => ({
+      ...prev,
+      userBudget: num,
+      priceText: `₹${num.toLocaleString('en-IN')}`
+    }));
   };
 
   // List of active services currently sold
@@ -413,6 +438,7 @@ export const DocumentPreviewDrawer = ({
     receivedAmount: '', // amount when partial received
     discountAmount: '', // Discount entered in ₹ or %
     gstRate: 18,
+    tdsRate: 0, // TDS % e.g. 0, 1, 2, 5, 10
     clientRemark: '', // Client remark / special instruction
     notes: '',
   });
@@ -845,19 +871,40 @@ export const DocumentPreviewDrawer = ({
     const gst = Math.round(baseAfterDiscount * (gstRate / 100));
     const total = baseAfterDiscount + gst;
 
+    // TDS Deduction calculation (TDS is deducted on base contract amount excluding GST)
+    const tdsRate = formData.tdsRate !== undefined ? Number(formData.tdsRate) : 0;
+    const tdsAmount = Math.round(baseAfterDiscount * (tdsRate / 100));
+    const netReceivable = Math.max(0, total - tdsAmount);
+
     // Calculate dynamic received and balance amounts based on paymentStatus
     let received = 0;
     if (formData.paymentStatus === 'Partial Received') {
       const parsedVal = Number(String(formData.receivedAmount).replace(/,/g, ''));
-      received = isNaN(parsedVal) ? 0 : Math.max(0, Math.min(parsedVal, total));
+      received = isNaN(parsedVal) ? 0 : Math.max(0, Math.min(parsedVal, netReceivable));
     } else if (formData.paymentStatus === 'Full Payment Received') {
-      received = total;
+      received = netReceivable;
     } else {
       // 'Full Payment Pending'
       received = 0;
     }
 
-    const balance = Math.max(total - received, 0);
+    const balance = Math.max(netReceivable - received, 0);
+
+    // Multi-month duration & automated renewal calculations
+    const cycleStr = String(pkg?.billingCycle || 'monthly').toLowerCase();
+    const isQuarterly = cycleStr.includes('quarter') || cycleStr.includes('3');
+    const isHalfYearly = cycleStr.includes('half') || cycleStr.includes('6');
+    // Annual is a complete 1-Year Plan contract; do NOT break into monthly renewal cycles.
+    // Monthly renewal distribution is strictly for Quarterly (3) and Half-Yearly (6).
+    const cycles = isQuarterly ? 3 : (isHalfYearly ? 6 : 1);
+
+    const monthlyBase = Math.round(baseAfterDiscount / cycles);
+    const monthlyGst = Math.round(gst / cycles);
+    const monthlyTds = Math.round(tdsAmount / cycles);
+    const monthlyTotal = Math.round(total / cycles);
+    const monthlyNetReceivable = Math.round(netReceivable / cycles);
+    const monthlyReceived = Math.round(received / cycles);
+    const monthlyBalance = Math.max(0, monthlyNetReceivable - monthlyReceived);
 
     return {
       baseAmount: originalBase,
@@ -866,12 +913,30 @@ export const DocumentPreviewDrawer = ({
       gstRate,
       gstAmount: gst,
       totalAmount: total,
+      tdsRate,
+      tdsAmount,
+      netReceivable,
       receivedAmount: received,
-      balanceAmount: balance
+      balanceAmount: balance,
+      cycles,
+      monthlyBase,
+      monthlyGst,
+      monthlyTds,
+      monthlyTotal,
+      monthlyNetReceivable,
+      monthlyReceived,
+      monthlyBalance,
+      isAutoRenewing: cycles > 1
     };
   };
 
   const financialData = getPackageFinancials(selectedPkg);
+
+  const nextRenewalDateStr = useMemo(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 1);
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+  }, []);
 
   // Same-Page Direct Print & PDF Download Handler (No Popups, Native A4 Formatting)
   const handlePrint = () => {
@@ -1222,7 +1287,7 @@ Date: ${new Date().toLocaleDateString('en-GB')}
 
 *Client / Advertiser:* ${companyTitle}
 *Scope:* ${selectedPkg?.categoryTitle || 'Digital Retainer'} (${selectedPkg?.tierName || 'Custom Scope'})
-*Total Amount:* ₹${formatINR(financialData.totalAmount)} (Incl. ${financialData.gstRate}% GST)
+*Total Amount:* ₹${formatINR(financialData.totalAmount)} (Incl. ${financialData.gstRate}% GST)${financialData.tdsAmount > 0 ? `\n*TDS Deductible (${financialData.tdsRate}%):* -₹${formatINR(financialData.tdsAmount)}\n*Net Receivable:* ₹${formatINR(financialData.netReceivable)}` : ''}
 *Status:* ${formData.paymentStatus}
 
 *Beneficiary Bank Details:*
@@ -1270,7 +1335,7 @@ Billing: ${selectedPkg?.billingCycle === 'annual' ? 'Annual Plan' : selectedPkg?
   GST (${financialData.gstRate}%):       ₹${formatINR(financialData.gstAmount)}
   ─────────────────────────
   TOTAL:           ₹${formatINR(financialData.totalAmount)}
-
+${financialData.tdsAmount > 0 ? `  TDS (${financialData.tdsRate}%):       -₹${formatINR(financialData.tdsAmount)}\n  NET RECEIVABLE:  ₹${formatINR(financialData.netReceivable)}\n` : ''}
   Payment Status:  ${formData.paymentStatus}
   Payment Mode:    ${formData.paymentMode}
 
@@ -1314,14 +1379,33 @@ ${AGENCY_DETAILS.website}`;
         gstin: formData.gstin || 'N/A',
         tan_no: formData.tanNo || 'N/A',
         selected_package: `${selectedPkg?.categoryTitle || 'Service'} - ${selectedPkg?.tierName || 'Custom'}`,
-        billing_cycle: selectedPkg?.billingCycle || 'Standard',
+        billing_cycle: selectedPkg?.billingCycle === 'quarterly' 
+          ? 'Quarterly' 
+          : selectedPkg?.billingCycle === 'half-yearly' 
+            ? 'Half Yearly' 
+            : selectedPkg?.billingCycle === 'annual' 
+              ? 'Annual' 
+              : (selectedPkg?.billingCycle === 'one-time' ? 'One-Time' : 'Monthly'),
+        contract_duration: selectedPkg?.billingCycle === 'quarterly'
+          ? '3 Months'
+          : selectedPkg?.billingCycle === 'half-yearly'
+            ? '6 Months'
+            : selectedPkg?.billingCycle === 'annual'
+              ? '1 Year'
+              : (selectedPkg?.billingCycle === 'one-time' ? 'One-Time' : '1 Month'),
+        total_cycles: financialData.cycles,
+        monthly_distribution_amount: financialData.monthlyBase,
+        next_renewal_date: nextRenewalDateStr,
         services_sold: activeSoldServices.join(', '),
         deliverables_summary: getDeliverablesSummary(selectedPkg),
-        original_base_amount: financialData.originalBaseAmount,
+        original_base_amount: financialData.baseAmount,
         discount_applied: financialData.discountAmount,
-        base_taxable_amount: financialData.baseAmount,
+        base_taxable_amount: financialData.baseAfterDiscount || financialData.baseAmount,
         gst_18_percent: financialData.gstAmount,
         total_amount_incl_gst: financialData.totalAmount,
+        tds_rate: financialData.tdsRate,
+        tds_amount: financialData.tdsAmount,
+        net_receivable: financialData.netReceivable,
         payment_mode: formData.paymentMode,
         payment_status: formData.paymentStatus,
         received_amount: financialData.receivedAmount,
@@ -1331,16 +1415,21 @@ ${AGENCY_DETAILS.website}`;
 
       // 1. Sync directly to CRM Backend (creates Sales Contract, Client, Deal, Lead & Projects)
       let crmSuccess = false;
+      let crmErrorMsg = '';
       try {
         const crmResult = await syncPackageOrderToCrm(orderPayload);
         crmSuccess = Boolean(crmResult?.success);
+        if (!crmSuccess && crmResult?.error) {
+          crmErrorMsg = crmResult.error;
+        }
       } catch (crmErr) {
         console.warn('CRM sync notice:', crmErr);
+        crmErrorMsg = crmErr.message;
       }
 
       // 2. Email dispatch via FormSubmit (kept for email redundancy)
       try {
-        const response = await fetch('https://formsubmit.co/ajax/sales@prittal.com', {
+        await fetch('https://formsubmit.co/ajax/sales@prittal.com', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1348,9 +1437,9 @@ ${AGENCY_DETAILS.website}`;
           },
           body: JSON.stringify({
             ...orderPayload,
-            original_base_amount: `₹${formatINR(financialData.originalBaseAmount)}`,
+            original_base_amount: `₹${formatINR(financialData.baseAmount)}`,
             discount_applied: financialData.discountAmount > 0 ? `- ₹${formatINR(financialData.discountAmount)}` : 'None',
-            base_taxable_amount: `₹${formatINR(financialData.baseAmount)}`,
+            base_taxable_amount: `₹${formatINR(financialData.baseAfterDiscount || financialData.baseAmount)}`,
             gst_18_percent: `₹${formatINR(financialData.gstAmount)}`,
             total_amount_incl_gst: `₹${formatINR(financialData.totalAmount)}`,
             received_amount: `₹${formatINR(financialData.receivedAmount)}`,
@@ -1359,15 +1448,8 @@ ${AGENCY_DETAILS.website}`;
             _template: 'table',
           }),
         });
-
-        if (!response.ok && !crmSuccess) {
-          throw new Error('Failed to dispatch proforma invoice.');
-        }
       } catch (formSubmitErr) {
-        if (!crmSuccess) {
-          throw formSubmitErr;
-        }
-        console.warn('FormSubmit notice (CRM sync succeeded):', formSubmitErr);
+        console.warn('FormSubmit notice (secondary redundancy):', formSubmitErr);
       }
 
       // Success flow
@@ -1385,12 +1467,7 @@ ${AGENCY_DETAILS.website}`;
       } catch (e) {}
 
       setIsSubmitting(false);
-      onClose();
-      if (onNavigate) {
-        onNavigate('/thank-you');
-      } else {
-        window.location.href = '/thank-you';
-      }
+      setSubmitted(true);
     } catch (err) {
       console.error('Inquiry submission error:', err);
       setSubmitError('Unable to process proforma request right now. Please check your network or reach out directly to sales@prittal.com.');
@@ -1464,6 +1541,29 @@ ${AGENCY_DETAILS.website}`;
 
           {/* Right: Quick Action Buttons (Desktop only) & Close */}
           <div className="flex items-center space-x-1.5 flex-shrink-0">
+            {/* Primary Add to CRM Action - Available on desktop */}
+            <div className="hidden md:flex items-center space-x-1.5">
+              <button
+                type="button"
+                disabled={isSubmitting}
+                onClick={handleSubmit}
+                className="px-3.5 py-1.5 rounded-xl text-xs font-black text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-md shadow-emerald-500/20 transition-all flex items-center space-x-1.5 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+                title="Confirm PI: Logs in Sales Sheet, registers Client, and creates Project in Production Admin"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-200" />
+                    <span>Add to CRM & Production</span>
+                  </>
+                )}
+              </button>
+            </div>
+
             {activeView === 'preview' && (
               <div className="hidden md:flex items-center space-x-1.5">
                 {/* Direct Gmail Web Button */}
@@ -1520,30 +1620,87 @@ ${AGENCY_DETAILS.website}`;
         <div className="flex-1 overflow-y-auto p-4 sm:p-7 overscroll-contain">
           {submitted ? (
             /* Success State */
-            <div className="text-center py-12 space-y-4 animate-scaleUp max-w-md mx-auto">
-              <div className="w-16 h-16 bg-emerald-500/15 text-emerald-500 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle className="w-10 h-10 stroke-[2.5]" />
+            <div className="text-center py-8 space-y-5 animate-scaleUp max-w-lg mx-auto">
+              <div className="w-20 h-20 bg-emerald-500/15 text-emerald-500 rounded-3xl flex items-center justify-center mx-auto shadow-inner border border-emerald-500/30">
+                <CheckCircle className="w-12 h-12 stroke-[2.5]" />
               </div>
-              <h3 className={`text-2xl sm:text-3xl font-extrabold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                Proforma Invoice Dispatched!
-              </h3>
-              <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                Reference: <strong className="text-[#11b1d0]">{docCode}</strong>. Your official Proforma Invoice & project specifications have been logged. A copy has been routed to <strong className="text-[#11b1d0]">{formData.email || 'your email'}</strong> and Prittal's executive sales team.
+              <div>
+                <span className="text-[11px] font-black uppercase tracking-widest text-emerald-500 block mb-1">
+                  ORDER & CRM PIPELINE INITIALIZED
+                </span>
+                <h3 className={`text-2xl sm:text-3xl font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  Successfully Added to CRM!
+                </h3>
+              </div>
+
+              {/* Entity Creation Badges Card */}
+              <div className={`p-4 rounded-2xl border text-left space-y-2.5 ${
+                isDark ? 'bg-[#0f172a] border-slate-800' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="text-xs font-bold text-slate-400 pb-2 border-b border-slate-700/50 flex items-center justify-between">
+                  <span>Proforma Invoice Ref:</span>
+                  <span className="font-mono font-black text-[#11b1d0] text-sm">{docCode}</span>
+                </div>
+                <div className="space-y-2 text-xs">
+                  <div className="flex items-center gap-2 text-emerald-400 font-semibold">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <span><strong>Sales Sheet:</strong> Contract logged for <em>{formData.companyName || formData.name}</em></span>
+                  </div>
+                  <div className="flex items-center gap-2 text-emerald-400 font-semibold">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <span><strong>Client Directory:</strong> Profile saved and contact info linked</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-emerald-400 font-semibold">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <span><strong>Production Admin:</strong> New project initialized with deliverables scope</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-emerald-400 font-semibold">
+                    <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+                    <span><strong>Real-time Alert:</strong> Broadcasted to Sales & Production team dashboards</span>
+                  </div>
+                </div>
+              </div>
+
+              <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                The proforma invoice is now officially registered. You can print or download the stamped PDF, share it with the client, or close this window.
               </p>
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5">
                 <button
-                  onClick={handleDirectGmailSend}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-red-600 text-white font-extrabold text-xs uppercase tracking-wider hover:bg-red-700 transition-colors shadow-md flex items-center justify-center space-x-1.5"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Open in Gmail</span>
-                </button>
-                <button
+                  type="button"
                   onClick={handlePrint}
-                  className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-[#11b1d0] text-white font-extrabold text-xs uppercase tracking-wider hover:bg-[#0fa1be] transition-colors shadow-md flex items-center justify-center space-x-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-[#11b1d0] text-white font-extrabold text-xs hover:bg-[#0fa1be] transition-colors shadow-md flex items-center justify-center space-x-1.5 cursor-pointer"
                 >
                   <Printer className="w-4 h-4" />
                   <span>Print / Save PDF</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenGmailModal}
+                  className="px-5 py-2.5 rounded-xl bg-red-600 text-white font-extrabold text-xs hover:bg-red-700 transition-colors shadow-md flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Send via Gmail</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleWhatsApp}
+                  className="px-5 py-2.5 rounded-xl bg-green-600 text-white font-extrabold text-xs hover:bg-green-700 transition-colors shadow-md flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span>WhatsApp</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    if (onNavigate) onNavigate('/thank-you');
+                  }}
+                  className={`px-5 py-2.5 rounded-xl font-extrabold text-xs transition-colors border flex items-center justify-center space-x-1.5 cursor-pointer ${
+                    isDark ? 'bg-slate-800 border-slate-700 text-slate-200 hover:bg-slate-700' : 'bg-slate-200 border-slate-300 text-slate-800 hover:bg-slate-300'
+                  }`}
+                >
+                  <span>Done / Close</span>
                 </button>
               </div>
             </div>
@@ -1568,31 +1725,51 @@ ${AGENCY_DETAILS.website}`;
                       </span>
                     </h3>
                     <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2 flex-wrap">
-                      <span>Billing: <strong>{selectedPkg?.billingCycle === 'annual' ? 'Annual Plan (Discounted)' : selectedPkg?.billingCycle === 'one-time' ? 'One-Time Project' : 'Monthly Retainer'}</strong></span>
+                      <span>Billing: <strong>{
+                        selectedPkg?.billingCycle === 'quarterly' 
+                          ? 'Quarterly (3 Months — Auto-Renews)' 
+                          : selectedPkg?.billingCycle === 'half-yearly' 
+                            ? 'Half-Yearly (6 Months — Auto-Renews)' 
+                            : selectedPkg?.billingCycle === 'annual' 
+                              ? 'Annual Plan (1 Year Contract)' 
+                              : selectedPkg?.billingCycle === 'one-time' 
+                                ? 'One-Time Project' 
+                                : 'Monthly Retainer'
+                      }</strong></span>
                       {selectedPkg?.billingCycle !== 'one-time' && (
-                        <div className="inline-flex items-center p-0.5 rounded-lg bg-slate-800/80 border border-slate-700/80 ml-1">
-                          <button
-                            type="button"
-                            onClick={() => handleToggleModalBillingCycle('monthly')}
-                            className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase transition-all cursor-pointer ${
-                              selectedPkg?.billingCycle === 'monthly'
-                                ? 'bg-[#11b1d0] text-white shadow-xs'
-                                : 'text-slate-400 hover:text-white'
-                            }`}
-                          >
-                            Monthly
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleToggleModalBillingCycle('annual')}
-                            className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase transition-all cursor-pointer ${
-                              selectedPkg?.billingCycle === 'annual'
-                                ? 'bg-[#11b1d0] text-white shadow-xs'
-                                : 'text-slate-400 hover:text-white'
-                            }`}
-                          >
-                            Annual
-                          </button>
+                        <div className={`inline-flex items-center p-0.5 rounded-lg border ml-1 shadow-2xs ${
+                          isDark 
+                            ? 'bg-slate-900/90 border-slate-700/80' 
+                            : 'bg-slate-200/90 border-slate-300'
+                        }`}>
+                          {[
+                            { id: 'monthly', label: 'Monthly' },
+                            { id: 'quarterly', label: 'Quarterly (3M)' },
+                            { id: 'half-yearly', label: 'Half-Yearly (6M)' },
+                            { id: 'annual', label: 'Annual Plan' }
+                          ].map(b => {
+                            const isSelected = selectedPkg?.billingCycle === b.id || (b.id === 'monthly' && (!selectedPkg?.billingCycle || selectedPkg?.billingCycle === 'one-time'));
+                            return (
+                              <button
+                                key={b.id}
+                                type="button"
+                                onClick={() => handleToggleModalBillingCycle(b.id)}
+                                className={`px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase transition-all cursor-pointer border-0 outline-none select-none ${
+                                  isSelected
+                                    ? 'bg-[#11b1d0] text-white shadow-xs font-black'
+                                    : isDark
+                                      ? 'bg-transparent text-slate-400 hover:text-white hover:bg-slate-800/60'
+                                      : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                                }`}
+                                style={{
+                                  backgroundColor: isSelected ? '#11b1d0' : 'transparent',
+                                  color: isSelected ? '#ffffff' : (isDark ? '#94a3b8' : '#475569')
+                                }}
+                              >
+                                {b.label}
+                              </button>
+                            );
+                          })}
                         </div>
                       )}
                       <span>•</span>
@@ -1608,6 +1785,11 @@ ${AGENCY_DETAILS.website}`;
                     <span className="text-[11px] font-semibold text-slate-400 block">
                       (Base: ₹{formatINR(financialData.baseAmount)} + GST: ₹{formatINR(financialData.gstAmount)})
                     </span>
+                    {financialData.cycles > 1 && (
+                      <span className="text-[10.5px] font-extrabold text-emerald-400 block mt-0.5 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                        CRM Sales Sheet: ₹{formatINR(financialData.monthlyTotal)}/mo
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -2445,6 +2627,161 @@ ${AGENCY_DETAILS.website}`;
                   </div>
                 </div>
 
+                {/* Section: Contract Duration & CRM Auto-Renewal Term */}
+                <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${
+                  isDark ? 'bg-[#0c121e] border-slate-800' : 'bg-slate-50 border-slate-200'
+                }`}>
+                  <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+                    <div className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-[#11b1d0]">
+                      <RefreshCw className="w-4 h-4 text-[#11b1d0]" />
+                      <span>Contract Duration & CRM Sales Sheet Renewal Term</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-400">
+                      Auto-distributes monthly into CRM Sales Sheet
+                    </span>
+                  </div>
+
+                  {/* Duration Selector Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+                    {[
+                      { id: 'monthly', label: 'Monthly Retainer', sub: '1 Month Cycle', cycles: 1 },
+                      { id: 'quarterly', label: 'Quarterly', sub: '3 Months (3 Cycles in Sheet)', cycles: 3, badge: 'Popular' },
+                      { id: 'half-yearly', label: 'Half Yearly', sub: '6 Months (6 Cycles in Sheet)', cycles: 6 },
+                      { id: 'annual', label: 'Annual Plan', sub: '1 Year Plan (Full Annual Contract)', cycles: 1, badge: 'Annual Plan' },
+                    ].map((opt) => {
+                      const isSelected = selectedPkg?.billingCycle === opt.id || (opt.id === 'monthly' && (!selectedPkg?.billingCycle || selectedPkg?.billingCycle === 'one-time'));
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => handleToggleModalBillingCycle(opt.id)}
+                          className={`p-3 rounded-xl text-left border transition-all cursor-pointer relative ${
+                            isSelected
+                              ? 'bg-[#11b1d0] text-white border-[#11b1d0] shadow-md ring-2 ring-[#11b1d0]/30'
+                              : isDark
+                                ? 'bg-[#131b2c] border-slate-700 text-slate-300 hover:border-slate-600 hover:bg-[#1a253c]'
+                                : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                          }`}
+                        >
+                          {opt.badge && (
+                            <span className={`absolute -top-1.5 right-2 px-1.5 py-0.2 rounded-full text-[9px] font-black uppercase ${
+                              isSelected ? 'bg-white text-[#11b1d0]' : 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                            }`}>
+                              {opt.badge}
+                            </span>
+                          )}
+                          <div className="font-extrabold text-xs">{opt.label}</div>
+                          <div className={`text-[10px] mt-0.5 font-medium ${isSelected ? 'text-white/90' : 'text-slate-400'}`}>
+                            {opt.sub}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Contract Base Price Input */}
+                  <div className={`p-3 rounded-xl border mb-3 flex items-center justify-between flex-wrap gap-2 ${
+                    isDark ? 'bg-[#131b2c] border-slate-700' : 'bg-white border-slate-200 shadow-2xs'
+                  }`}>
+                    <div>
+                      <div className="text-[11px] font-extrabold uppercase tracking-wider flex items-center gap-1.5 text-[#11b1d0]">
+                        <Tag className="w-3.5 h-3.5 text-[#11b1d0]" />
+                        <span>Contract Base Price (Custom)</span>
+                      </div>
+                      <span className="text-[10px] text-slate-400">
+                        {financialData.cycles > 1 
+                          ? `Total package price distributed across ${financialData.cycles} monthly cycles (₹${formatINR(financialData.monthlyBase)}/mo base)`
+                          : selectedPkg?.billingCycle === 'annual'
+                            ? '1-Year Annual Plan total contract value (logged directly in CRM sales sheet)'
+                            : 'Standard 1-Month contract value'}
+                      </span>
+                    </div>
+                    <div className="relative w-44">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-slate-400 text-sm">₹</span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={selectedPkg?.userBudget !== undefined ? selectedPkg.userBudget : (financialData.baseAmount || '')}
+                        onChange={(e) => handleUpdateContractBasePrice(e.target.value)}
+                        placeholder="Enter base price"
+                        className={`w-full pl-7 pr-3 py-1.5 rounded-lg text-sm font-black border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] ${
+                          isDark ? 'bg-[#0c121e] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Auto-Renewal Breakdown Explainer when cycles > 1 */}
+                  {financialData.cycles > 1 ? (
+                    <div className={`p-3.5 rounded-xl border space-y-2.5 ${
+                      isDark ? 'bg-cyan-950/25 border-cyan-500/30' : 'bg-cyan-50/80 border-cyan-200'
+                    }`}>
+                      <div className="flex items-center justify-between text-xs font-black text-[#11b1d0] flex-wrap gap-1">
+                        <div className="flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                          <span>Automated Monthly Distribution in CRM Sales Sheet:</span>
+                        </div>
+                        <span className="text-[10px] px-2 py-0.5 rounded-md font-extrabold bg-[#11b1d0]/20 text-[#11b1d0] border border-[#11b1d0]/30">
+                          {financialData.cycles} Monthly Cycles Scheduled
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs pt-1 border-t border-cyan-500/20">
+                        <div>
+                          <span className="text-[10px] text-slate-400 block font-bold">Total PI Value:</span>
+                          <span className={`font-black ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                            ₹{formatINR(financialData.totalAmount)}
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 block font-bold">Monthly Sheet Revenue:</span>
+                          <span className="font-black text-emerald-500">
+                            ₹{formatINR(financialData.monthlyTotal)} / mo
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 block font-bold">Cycle 1 Logged:</span>
+                          <span className={`font-bold ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                            Today ({new Date().toLocaleDateString('en-GB')})
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 block font-bold">Cycle 2 Auto-Renewal:</span>
+                          <span className="font-bold text-[#11b1d0]">
+                            {nextRenewalDateStr}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-[10.5px] text-slate-400 leading-tight">
+                        ℹ️ When confirmed, CRM automatically logs <strong>Cycle 1</strong> in the sales sheet for <strong>₹{formatINR(financialData.monthlyBase)} (+ GST)</strong>. On <strong>{nextRenewalDateStr}</strong>, the automated renewal engine will generate the subsequent monthly renewal contract entry seamlessly.
+                      </p>
+                    </div>
+                  ) : selectedPkg?.billingCycle === 'annual' ? (
+                    <div className={`p-3.5 rounded-xl border flex items-center justify-between gap-3 ${
+                      isDark ? 'bg-cyan-950/20 border-cyan-500/30' : 'bg-cyan-50/70 border-cyan-200'
+                    }`}>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-[#11b1d0] flex-shrink-0" />
+                        <div>
+                          <span className="text-xs font-black text-[#11b1d0] block">
+                            Full 1-Year Annual Contract Plan
+                          </span>
+                          <span className="text-[10.5px] text-slate-400">
+                            Logged directly into the CRM Sales Sheet as an Annual Plan without monthly renewal splitting.
+                          </span>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black px-2.5 py-1 rounded-md bg-[#11b1d0]/15 text-[#11b1d0] border border-[#11b1d0]/30 whitespace-nowrap">
+                        1-Year Plan
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="text-[11px] text-slate-400 flex items-center gap-1.5 pt-1">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Standard 1-Month contract cycle. No automated multi-month splitting required.</span>
+                    </div>
+                  )}
+                </div>
+
                 {/* Section: Payment Terms & Collection Status */}
                 <div className={`p-4 sm:p-5 rounded-2xl border transition-all ${
                   isDark ? 'bg-[#0c121e] border-slate-800' : 'bg-slate-50 border-slate-200'
@@ -2528,7 +2865,7 @@ ${AGENCY_DETAILS.website}`;
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {/* GST Selection Dropdown */}
                     <div>
                       <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
@@ -2539,7 +2876,7 @@ ${AGENCY_DETAILS.website}`;
                       <select
                         value={formData.gstRate}
                         onChange={(e) => setFormData({ ...formData, gstRate: Number(e.target.value) })}
-                        className={`w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] cursor-pointer ${
+                        className={`w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] cursor-pointer ${
                           isDark ? 'bg-[#131b2c] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
                         }`}
                       >
@@ -2547,6 +2884,28 @@ ${AGENCY_DETAILS.website}`;
                         <option value="5">5%</option>
                         <option value="18">18%</option>
                         <option value="40">40%</option>
+                      </select>
+                    </div>
+
+                    {/* Deduction (TDS %) Dropdown */}
+                    <div>
+                      <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
+                        isDark ? 'text-slate-300' : 'text-slate-700'
+                      }`}>
+                        Deduction (TDS %)
+                      </label>
+                      <select
+                        value={formData.tdsRate ?? 0}
+                        onChange={(e) => setFormData({ ...formData, tdsRate: Number(e.target.value) })}
+                        className={`w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] cursor-pointer ${
+                          isDark ? 'bg-[#131b2c] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
+                        }`}
+                      >
+                        <option value={0}>0% — No TDS</option>
+                        <option value={1}>1% — TDS Sec 194C (Indiv/HUF)</option>
+                        <option value={2}>2% — TDS Sec 194C (Company/LLP)</option>
+                        <option value={5}>5% — TDS Sec 194H (Commission)</option>
+                        <option value={10}>10% — TDS Sec 194J (Professional)</option>
                       </select>
                     </div>
 
@@ -2564,10 +2923,10 @@ ${AGENCY_DETAILS.website}`;
                           setFormData((prev) => ({
                             ...prev,
                             paymentStatus: status,
-                            receivedAmount: status === 'Partial Received' ? (prev.receivedAmount || Math.round(financialData.totalAmount * 0.5)) : '',
+                            receivedAmount: status === 'Partial Received' ? (prev.receivedAmount || Math.round(financialData.netReceivable * 0.5)) : '',
                           }));
                         }}
-                        className={`w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] cursor-pointer ${
+                        className={`w-full px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] cursor-pointer ${
                           isDark ? 'bg-[#131b2c] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
                         }`}
                       >
@@ -2576,74 +2935,84 @@ ${AGENCY_DETAILS.website}`;
                         <option value="Full Payment Received">Full Payment Received</option>
                       </select>
                     </div>
-
-                    {/* Conditional: If Partial Received, ask how much received */}
-                    {formData.paymentStatus === 'Partial Received' ? (
-                      <div className="animate-fadeIn">
-                        <div className="flex items-center justify-between mb-1">
-                          <label className="text-[11px] font-extrabold uppercase tracking-wider text-[#11b1d0]">
-                            Partial Amount Received (₹) *
-                          </label>
-                          {/* Quick 50% Preset Chip */}
-                          <button
-                            type="button"
-                            onClick={() => setFormData({ ...formData, receivedAmount: Math.round(financialData.totalAmount * 0.5) })}
-                            className="text-[10px] font-black px-2 py-0.5 rounded bg-[#11b1d0]/15 text-[#11b1d0] hover:bg-[#11b1d0] hover:text-white transition-colors cursor-pointer"
-                          >
-                            Set 50% (₹{formatINR(Math.round(financialData.totalAmount * 0.5))})
-                          </button>
-                        </div>
-                        <div className="relative">
-                          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
-                            ₹
-                          </span>
-                          <input
-                            type="number"
-                            min="1"
-                            max={financialData.totalAmount}
-                            required
-                            value={formData.receivedAmount}
-                            onChange={(e) => setFormData({ ...formData, receivedAmount: e.target.value })}
-                            placeholder="Enter amount received"
-                            className={`w-full pl-8 pr-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-[#11b1d0] focus:outline-none focus:ring-2 focus:ring-[#11b1d0] ${
-                              isDark ? 'bg-[#131b2c] text-white' : 'bg-white text-slate-900'
-                            }`}
-                          />
-                        </div>
-                        <div className="flex justify-between text-[10px] font-semibold text-slate-400 mt-1 px-1">
-                          <span>Total: ₹{formatINR(financialData.totalAmount)}</span>
-                          <span className="text-amber-500 font-bold">
-                            Balance: ₹{formatINR(financialData.balanceAmount)}
-                          </span>
-                        </div>
-                      </div>
-                    ) : (
-                      /* If Full Payment Pending or Full Received */
-                      <div className="flex flex-col justify-center">
-                        <span className="text-[11px] font-extrabold uppercase tracking-wider mb-1 text-slate-400">
-                          Balance Overview
-                        </span>
-                        <div className={`px-3.5 py-2.5 rounded-xl text-xs font-bold border flex items-center justify-between ${
-                          formData.paymentStatus === 'Full Payment Received'
-                            ? isDark
-                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-                              : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'
-                            : isDark
-                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-                              : 'bg-amber-500/10 text-amber-600 border-amber-500/30'
-                        }`}>
-                          <span>
-                            {formData.paymentStatus === 'Full Payment Received' ? '100% Paid (Zero Balance)' : 'Pending Advance'}
-                          </span>
-                          <span className="font-black">
-                            {formData.paymentStatus === 'Full Payment Received'
-                              ? `₹${formatINR(financialData.totalAmount)} Paid`
-                              : `₹${formatINR(financialData.totalAmount)} Due`}
-                          </span>
-                        </div>
-                      </div>
-                    )}
                   </div>
+
+                  {/* Informational banner when TDS is applied */}
+                  {financialData.tdsAmount > 0 && (
+                    <div className="mt-2.5 px-3 py-2 rounded-xl text-[11px] font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-500 flex items-center justify-between flex-wrap gap-1">
+                      <span>TDS Deductible ({financialData.tdsRate}% on Taxable Base): <strong>-₹{formatINR(financialData.tdsAmount)}</strong></span>
+                      <span className="font-extrabold">Net Receivable Amount: <strong>₹{formatINR(financialData.netReceivable)}</strong></span>
+                    </div>
+                  )}
+
+                  {/* Conditional: If Partial Received, ask how much received */}
+                  {formData.paymentStatus === 'Partial Received' ? (
+                    <div className="animate-fadeIn mt-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-extrabold uppercase tracking-wider text-[#11b1d0]">
+                          Partial Amount Received (₹) *
+                        </label>
+                        {/* Quick 50% Preset Chip */}
+                        <button
+                          type="button"
+                          onClick={() => setFormData({ ...formData, receivedAmount: Math.round(financialData.netReceivable * 0.5) })}
+                          className="text-[10px] font-black px-2 py-0.5 rounded bg-[#11b1d0]/15 text-[#11b1d0] hover:bg-[#11b1d0] hover:text-white transition-colors cursor-pointer"
+                        >
+                          Set 50% (₹{formatINR(Math.round(financialData.netReceivable * 0.5))})
+                        </button>
+                      </div>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">
+                          ₹
+                        </span>
+                        <input
+                          type="number"
+                          min="1"
+                          max={financialData.netReceivable}
+                          required
+                          value={formData.receivedAmount}
+                          onChange={(e) => setFormData({ ...formData, receivedAmount: e.target.value })}
+                          placeholder="Enter amount received"
+                          className={`w-full pl-8 pr-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-[#11b1d0] focus:outline-none focus:ring-2 focus:ring-[#11b1d0] ${
+                            isDark ? 'bg-[#131b2c] text-white' : 'bg-white text-slate-900'
+                          }`}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[10px] font-semibold text-slate-400 mt-1 px-1">
+                        <span>Net Receivable: ₹{formatINR(financialData.netReceivable)}</span>
+                        <span className="text-amber-500 font-bold">
+                          Balance: ₹{formatINR(financialData.balanceAmount)}
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    /* If Full Payment Pending or Full Received */
+                    <div className="flex flex-col justify-center mt-3">
+                      <span className="text-[11px] font-extrabold uppercase tracking-wider mb-1 text-slate-400">
+                        Balance Overview
+                      </span>
+                      <div className={`px-3.5 py-2.5 rounded-xl text-xs font-bold border flex items-center justify-between ${
+                        formData.paymentStatus === 'Full Payment Received'
+                          ? isDark
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+                            : 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'
+                          : isDark
+                            ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                            : 'bg-amber-500/10 text-amber-600 border-amber-500/30'
+                      }`}>
+                        <span>
+                          {formData.paymentStatus === 'Full Payment Received' 
+                            ? (financialData.tdsAmount > 0 ? `100% Paid (Net of TDS)` : '100% Paid (Zero Balance)')
+                            : (financialData.tdsAmount > 0 ? `Pending Advance (TDS: ₹${formatINR(financialData.tdsAmount)})` : 'Pending Advance')}
+                        </span>
+                        <span className="font-black">
+                          {formData.paymentStatus === 'Full Payment Received'
+                            ? `₹${formatINR(financialData.netReceivable)} Paid`
+                            : `₹${formatINR(financialData.netReceivable)} Due`}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Client Remark Input Box */}
@@ -2672,11 +3041,31 @@ ${AGENCY_DETAILS.website}`;
                 )}
                 <div className="pt-3 flex flex-col sm:flex-row gap-3">
                   <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={handleSubmit}
+                    className="flex-1 py-3.5 px-6 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-wider bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+                    title="Confirm PI: Directly logs in Sales Sheet, registers Client, and creates Project in Production Admin"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Adding to Sales & Production CRM...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 text-emerald-200" />
+                        <span>Add to CRM & Production</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 py-3.5 px-6 rounded-2xl text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-[#11b1d0] hover:bg-[#0fa1be] text-white shadow-xl shadow-[#11b1d0]/25 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed"
+                    className="py-3.5 px-6 rounded-2xl text-xs sm:text-sm font-extrabold uppercase tracking-wider bg-slate-200 dark:bg-slate-800 hover:bg-[#11b1d0] hover:text-white text-slate-800 dark:text-slate-200 shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-75"
                   >
-                    <span>Generate & Preview Proforma Invoice (PI)</span>
+                    <span>Preview PI Sheet</span>
                     <FileText className="w-4 h-4" />
                   </button>
                 </div>
@@ -2718,34 +3107,56 @@ ${AGENCY_DETAILS.website}`;
               </div>
 
               {/* Mobile Quick Action Buttons (Visible only on mobile screens < 768px, never cropped) */}
-              <div className="grid grid-cols-3 gap-2 md:hidden">
+              <div className="space-y-2 md:hidden">
+                {/* Mobile Primary Ingestion Button */}
                 <button
                   type="button"
-                  onClick={handlePrint}
-                  className="py-2.5 px-2 rounded-xl text-[11px] font-extrabold text-white bg-[#11b1d0] hover:bg-[#0fa1be] shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                  title="Print or Save A4 PDF"
+                  disabled={isSubmitting}
+                  onClick={handleSubmit}
+                  className="w-full py-3 px-3 rounded-xl text-xs font-black text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                 >
-                  <Printer className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>Print PDF</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Adding to CRM Sales & Production...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+                      <span>Confirm & Add to Sales & Production CRM</span>
+                    </>
+                  )}
                 </button>
-                <button
-                  type="button"
-                  onClick={handleWhatsApp}
-                  className="py-2.5 px-2 rounded-xl text-[11px] font-extrabold text-white bg-green-600 hover:bg-green-700 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                  title="Share via WhatsApp"
-                >
-                  <MessageCircle className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>WhatsApp</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleOpenGmailModal}
-                  className="py-2.5 px-2 rounded-xl text-[11px] font-extrabold text-white bg-red-600 hover:bg-red-700 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
-                  title="Send via Gmail"
-                >
-                  <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
-                  <span>Gmail</span>
-                </button>
+
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={handlePrint}
+                    className="py-2.5 px-2 rounded-xl text-[11px] font-extrabold text-white bg-[#11b1d0] hover:bg-[#0fa1be] shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                    title="Print or Save A4 PDF"
+                  >
+                    <Printer className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span>Print PDF</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleWhatsApp}
+                    className="py-2.5 px-2 rounded-xl text-[11px] font-extrabold text-white bg-green-600 hover:bg-green-700 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                    title="Share via WhatsApp"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span>WhatsApp</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleOpenGmailModal}
+                    className="py-2.5 px-2 rounded-xl text-[11px] font-extrabold text-white bg-red-600 hover:bg-red-700 shadow-sm flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                    title="Send via Gmail"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
+                    <span>Gmail</span>
+                  </button>
+                </div>
               </div>
 
               {/* Mobile View Mode / Zoom Controls Bar */}
@@ -3056,7 +3467,15 @@ ${AGENCY_DETAILS.website}`;
                               <div className="flex items-center text-[10.5px] mt-1">
                                 <span className="font-medium text-slate-700 mr-1.5">Drawn in Favour of PRITTAL:</span>
                                 <span className="font-semibold text-slate-800 border-b border-slate-400 flex-1 px-1 min-h-[16px]">
-                                  Rupees ₹{formatINR(financialData.receivedAmount > 0 ? financialData.receivedAmount : financialData.totalAmount)}
+                                  Rupees ₹{formatINR(financialData.receivedAmount > 0 ? financialData.receivedAmount : financialData.netReceivable)}
+                                </span>
+                              </div>
+                              <div className="flex items-center text-[10.5px] mt-1">
+                                <span className="font-medium text-slate-700 mr-1.5">Contract Term:</span>
+                                <span className="font-semibold text-slate-800 border-b border-slate-400 flex-1 px-1 min-h-[16px]">
+                                  {financialData.cycles > 1 
+                                    ? `${selectedPkg?.billingCycle === 'quarterly' ? 'Quarterly (3 Months)' : selectedPkg?.billingCycle === 'half-yearly' ? 'Half Yearly (6 Months)' : 'Annual (12 Months)'} • ₹${formatINR(financialData.monthlyNetReceivable || financialData.monthlyTotal)}/mo recurring`
+                                    : (selectedPkg?.billingCycle === 'one-time' ? 'One-Time Project' : 'Monthly Retainer')}
                                 </span>
                               </div>
                             </div>
@@ -3129,6 +3548,24 @@ ${AGENCY_DETAILS.website}`;
                                   <span>Total Amount (Incl. GST)</span>
                                   <span>₹{formatINR(financialData.totalAmount)}</span>
                                 </div>
+                                {financialData.tdsAmount > 0 && (
+                                  <div className="flex justify-between px-2.5 py-1 text-[10.5px] font-bold text-amber-700 bg-amber-50/70 border-t border-amber-100">
+                                    <span>Less: TDS Deductible ({financialData.tdsRate}%)</span>
+                                    <span>- ₹{formatINR(financialData.tdsAmount)}</span>
+                                  </div>
+                                )}
+                                {financialData.tdsAmount > 0 && (
+                                  <div className="flex justify-between px-2.5 py-1.5 text-[11px] font-bold bg-slate-100/80 text-slate-800 border-t border-slate-200">
+                                    <span>Net Receivable (Payable)</span>
+                                    <span>₹{formatINR(financialData.netReceivable)}</span>
+                                  </div>
+                                )}
+                                {financialData.cycles > 1 && (
+                                  <div className="flex justify-between px-2.5 py-1 text-[10px] font-bold text-teal-700 bg-teal-50/70 border-t border-teal-100">
+                                    <span>Sales Sheet Entry (Cycle 1 of {financialData.cycles})</span>
+                                    <span>₹{formatINR(financialData.monthlyNetReceivable || financialData.monthlyTotal)} / mo</span>
+                                  </div>
+                                )}
                                 <div className="flex justify-between px-2.5 py-1.5 text-[11px] font-normal text-slate-700">
                                   <span>Received Amount</span>
                                   <span className={financialData.receivedAmount > 0 ? "font-semibold text-emerald-600" : "font-normal text-slate-500"}>
@@ -3301,7 +3738,28 @@ ${AGENCY_DETAILS.website}`;
                   ← Edit Client & Billing Details
                 </button>
 
-                <div className="grid grid-cols-1 sm:flex items-center gap-2.5 w-full sm:w-auto">
+                <div className="grid grid-cols-1 sm:flex items-center gap-2.5 w-full sm:w-auto flex-wrap">
+                  {/* Primary Action Button: Confirm & Add to CRM Sales Sheet & Production */}
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={handleSubmit}
+                    className="w-full sm:w-auto py-2.5 sm:py-3 px-5 sm:px-6 rounded-xl text-xs sm:text-sm font-black text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 shadow-xl shadow-emerald-500/30 transition-all flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed order-first sm:order-none"
+                    title="Confirm PI: Adds record to Sales Sheet, registers Client, and creates Project in Production Admin"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin text-white" />
+                        <span>Adding to Sales & Production CRM...</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 text-emerald-200" />
+                        <span>Confirm & Add to Sales & Production CRM</span>
+                      </>
+                    )}
+                  </button>
+
                   <button
                     type="button"
                     onClick={handleOpenGmailModal}

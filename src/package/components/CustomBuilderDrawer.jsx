@@ -49,6 +49,13 @@ export const CustomBuilderDrawer = ({
   }, [isOpen]);
 
   // Track custom feature toggles (default ALL UNSELECTED or initialized per category)
+  const [activePreset, setActivePreset] = useState('standard');
+  const [userBudget, setUserBudget] = useState('');
+  const [gstRate, setGstRate] = useState(18);
+  const [featureQuantities, setFeatureQuantities] = useState({});
+  const [featureFrequencies, setFeatureFrequencies] = useState({});
+  const [selectedPlatforms, setSelectedPlatforms] = useState({});
+
   const [customToggles, setCustomToggles] = useState(() => {
     const initial = {};
     if (category?.featureGroups) {
@@ -149,9 +156,6 @@ export const CustomBuilderDrawer = ({
     return 5;
   };
 
-  // Quantitative numbers map
-  const [featureQuantities, setFeatureQuantities] = useState({});
-
   const handleFeatureQuantityChange = (featureKey, val) => {
     if (val === '') {
       setFeatureQuantities((prev) => ({ ...prev, [featureKey]: '' }));
@@ -160,9 +164,6 @@ export const CustomBuilderDrawer = ({
     const num = Math.min(999, Math.max(1, Number(val) || 1));
     setFeatureQuantities((prev) => ({ ...prev, [featureKey]: num }));
   };
-
-  // Frequency cadence map
-  const [featureFrequencies, setFeatureFrequencies] = useState({});
 
   const getDefaultPlatformsForPreset = (tierScope) => {
     if (tierScope === 'basic') {
@@ -173,9 +174,6 @@ export const CustomBuilderDrawer = ({
     }
     return ['Facebook', 'Instagram', 'LinkedIn', 'X (Twitter)'];
   };
-
-  // Target platforms map
-  const [selectedPlatforms, setSelectedPlatforms] = useState({});
 
   const togglePlatform = (key, platformName) => {
     setSelectedPlatforms((prev) => {
@@ -190,8 +188,6 @@ export const CustomBuilderDrawer = ({
   const handleToggleFeature = (key) => {
     setCustomToggles((prev) => ({ ...prev, [key]: !prev[key] }));
   };
-
-  const [activePreset, setActivePreset] = useState('standard');
 
   const getPresetPrice = (cat, tierScope, cycle) => {
     const catId = (cat?.id || '').toLowerCase();
@@ -297,10 +293,6 @@ export const CustomBuilderDrawer = ({
       handleApplyPresetScope(activePreset);
     }
   }, [isOpen, category]);
-
-  // Budget & GST State
-  const [userBudget, setUserBudget] = useState('');
-  const [gstRate, setGstRate] = useState(18);
 
   // Indian currency formatting
   const formatIndianNumber = (num) => {

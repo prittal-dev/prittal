@@ -5,7 +5,7 @@ import {
   Phone, User, CreditCard, ShieldCheck, HelpCircle, Layers, CheckCircle2,
   ChevronDown, ChevronUp, Sliders, AlertCircle, MessageCircle, Tag, ClipboardCheck,
   Search, RefreshCw, TrendingUp, ShoppingBag, Plus, Trash2, Edit3, CheckSquare, Palette,
-  Circle, UserPlus, Package, Wrench, ZoomIn, ZoomOut
+  Circle, UserPlus, Package, Wrench, ZoomIn, ZoomOut, QrCode, Copy
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { A_LA_CARTE_SERVICES } from './ALaCarteDrawer';
@@ -16,6 +16,7 @@ import {
   TERMS_AND_CONDITIONS, 
   formatINR, 
   generateDocCode, 
+  formatBrandSlug, 
   isServiceIncluded, 
   getInitialCheckedServices,
   getActiveCategoriesWithServices,
@@ -23,6 +24,7 @@ import {
   getAdditionalServicesList,
   getParseableAdditionalServicesList,
   getDeliverablesSummary,
+  getPlanBaseQuotasByPlanName,
   buildInvoiceEmailText 
 } from '../utils/proformaUtils';
 import { packagesData } from '../data/packagesData';
@@ -59,7 +61,8 @@ export const DocumentPreviewDrawer = ({
   const printRef = useRef(null);
 
   const dealCode = deal?.dealCode || deal?.sourceDealId;
-  const initialDocCode = dealCode ? (docType === 'TAX_INVOICE' ? `INV-${dealCode}` : `PI-PROD-${dealCode}`) : generateDocCode();
+  const initialCompany = client?.companyName || client?.company || client?.name || deal?.clientName || deal?.company || '';
+  const initialDocCode = dealCode ? (docType === 'TAX_INVOICE' ? `INV-${dealCode}` : `PI-PROD-${dealCode}`) : generateDocCode(initialCompany);
   const [docCode, setDocCode] = useState(() => initialDocCode);
 
   // Active View Mode: 'form' (Client & Billing Details) | 'preview' (Official 2-Page Proforma Invoice)
@@ -156,18 +159,15 @@ export const DocumentPreviewDrawer = ({
   // Regenerate docCode and synchronize package when modal opens
   useEffect(() => {
     if (isOpen) {
-      setZoomMode('fit');
-      setManualScale(null);
+      const resolvedClient = client || deal?.client || {};
+      const company = resolvedClient?.companyName || resolvedClient?.company || resolvedClient?.name || deal?.clientName || '';
       if (dealCode) {
         setDocCode(docType === 'TAX_INVOICE' ? `INV-${dealCode}` : `PI-PROD-${dealCode}`);
       } else {
-        setDocCode(generateDocCode());
+        setDocCode(generateDocCode(company));
       }
       setActiveView(deal ? 'preview' : 'form');
       setSubmitted(false);
-
-      const resolvedClient = client || deal?.client || {};
-      const company = resolvedClient?.companyName || resolvedClient?.company || resolvedClient?.name || deal?.clientName || '';
       const contactName = resolvedClient?.name || resolvedClient?.contacts?.[0]?.name || deal?.clientName || '';
       const contactDesig = resolvedClient?.contacts?.[0]?.designation || '';
       const email = resolvedClient?.email || resolvedClient?.contacts?.[0]?.email || deal?.clientEmail || '';
@@ -443,6 +443,27 @@ export const DocumentPreviewDrawer = ({
     notes: '',
   });
 
+  // Payment QR Modal State & Actions
+  const [showPaymentQrModal, setShowPaymentQrModal] = useState(false);
+  const [copiedUpi, setCopiedUpi] = useState(false);
+
+  const handleCopyUpi = () => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(AGENCY_DETAILS.bank.upiId || 'eazypay.571785262@icici');
+      setCopiedUpi(true);
+      setTimeout(() => setCopiedUpi(false), 2000);
+    }
+  };
+
+  const handleDownloadQr = () => {
+    const link = document.createElement('a');
+    link.href = AGENCY_DETAILS.bank.qrImage || '/images/prittal-payment-qr.png';
+    link.download = 'prittal-payment-qr.png';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // CRM Context Integration for Existing Clients (Renewal / Upsell)
   let authContext = {};
   try {
@@ -574,8 +595,35 @@ export const DocumentPreviewDrawer = ({
     ).slice(0, 20);
   }, [clientOptions, clientSearchQuery]);
 
+  const handleUpdateCompanyName = (newCompany) => {
+    setFormData(prev => ({ ...prev, companyName: newCompany }));
+    if (!dealCode) {
+      setDocCode(prevCode => {
+        const slug = formatBrandSlug(newCompany) || 'CLIENT';
+        if (!prevCode) return generateDocCode(newCompany);
+        const parts = prevCode.split('-');
+        if (parts.length >= 4 && parts[0] === 'PI') {
+          return `PI-${slug}-${parts.slice(2).join('-')}`;
+        }
+        return `PI-${slug}-${parts.slice(1).join('-')}`;
+      });
+    }
+  };
+
   const handleSelectExistingClient = (c) => {
     setSelectedClient(c);
+    const company = c.companyName || c.name || '';
+    if (!dealCode && company) {
+      setDocCode(prevCode => {
+        const slug = formatBrandSlug(company) || 'CLIENT';
+        if (!prevCode) return generateDocCode(company);
+        const parts = prevCode.split('-');
+        if (parts.length >= 4 && parts[0] === 'PI') {
+          return `PI-${slug}-${parts.slice(2).join('-')}`;
+        }
+        return `PI-${slug}-${parts.slice(1).join('-')}`;
+      });
+    }
     setFormData(prev => ({
       ...prev,
       companyName: c.companyName || prev.companyName,
@@ -750,6 +798,14 @@ export const DocumentPreviewDrawer = ({
   };
 
   const handleSelectCustomTier = (catTitle, compiledScopeString, customData) => {
+    const activeDetails = customData?.activeDetails || [];
+    const customSummary = customData?.customSummary || activeDetails.join(', ');
+    const computedQuotas = getPlanBaseQuotasByPlanName(
+      customData?.categoryTitle || currentCategoryForCustom?.title || catTitle,
+      packagesData,
+      `${customSummary} ${compiledScopeString || ''}`
+    );
+
     const finalPkg = {
       ...customData,
       categoryId: customData?.categoryId || currentCategoryForCustom.id,
@@ -760,10 +816,17 @@ export const DocumentPreviewDrawer = ({
       billingCycle: customData?.billingCycle || selectedPkg?.billingCycle || 'monthly',
       priceText: customData?.priceText || `₹${(customData?.userBudget || 35000).toLocaleString('en-IN')}`,
       userBudget: customData?.userBudget || 35000,
-      activeDetails: customData?.activeDetails || [],
-      activeCount: customData?.activeCount || (customData?.activeDetails || []).length,
+      activeDetails,
+      activeCount: customData?.activeCount || activeDetails.length,
       isCustom: true,
-      customSummary: customData?.customSummary || (customData?.activeDetails || []).join(', ')
+      customSummary,
+      deliverablesQuota: {
+        creatives: computedQuotas.creatives || 8,
+        aiReels: computedQuotas.aiReels || 4,
+        carousels: computedQuotas.carousels || 0,
+        festival: computedQuotas.festival !== undefined ? computedQuotas.festival : true,
+        blogs: computedQuotas.blogs || 0
+      }
     };
     setSelectedPkg(finalPkg);
     setCheckedServices(getInitialCheckedServices(finalPkg));
@@ -937,6 +1000,13 @@ export const DocumentPreviewDrawer = ({
     d.setMonth(d.getMonth() + 1);
     return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
   }, []);
+
+  const payableAmount = useMemo(() => {
+    if (formData.paymentStatus === 'Partial Received') {
+      return Number(formData.receivedAmount) || Math.round(financialData.netReceivable * 0.5) || 0;
+    }
+    return financialData.netReceivable || financialData.totalAmount || 0;
+  }, [formData.paymentStatus, formData.receivedAmount, financialData]);
 
   // Same-Page Direct Print & PDF Download Handler (No Popups, Native A4 Formatting)
   const handlePrint = () => {
@@ -1398,6 +1468,11 @@ ${AGENCY_DETAILS.website}`;
         next_renewal_date: nextRenewalDateStr,
         services_sold: activeSoldServices.join(', '),
         deliverables_summary: getDeliverablesSummary(selectedPkg),
+        deliverables_quota: selectedPkg?.deliverablesQuota || getPlanBaseQuotasByPlanName(
+          selectedPkg?.categoryTitle || 'Service',
+          packagesData,
+          getDeliverablesSummary(selectedPkg)
+        ),
         original_base_amount: financialData.baseAmount,
         discount_applied: financialData.discountAmount,
         base_taxable_amount: financialData.baseAfterDiscount || financialData.baseAmount,
@@ -2427,7 +2502,7 @@ ${AGENCY_DETAILS.website}`;
                       type="text"
                       required
                       value={formData.companyName}
-                      onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                      onChange={(e) => handleUpdateCompanyName(e.target.value)}
                       placeholder="e.g. Apex Global Corp"
                       className={`w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] ${
                         isDark ? 'bg-[#0c121e] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
@@ -3013,6 +3088,46 @@ ${AGENCY_DETAILS.website}`;
                       </div>
                     </div>
                   )}
+
+                  {/* Quick QR Payment Trigger Pill - Only shown for Partial or Full Payment */}
+                  {(formData.paymentStatus === 'Partial Received' || formData.paymentStatus === 'Full Payment Received') && (
+                    <div className={`mt-3 p-3 rounded-xl border flex items-center justify-between transition-all ${
+                      isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-slate-50 border-slate-200'
+                    }`}>
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-xl bg-[#11b1d0]/15 flex items-center justify-center text-[#11b1d0] flex-shrink-0">
+                          <QrCode className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className={`text-xs font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                              {formData.paymentStatus === 'Partial Received' ? 'Advance Payment QR' : 'UPI Payment QR'}
+                            </span>
+                            <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-[#11b1d0]/15 text-[#11b1d0]">
+                              ICICI UPI
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-slate-500">
+                            {formData.paymentStatus === 'Partial Received' ? (
+                              <span>Advance to Collect: <strong className="text-[#11b1d0] font-bold">₹{formatINR(payableAmount)}</strong></span>
+                            ) : (
+                              <span>Payable Amount: <strong className="text-[#11b1d0] font-bold">₹{formatINR(payableAmount)}</strong></span>
+                            )}
+                            <span className="mx-1 text-slate-400">•</span>
+                            <span className="font-mono text-[10px]">eazypay.571785262@icici</span>
+                          </div>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setShowPaymentQrModal(true)}
+                        className="px-3 py-1.5 rounded-lg bg-[#11b1d0] hover:bg-[#009bb8] text-white text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer flex-shrink-0"
+                      >
+                        <QrCode className="w-3.5 h-3.5" />
+                        <span>Open QR Popup</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Client Remark Input Box */}
@@ -3584,15 +3699,39 @@ ${AGENCY_DETAILS.website}`;
                               </div>
                             </div>
 
-                            {/* Bank Details Beneficiary */}
-                            <div className="border border-[#00adc8] rounded-lg p-2 bg-slate-50 text-[9.5px] space-y-1 mt-2">
-                              <div className="inline-block bg-[#00adc8] text-white px-2 py-0.5 rounded text-[8.5px] font-bold tracking-wider uppercase mb-0.5">
-                                BANK DETAILS (BENEFICIARY)
+                            {/* Bank Details Beneficiary & Scan to Pay QR */}
+                            <div className="border border-[#00adc8] rounded-lg p-2 bg-slate-50 text-[9.5px] mt-2">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 space-y-1">
+                                  <div className="inline-block bg-[#00adc8] text-white px-2 py-0.5 rounded text-[8.5px] font-bold tracking-wider uppercase mb-0.5">
+                                    BANK DETAILS (BENEFICIARY)
+                                  </div>
+                                  <div className="flex justify-between pr-2"><span className="font-medium text-slate-600">Name:</span> <span className="font-semibold text-slate-800">{AGENCY_DETAILS.bank.beneficiary}</span></div>
+                                  <div className="flex justify-between pr-2"><span className="font-medium text-slate-600">Account No:</span> <span className="font-mono font-semibold text-slate-800">{AGENCY_DETAILS.bank.accountNo}</span></div>
+                                  <div className="flex justify-between pr-2"><span className="font-medium text-slate-600">IFSC Code:</span> <span className="font-mono font-semibold text-slate-800">{AGENCY_DETAILS.bank.ifsc}</span></div>
+                                  <div className="flex justify-between pr-2"><span className="font-medium text-slate-600">Bank & Branch:</span> <span className="font-semibold text-slate-800">{AGENCY_DETAILS.bank.bankName}, {AGENCY_DETAILS.bank.branch}</span></div>
+                                  <div className="flex justify-between pr-2"><span className="font-medium text-slate-600">UPI ID:</span> <span className="font-mono font-semibold text-[#00adc8]">{AGENCY_DETAILS.bank.upiId}</span></div>
+                                </div>
+                                {(formData.paymentStatus === 'Partial Received' || formData.paymentStatus === 'Full Payment Received') && (
+                                  <div
+                                    onClick={() => setShowPaymentQrModal(true)}
+                                    className="flex flex-col items-center justify-center p-1 bg-white rounded border border-[#00adc8]/40 shadow-sm cursor-pointer hover:border-[#00adc8] transition-all flex-shrink-0 w-[68px]"
+                                    title="Click to view full payment QR popup"
+                                  >
+                                    <img
+                                      src={AGENCY_DETAILS.bank.qrImage || '/images/prittal-payment-qr.png'}
+                                      alt="Prittal Payment QR"
+                                      className="w-[52px] h-[52px] object-contain rounded"
+                                    />
+                                    <div className="text-[6.5px] font-bold text-[#00adc8] uppercase tracking-wider mt-0.5 text-center leading-none">
+                                      Scan & Pay
+                                    </div>
+                                    <div className="text-[6px] text-slate-500 font-medium text-center leading-none mt-0.5">
+                                      All UPI Apps
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                              <div className="flex justify-between"><span className="font-medium text-slate-600">Name:</span> <span className="font-semibold text-slate-800">{AGENCY_DETAILS.bank.beneficiary}</span></div>
-                              <div className="flex justify-between"><span className="font-medium text-slate-600">Account No:</span> <span className="font-mono font-semibold text-slate-800">{AGENCY_DETAILS.bank.accountNo}</span></div>
-                              <div className="flex justify-between"><span className="font-medium text-slate-600">IFSC Code:</span> <span className="font-mono font-semibold text-slate-800">{AGENCY_DETAILS.bank.ifsc}</span></div>
-                              <div className="flex justify-between"><span className="font-medium text-slate-600">Bank & Branch:</span> <span className="font-semibold text-slate-800">{AGENCY_DETAILS.bank.bankName}, {AGENCY_DETAILS.bank.branch}</span></div>
                             </div>
                           </div>
                         </div>
@@ -3978,6 +4117,156 @@ ${AGENCY_DETAILS.website}`;
         billingCycle={selectedPkg?.billingCycle || 'monthly'}
         onSelectTier={handleSelectCustomTier}
       />
+
+      {/* Sleek Payment QR Modal Popup */}
+      {showPaymentQrModal && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+          <div className={`relative w-full max-w-sm max-h-[90vh] flex flex-col rounded-2xl shadow-2xl border overflow-hidden transition-all ${
+            isDark ? 'bg-[#0f172a] border-slate-700 text-white' : 'bg-white border-slate-200 text-slate-900'
+          }`}>
+            {/* Modal Header */}
+            <div className={`flex items-center justify-between px-5 py-3.5 border-b flex-shrink-0 ${
+              isDark ? 'border-slate-800 bg-slate-900/60' : 'border-slate-100 bg-slate-50/80'
+            }`}>
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-[#11b1d0]/15 flex items-center justify-center text-[#11b1d0]">
+                  <QrCode className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-extrabold tracking-tight">Payment QR & Details</h4>
+                  <p className="text-[10px] text-slate-400 font-medium">Scan with any UPI app to pay</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPaymentQrModal(false)}
+                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                  isDark ? 'hover:bg-slate-800 text-slate-400 hover:text-white' : 'hover:bg-slate-200 text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Content - Scrollable to see all details */}
+            <div className="p-4 space-y-3.5 overflow-y-auto flex-1 min-h-0 overscroll-contain pb-6">
+              {/* Dynamic Amount Banner */}
+              <div className={`p-3 rounded-xl border flex items-center justify-between ${
+                formData.paymentStatus === 'Partial Received'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-500'
+                  : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'
+              }`}>
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider block">
+                    {formData.paymentStatus === 'Partial Received' ? 'Advance Payment (Partial)' : 'Total Payable Amount'}
+                  </span>
+                  <span className="text-lg font-black tracking-tight">
+                    ₹{formatINR(payableAmount)}
+                  </span>
+                </div>
+                {formData.paymentStatus === 'Partial Received' && (
+                  <div className="text-right text-[10px] text-slate-400">
+                    <span>Remaining Balance</span>
+                    <div className="font-bold text-slate-300">₹{formatINR(financialData.balanceAmount)}</div>
+                  </div>
+                )}
+              </div>
+
+              {/* QR Image Card */}
+              <div className="flex flex-col items-center justify-center bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
+                <img
+                  src={AGENCY_DETAILS.bank.qrImage || '/images/prittal-payment-qr.png'}
+                  alt="Prittal ICICI Bank Payment QR"
+                  className="w-full max-w-[240px] h-auto object-contain rounded"
+                />
+              </div>
+
+              {/* UPI ID Copy Card */}
+              <div className={`p-3 rounded-xl border flex items-center justify-between gap-2 ${
+                isDark ? 'bg-slate-800/60 border-slate-700' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <div className="min-w-0 flex-1">
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">UPI ID</span>
+                  <div className="font-mono text-xs font-bold text-[#11b1d0] truncate select-all">
+                    {AGENCY_DETAILS.bank.upiId}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleCopyUpi}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer flex-shrink-0 ${
+                    copiedUpi
+                      ? 'bg-emerald-600 text-white'
+                      : isDark
+                        ? 'bg-slate-700 hover:bg-slate-600 text-white'
+                        : 'bg-slate-200 hover:bg-slate-300 text-slate-800'
+                  }`}
+                >
+                  {copiedUpi ? (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy UPI</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Bank Account Details Summary for NEFT / RTGS */}
+              <div className={`p-3 rounded-xl border text-[11px] space-y-1 ${
+                isDark ? 'bg-slate-800/40 border-slate-700/80 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-700'
+              }`}>
+                <div className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1">
+                  Direct Bank Transfer (NEFT / IMPS / RTGS)
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Beneficiary:</span>
+                  <span className="font-semibold text-right">{AGENCY_DETAILS.bank.beneficiary}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">A/C Number:</span>
+                  <span className="font-mono font-semibold">{AGENCY_DETAILS.bank.accountNo}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">IFSC Code:</span>
+                  <span className="font-mono font-semibold">{AGENCY_DETAILS.bank.ifsc}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-400">Bank & Branch:</span>
+                  <span className="font-semibold">{AGENCY_DETAILS.bank.bankName}, {AGENCY_DETAILS.bank.branch}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer Actions */}
+            <div className={`flex items-center justify-between p-3.5 border-t gap-2 flex-shrink-0 ${
+              isDark ? 'border-slate-800 bg-slate-900/60' : 'border-slate-100 bg-slate-50/80'
+            }`}>
+              <button
+                type="button"
+                onClick={handleDownloadQr}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer ${
+                  isDark ? 'bg-slate-800 hover:bg-slate-700 text-slate-200' : 'bg-slate-200 hover:bg-slate-300 text-slate-800'
+                }`}
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Save QR</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowPaymentQrModal(false)}
+                className="px-5 py-1.5 rounded-xl text-xs font-bold bg-[#11b1d0] hover:bg-[#009bb8] text-white transition-all shadow-md cursor-pointer"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

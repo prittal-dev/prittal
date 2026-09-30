@@ -19,6 +19,8 @@ export const AGENCY_DETAILS = {
     ifsc: 'ICIC0000367',
     bankName: 'ICICI Bank',
     branch: 'Rohini sec 11',
+    upiId: 'eazypay.571785262@icici',
+    qrImage: '/images/prittal-payment-qr.png',
   },
 };
 
@@ -220,9 +222,22 @@ export const formatINR = (amt) => {
 };
 
 /**
- * Generates a unique Proforma Invoice number matching the CRM standard
+ * Formats a clean, readable brand slug from company or brand name
  */
-export const generateDocCode = () => {
+export const formatBrandSlug = (name) => {
+  if (!name || typeof name !== 'string') return '';
+  const cleaned = name.trim().toUpperCase().replace(/[^A-Z0-9\s]/g, '');
+  if (!cleaned) return '';
+  const words = cleaned.split(/\s+/).filter(Boolean).filter(w => !['PVT', 'LTD', 'LIMITED', 'PRIVATE', 'CORP', 'LLP', 'INC', 'PRITTAL'].includes(w));
+  if (words.length === 0) return 'CLIENT';
+  const candidate = words.slice(0, 2).join('').substring(0, 14);
+  return candidate || words[0].substring(0, 12);
+};
+
+/**
+ * Generates a unique Proforma Invoice number matching the CRM standard with client brand prefix
+ */
+export const generateDocCode = (brandOrCompanyName = '') => {
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -231,7 +246,8 @@ export const generateDocCode = () => {
   let currentNum = parseInt(localStorage.getItem('prittal_invoice_seq') || '201', 10);
   localStorage.setItem('prittal_invoice_seq', (currentNum + 1).toString());
   
-  return `PI-PRITTAL-${year}${month}${day}-${currentNum}`;
+  const slug = formatBrandSlug(brandOrCompanyName) || 'CLIENT';
+  return `PI-${slug}-${year}${month}${day}-${currentNum}`;
 };
 
 /**
@@ -793,11 +809,79 @@ export const getParseableAdditionalServicesList = (packageInfo, dataList = packa
  * Resolves the actual plan quotas based on the soldPlanName by looking up packagesData.
  * Falls back to default limits if not found.
  */
-export const getPlanBaseQuotasByPlanName = (soldPlanName, dataList = packagesData) => {
-  const defaultQuotas = { creatives: 4, aiReels: 4, carousels: 0, longVideos: 0, festival: true, blogs: 0, gmb: false };
-  if (!soldPlanName || typeof soldPlanName !== 'string') return defaultQuotas;
+export const getPlanBaseQuotasByPlanName = (soldPlanNameOrProject, dataList = packagesData, extraText = '') => {
+  const defaultQuotas = { creatives: 8, aiReels: 4, carousels: 0, longVideos: 0, festival: true, blogs: 0, gmb: false };
+  if (!soldPlanNameOrProject) return defaultQuotas;
 
-  const normalized = soldPlanName.toLowerCase();
+  let planText = '';
+  let projectObj = null;
+
+  if (typeof soldPlanNameOrProject === 'object' && soldPlanNameOrProject !== null) {
+    projectObj = soldPlanNameOrProject;
+    planText = `${projectObj.soldPlanName || ''} ${projectObj.name || ''} ${projectObj.finalRemarks || ''} ${projectObj.remarks || ''} ${projectObj.servicesBrief || ''} ${projectObj.clientRemark || ''} ${(projectObj.services || []).join(' ')} ${extraText}`.toLowerCase();
+    
+    // Check if project already has explicit numbers
+    const dq = projectObj.deliverablesQuota;
+    const cnt = projectObj.content;
+    const cr = dq?.creatives ?? cnt?.creatives;
+    const rl = dq?.aiReels ?? dq?.basicReels ?? cnt?.shorts ?? cnt?.aiVideos;
+    if (cr !== undefined && cr !== null && Number(cr) > 0) {
+      defaultQuotas.creatives = Number(cr);
+    }
+    if (rl !== undefined && rl !== null && Number(rl) > 0) {
+      defaultQuotas.aiReels = Number(rl);
+    }
+    if (dq?.carousels !== undefined || cnt?.carousels !== undefined) {
+      defaultQuotas.carousels = Number(dq?.carousels ?? cnt?.carousels ?? 0);
+    }
+    if (dq?.festival !== undefined || cnt?.festivalContent !== undefined) {
+      defaultQuotas.festival = Boolean(dq?.festival ?? cnt?.festivalContent);
+    }
+  } else {
+    planText = `${String(soldPlanNameOrProject || '')} ${extraText}`.toLowerCase();
+  }
+
+  // Check for custom cadence in text (e.g. "Creative Posts Per Week (2)" -> 8/month, "AI Reels (1)" -> 4/month)
+  const weeklyCreativeMatch = planText.match(/creative(?:\s*posts?)?\s*(?:per\s*week|\/\s*week|\/\s*wk)[^\d]*\(?(\d+)\)?/i) ||
+                              planText.match(/\(?(\d+)\)?\s*creative(?:\s*posts?)?\s*(?:per\s*week|\/\s*week|\/\s*wk)/i);
+  if (weeklyCreativeMatch) {
+    const perWeek = parseInt(weeklyCreativeMatch[1], 10);
+    if (!isNaN(perWeek) && perWeek > 0) {
+      defaultQuotas.creatives = perWeek * 4;
+    }
+  } else {
+    const monthlyCreativeMatch = planText.match(/(\d+)\s*creatives?(?:\s*per\s*month|\/\s*month|\/\s*mo)?/i);
+    if (monthlyCreativeMatch) {
+      const perMonth = parseInt(monthlyCreativeMatch[1], 10);
+      if (!isNaN(perMonth) && perMonth > 0) defaultQuotas.creatives = perMonth;
+    }
+  }
+
+  const weeklyReelMatch = planText.match(/ai\s*reels?(?:\s*per\s*week|\/\s*week|\/\s*wk)?[^\d]*\(?(\d+)\)?/i) ||
+                          planText.match(/\(?(\d+)\)?\s*ai\s*reels?(?:\s*per\s*week|\/\s*week|\/\s*wk)?/i);
+  if (weeklyReelMatch) {
+    const num = parseInt(weeklyReelMatch[1], 10);
+    if (!isNaN(num) && num > 0) {
+      defaultQuotas.aiReels = num <= 6 ? num * 4 : num;
+    }
+  }
+
+  const carouselMatch = planText.match(/carousel[^\d]*\(?(\d+)\)?/i);
+  if (carouselMatch) {
+    const num = parseInt(carouselMatch[1], 10);
+    if (!isNaN(num) && num > 0) defaultQuotas.carousels = num;
+  }
+
+  if (planText.includes('festival') || planText.includes('occasion')) {
+    defaultQuotas.festival = true;
+  }
+
+  // If weekly creative match was found, return immediately as custom quota
+  if (weeklyCreativeMatch) {
+    return defaultQuotas;
+  }
+
+  const normalized = planText;
   
   // Find category and tier
   let matchedCat = null;
@@ -816,9 +900,9 @@ export const getPlanBaseQuotasByPlanName = (soldPlanName, dataList = packagesDat
     }
   }
 
-  // If no tier is matched but category is matched, assume standard or standard equivalent
+  // If no tier is matched but category is matched, assume standard or popular equivalent
   if (matchedCat && !matchedTier && matchedCat.tiers.length > 0) {
-     matchedTier = matchedCat.tiers.find(t => t.isPopular) || matchedCat.tiers[0];
+     matchedTier = matchedCat.tiers.find(t => t.isPopular) || matchedCat.tiers[1] || matchedCat.tiers[0];
   }
 
   if (!matchedCat || !matchedCat.featureGroups || !matchedTier) return defaultQuotas;
@@ -846,7 +930,7 @@ export const getPlanBaseQuotasByPlanName = (soldPlanName, dataList = packagesDat
         const num = parseInt(valStr, 10);
         if (!isNaN(num)) quotas.blogs = num;
       }
-      if (feat.name.includes('Stories Per Week')) {
+      if (feat.name.includes('Stories')) {
         const num = parseInt(valStr, 10);
         if (!isNaN(num)) quotas.stories = num * 4;
       }

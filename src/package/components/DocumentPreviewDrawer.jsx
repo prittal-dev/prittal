@@ -3588,9 +3588,7 @@ ${AGENCY_DETAILS.website}`;
                               <div className="flex items-center text-[10.5px] mt-1">
                                 <span className="font-medium text-slate-700 mr-1.5">Contract Term:</span>
                                 <span className="font-semibold text-slate-800 border-b border-slate-400 flex-1 px-1 min-h-[16px]">
-                                  {financialData.cycles > 1 
-                                    ? `${selectedPkg?.billingCycle === 'quarterly' ? 'Quarterly (3 Months)' : selectedPkg?.billingCycle === 'half-yearly' ? 'Half Yearly (6 Months)' : 'Annual (12 Months)'} • ₹${formatINR(financialData.monthlyNetReceivable || financialData.monthlyTotal)}/mo recurring`
-                                    : (selectedPkg?.billingCycle === 'one-time' ? 'One-Time Project' : 'Monthly Retainer')}
+                                  {selectedPkg?.billingCycle === 'quarterly' ? 'Quarterly (3 Months)' : selectedPkg?.billingCycle === 'half-yearly' ? 'Half Yearly (6 Months)' : selectedPkg?.billingCycle === 'annual' ? 'Annual (12 Months)' : selectedPkg?.billingCycle === 'one-time' ? 'One-Time Project' : 'Monthly'}
                                 </span>
                               </div>
                             </div>
@@ -3634,26 +3632,21 @@ ${AGENCY_DETAILS.website}`;
                                 <span>AMOUNT (INR)</span>
                               </div>
                               <div className="divide-y divide-slate-200">
-                                {financialData.discountAmount > 0 ? (
+                                <div className="flex justify-between px-2.5 py-1.5 text-[11px] font-normal text-slate-700">
+                                  <span>Package Amount</span>
+                                  <span className="font-semibold text-slate-900">₹{formatINR(financialData.baseAmount)}</span>
+                                </div>
+                                {financialData.discountAmount > 0 && (
                                   <>
-                                    <div className="flex justify-between px-2.5 py-1 text-[10.5px] font-normal text-slate-600">
-                                      <span>Package Standard Price</span>
-                                      <span className="font-semibold text-slate-700 line-through">₹{formatINR(financialData.originalBaseAmount)}</span>
-                                    </div>
                                     <div className="flex justify-between px-2.5 py-1 text-[10.5px] font-bold text-emerald-700 bg-emerald-50/60">
                                       <span>Special Discount / Offer</span>
                                       <span>- ₹{formatINR(financialData.discountAmount)}</span>
                                     </div>
                                     <div className="flex justify-between px-2.5 py-1.5 text-[11px] font-semibold text-slate-800">
                                       <span>Net Taxable Base Amount</span>
-                                      <span className="font-bold text-slate-900">₹{formatINR(financialData.baseAmount)}</span>
+                                      <span className="font-bold text-slate-900">₹{formatINR(financialData.baseAfterDiscount)}</span>
                                     </div>
                                   </>
-                                ) : (
-                                  <div className="flex justify-between px-2.5 py-1.5 text-[11px] font-normal text-slate-700">
-                                    <span>Taxable Base Amount</span>
-                                    <span className="font-semibold text-slate-900">₹{formatINR(financialData.baseAmount)}</span>
-                                  </div>
                                 )}
                                 <div className="flex justify-between px-2.5 py-1.5 text-[11px] font-normal text-slate-700">
                                   <span>GST ( {financialData.gstRate}% )</span>
@@ -3675,12 +3668,7 @@ ${AGENCY_DETAILS.website}`;
                                     <span>₹{formatINR(financialData.netReceivable)}</span>
                                   </div>
                                 )}
-                                {financialData.cycles > 1 && (
-                                  <div className="flex justify-between px-2.5 py-1 text-[10px] font-bold text-teal-700 bg-teal-50/70 border-t border-teal-100">
-                                    <span>Sales Sheet Entry (Cycle 1 of {financialData.cycles})</span>
-                                    <span>₹{formatINR(financialData.monthlyNetReceivable || financialData.monthlyTotal)} / mo</span>
-                                  </div>
-                                )}
+
                                 <div className="flex justify-between px-2.5 py-1.5 text-[11px] font-normal text-slate-700">
                                   <span>Received Amount</span>
                                   <span className={financialData.receivedAmount > 0 ? "font-semibold text-emerald-600" : "font-normal text-slate-500"}>

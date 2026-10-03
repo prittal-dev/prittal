@@ -15,6 +15,7 @@ import Footer from './Footer';
 import ServiceHeroVisual from './ServiceHeroVisual';
 import FaqSection from './FaqSection';
 import { servicesData } from '../data/servicesData';
+import { updateSEOTags } from '../utils/seo';
 
 export default function ServiceDetailPage({
   service,
@@ -25,8 +26,15 @@ export default function ServiceDetailPage({
   isDark,
   onToggleTheme
 }) {
-  // Scroll to top whenever the service changes
   useEffect(() => {
+    if (service) {
+      updateSEOTags({
+        title: service.metaTitle || `${service.displayTitle || service.title} Services — Prittal`,
+        description: service.metaDescription || service.lede || service.desc,
+        path: `/services/${service.slug || service.id}`,
+        type: 'website'
+      });
+    }
     window.scrollTo({ top: 0, behavior: 'auto' });
     if (window.lenis) {
       window.lenis.scrollTo(0, { immediate: true });

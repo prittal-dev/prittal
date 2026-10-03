@@ -1,4 +1,5 @@
 {
+  "cleanUrls": true,
   "redirects": [
     {
       "source": "/(.*).php",
@@ -22,6 +23,54 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/about-us",
+      "destination": "/about-us/index.html"
+    },
+    {
+      "source": "/services",
+      "destination": "/services/index.html"
+    },
+    {
+      "source": "/portfolio",
+      "destination": "/portfolio/index.html"
+    },
+    {
+      "source": "/package",
+      "destination": "/package/index.html"
+    },
+    {
+      "source": "/packages",
+      "destination": "/package/index.html"
+    },
+    {
+      "source": "/thank-you",
+      "destination": "/thank-you/index.html"
+    },
+    {
+      "source": "/services/brand-design",
+      "destination": "/services/brand-design/index.html"
+    },
+    {
+      "source": "/services/digital-marketing",
+      "destination": "/services/digital-marketing/index.html"
+    },
+    {
+      "source": "/services/performance-marketing",
+      "destination": "/services/performance-marketing/index.html"
+    },
+    {
+      "source": "/services/video-production",
+      "destination": "/services/video-production/index.html"
+    },
+    {
+      "source": "/services/events-activations",
+      "destination": "/services/events-activations/index.html"
+    },
+    {
+      "source": "/services/marketplace-growth",
+      "destination": "/services/marketplace-growth/index.html"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"

@@ -24,6 +24,7 @@ import {
 import Navbar from './Navbar';
 import Footer from './Footer';
 import { CrowdCanvas } from './v1/skiper39';
+import { updateSEOTags } from '../utils/seo';
 
 // Client Logos from assets
 import xseedLogo from '../../assets/xseed.png';
@@ -46,6 +47,12 @@ export default function AboutUsPage({
   const [isCardHovered, setIsCardHovered] = useState(false);
 
   useEffect(() => {
+    updateSEOTags({
+      title: 'Best Branding Firm & Creative Agency | Prittal',
+      description: 'Prittal is a premier branding firm in USA, UAE & India. Recognized among the best creative agencies for strategic brand identity design & business growth.',
+      path: '/about-us',
+      type: 'website'
+    });
     window.scrollTo({ top: 0, behavior: 'auto' });
     if (window.lenis) {
       window.lenis.scrollTo(0, { immediate: true });

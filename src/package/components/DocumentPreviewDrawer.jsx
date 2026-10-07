@@ -423,6 +423,7 @@ export const DocumentPreviewDrawer = ({
   // Client Details Form State (matching CRM Proforma Invoice fields)
   const [formData, setFormData] = useState({
     companyName: '',
+    brandName: '',
     name: '',
     designation: '',
     email: '',
@@ -505,6 +506,7 @@ export const DocumentPreviewDrawer = ({
       return {
         id: client.id || client._id,
         companyName: client.companyName || client.company || client.name || '',
+        brandName: client.brandName || client.displayName || client.companyName || client.company || '',
         name: client.contactPerson || client.clientName || client.name || '',
         designation: client.designation || 'Director',
         email: client.email || '',
@@ -521,6 +523,7 @@ export const DocumentPreviewDrawer = ({
       return {
         id: deal.id || deal._id,
         companyName: deal.companyName || deal.company || deal.clientName || '',
+        brandName: deal.brandName || deal.displayName || deal.companyName || deal.company || '',
         name: deal.contactPerson || deal.clientName || '',
         designation: deal.designation || 'Director',
         email: deal.clientEmail || deal.email || '',
@@ -547,6 +550,7 @@ export const DocumentPreviewDrawer = ({
         map.set(nameKey.toLowerCase(), {
           id: c.id || c._id || nameKey,
           companyName: c.companyName || c.company || c.brandName || '',
+          brandName: c.brandName || c.displayName || c.companyName || '',
           name: c.contactPerson || c.clientName || c.name || c.contact || '',
           designation: c.designation || c.roleTitle || 'Founder / Director',
           email: c.email || '',
@@ -596,7 +600,11 @@ export const DocumentPreviewDrawer = ({
   }, [clientOptions, clientSearchQuery]);
 
   const handleUpdateCompanyName = (newCompany) => {
-    setFormData(prev => ({ ...prev, companyName: newCompany }));
+    setFormData(prev => ({
+      ...prev,
+      companyName: newCompany,
+      brandName: (!prev.brandName || prev.brandName === prev.companyName) ? newCompany : prev.brandName
+    }));
     if (!dealCode) {
       setDocCode(prevCode => {
         const slug = formatBrandSlug(newCompany) || 'CLIENT';
@@ -615,8 +623,8 @@ export const DocumentPreviewDrawer = ({
     const company = c.companyName || c.name || '';
     if (!dealCode && company) {
       setDocCode(prevCode => {
-        const slug = formatBrandSlug(company) || 'CLIENT';
-        if (!prevCode) return generateDocCode(company);
+        const slug = formatBrandSlug(c.brandName || company) || 'CLIENT';
+        if (!prevCode) return generateDocCode(c.brandName || company);
         const parts = prevCode.split('-');
         if (parts.length >= 4 && parts[0] === 'PI') {
           return `PI-${slug}-${parts.slice(2).join('-')}`;
@@ -627,6 +635,7 @@ export const DocumentPreviewDrawer = ({
     setFormData(prev => ({
       ...prev,
       companyName: c.companyName || prev.companyName,
+      brandName: c.brandName || c.displayName || c.companyName || prev.brandName,
       name: c.name || prev.name,
       designation: c.designation || prev.designation || 'Director',
       email: c.email || prev.email,
@@ -1441,6 +1450,8 @@ ${AGENCY_DETAILS.website}`;
       const orderPayload = {
         proforma_invoice_no: docCode,
         company_name: formData.companyName || formData.name,
+        brand_name: formData.brandName || formData.companyName || formData.name,
+        brandName: formData.brandName || formData.companyName || formData.name,
         contact_person: formData.name,
         designation: formData.designation || 'Not Specified',
         client_email: formData.email,
@@ -1533,6 +1544,7 @@ ${AGENCY_DETAILS.website}`;
           type: 'package',
           name: formData.name || formData.companyName,
           company: formData.companyName,
+          brand: formData.brandName || formData.companyName,
           email: formData.email,
           phone: formData.phone,
           package: `${selectedPkg?.categoryTitle || 'Package Order'} (${selectedPkg?.tierName || 'Custom'})`,
@@ -2490,7 +2502,7 @@ ${AGENCY_DETAILS.website}`;
                   Advertiser & Billing Details (For Proforma Invoice)
                 </div>
 
-                {/* Row 1: Company Name / Advertiser Name */}
+                {/* Row 1: Company Name / Advertiser Name & Brand Name */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
@@ -2510,6 +2522,32 @@ ${AGENCY_DETAILS.website}`;
                     />
                   </div>
 
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className={`block text-[11px] font-extrabold uppercase tracking-wider ${
+                        isDark ? 'text-slate-300' : 'text-slate-700'
+                      }`}>
+                        Brand Name (For Production) *
+                      </label>
+                      <span className="text-[9.5px] font-bold text-emerald-500 uppercase tracking-wider">
+                        Production Onboarding
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={formData.brandName}
+                      onChange={(e) => setFormData({ ...formData, brandName: e.target.value })}
+                      placeholder="e.g. Apex Lifestyle (Displays in Production)"
+                      className={`w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] ${
+                        isDark ? 'bg-[#0c121e] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
+                      }`}
+                    />
+                  </div>
+                </div>
+
+                {/* Row 2: Contact Person & Designation & Official Work Email */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
                       isDark ? 'text-slate-300' : 'text-slate-700'
@@ -2538,10 +2576,7 @@ ${AGENCY_DETAILS.website}`;
                       />
                     </div>
                   </div>
-                </div>
 
-                {/* Row 2: Official Work Email & Phone */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
                       isDark ? 'text-slate-300' : 'text-slate-700'
@@ -2559,7 +2594,10 @@ ${AGENCY_DETAILS.website}`;
                       }`}
                     />
                   </div>
+                </div>
 
+                {/* Row 3: Mobile / WhatsApp Number & Billing Address */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
                       isDark ? 'text-slate-300' : 'text-slate-700'
@@ -2577,24 +2615,23 @@ ${AGENCY_DETAILS.website}`;
                       }`}
                     />
                   </div>
-                </div>
 
-                {/* Row 3: Billing Address */}
-                <div>
-                  <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
-                    isDark ? 'text-slate-300' : 'text-slate-700'
-                  }`}>
-                    Billing Address (Street / Office Address)
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                    placeholder="e.g. 402, DLF Tower B, Jasola"
-                    className={`w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] ${
-                      isDark ? 'bg-[#0c121e] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
-                    }`}
-                  />
+                  <div>
+                    <label className={`block text-[11px] font-extrabold uppercase tracking-wider mb-1 ${
+                      isDark ? 'text-slate-300' : 'text-slate-700'
+                    }`}>
+                      Billing Address (Street / Office Address)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      placeholder="e.g. 402, DLF Tower B, Jasola"
+                      className={`w-full px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium border focus:outline-none focus:ring-2 focus:ring-[#11b1d0] ${
+                        isDark ? 'bg-[#0c121e] text-white border-slate-700' : 'bg-white text-slate-900 border-slate-300'
+                      }`}
+                    />
+                  </div>
                 </div>
 
                 {/* Row 4: City, State, PIN Code */}
@@ -3407,9 +3444,12 @@ ${AGENCY_DETAILS.website}`;
                         {/* Company's Details (Underline Form Style) */}
                         <div className="space-y-1.5 text-[12px]">
                           <div className="flex items-center">
-                            <span className="font-semibold text-slate-700 whitespace-nowrap mr-2">Company Name:</span>
+                            <span className="font-semibold text-slate-700 whitespace-nowrap mr-2">Company / Brand:</span>
                             <span className="flex-1 border-b border-slate-400 px-1 font-semibold text-slate-900 min-h-[18px]">
                               {clientDisplayName}
+                              {formData.brandName && formData.brandName.trim() && formData.brandName.trim().toLowerCase() !== (formData.companyName || '').trim().toLowerCase() && (
+                                <span className="text-slate-500 font-normal ml-1.5">({formData.brandName})</span>
+                              )}
                             </span>
                           </div>
 

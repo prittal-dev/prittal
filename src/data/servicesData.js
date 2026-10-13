@@ -35,7 +35,7 @@ import {
 } from 'lucide-react';
 
 export const servicesData = [
-  {
+{
     id: 'brand-design',
     slug: 'brand-design',
     metaTitle: 'Brand Identity & Design Agency | Branding Solutions - Prittal',
@@ -157,7 +157,7 @@ export const servicesData = [
       }
     ]
   },
-  {
+{
     id: 'digital-marketing',
     slug: 'digital-marketing',
     metaTitle: 'Digital Marketing & SEO Agency | Growth Solutions - Prittal',
@@ -269,7 +269,7 @@ export const servicesData = [
       }
     ]
   },
-  {
+{
     id: 'performance-marketing',
     slug: 'performance-marketing',
     metaTitle: 'Performance Marketing & Paid Media Agency | Growth - Prittal',
@@ -381,13 +381,135 @@ export const servicesData = [
       }
     ]
   },
-  {
+{
+    id: 'marketplace-growth',
+    slug: 'marketplace-growth',
+    metaTitle: 'E-commerce & Marketplace Growth Agency | Prittal',
+    metaDescription: 'Prittal specializes in e-commerce branding, website design, and marketplace optimization to boost sales and listing performance worldwide. Explore solutions.',
+    num: '04',
+    eyebrow: 'Service 04',
+    badge: 'E-Commerce & Q-Commerce',
+    icon: ShoppingBag,
+    title: 'Marketplace growth',
+    displayTitle: 'Marketplace Growth',
+    desc: 'Digital growth across Amazon, Flipkart, Meesho — we get your products found and bought.',
+    lede: 'Amazon, Flipkart, Meesho — we get your products found and bought. Marketplace presence managed like its own channel, not an afterthought.',
+    stats: [
+      { label: 'Listing Conversion', value: '+45%' },
+      { label: 'Channel Coverage', value: 'Top 5 E-Com' },
+      { label: 'Q-Commerce Live', value: 'Blinkit/Zepto' }
+    ],
+    deliverables: [
+      'Amazon & Flipkart Scaling',
+      'Listing & A+ Content Opt.',
+      'Quick-Commerce Setup'
+    ],
+    capabilities: [
+      {
+        icon: ShoppingCart,
+        title: 'Amazon and Flipkart scaling',
+        desc: 'Catalog, ads and inventory strategy built to grow share on the marketplaces that matter most to you.',
+        tags: ['Sponsored Brand & Product Ads', 'Buy Box Defense', 'Inventory Forecasting']
+      },
+      {
+        icon: FileText,
+        title: 'Listing and A+ content optimization',
+        desc: 'Titles, images and A+ content rebuilt around what actually drives clicks and conversion in search.',
+        tags: ['A+ Brand Story Modules', 'Infographic Gallery', 'Keyword Indexed Titles']
+      },
+      {
+        icon: Zap,
+        title: 'Quick-commerce setup',
+        desc: 'Onboarding and listing management for Blinkit, Zepto, Instamart and other quick-commerce platforms.',
+        tags: ['Fast Onboarding', 'City Dark-Store Fill', 'Banner Placements']
+      },
+      {
+        icon: Star,
+        title: 'Reviews and ratings management',
+        desc: 'Systems to build review volume and respond to feedback before it affects your buy box.',
+        tags: ['Review Ingestion', 'Customer Resolution', 'Rating Protection']
+      }
+    ],
+    process: [
+      {
+        num: '01',
+        name: 'Audit',
+        desc: 'Review current listings, pricing and marketplace performance.',
+        deliverable: 'Listing Health & Competitor Gap Analysis'
+      },
+      {
+        num: '02',
+        name: 'Optimize',
+        desc: 'Rebuild listings, content and keyword targeting.',
+        deliverable: 'Rebuilt Titles, Images & A+ Modules'
+      },
+      {
+        num: '03',
+        name: 'Advertise',
+        desc: 'Run marketplace ad campaigns tied to margin, not just visibility.',
+        deliverable: 'Targeted PPC Ads & Keyword Bid Matrix'
+      },
+      {
+        num: '04',
+        name: 'Expand',
+        desc: 'Add new marketplaces and quick-commerce platforms as volume proves out.',
+        deliverable: 'Multi-Channel Scaling & Q-Comm Rollout'
+      }
+    ],
+    closing: {
+      heading: 'Ready to talk marketplace growth?',
+      desc: 'Tell us where you\'re stuck and we\'ll tell you honestly if this is the right service to start with.'
+    },
+    faqs: [
+      {
+        id: 'mg-1',
+        question: 'What does your Marketplace Growth service include?',
+        answer: 'We manage your marketplace presence across platforms like Amazon, Flipkart, Meesho, and quick-commerce channels, covering listings, content, advertising, pricing, and optimization.'
+      },
+      {
+        id: 'mg-2',
+        question: 'Which marketplaces do you manage?',
+        answer: 'We work across major marketplaces including Amazon, Flipkart, Meesho, and quick-commerce platforms such as Blinkit, Zepto, and Instamart.'
+      },
+      {
+        id: 'mg-3',
+        question: 'Can you optimize my existing product listings?',
+        answer: 'Yes. We optimize product titles, descriptions, images, keywords, enhanced content, and other listing elements to improve visibility and conversions.'
+      },
+      {
+        id: 'mg-4',
+        question: 'Do you manage Amazon and Flipkart advertising?',
+        answer: 'Yes. We can manage marketplace advertising and PPC campaigns, including campaign strategy, keyword targeting, budget optimization, and performance tracking.'
+      },
+      {
+        id: 'mg-5',
+        question: 'Can you help improve my product\'s marketplace ranking?',
+        answer: 'Yes. We use a combination of listing optimization, keyword strategy, advertising, pricing, inventory management, and performance analysis to improve marketplace visibility.'
+      },
+      {
+        id: 'mg-6',
+        question: 'Do you manage pricing and inventory across marketplaces?',
+        answer: 'Yes. We help monitor pricing, stock levels, and product availability to support sales performance and reduce missed opportunities.'
+      },
+      {
+        id: 'mg-7',
+        question: 'Do you provide quick-commerce marketplace support?',
+        answer: 'Yes. We can help brands establish and optimize their presence across platforms such as Blinkit, Zepto, and Instamart, including product visibility and promotional placements.'
+      },
+      {
+        id: 'mg-8',
+        question: 'How do you measure Marketplace Growth?',
+        answer: 'We track metrics such as sales, conversion rate, marketplace visibility, advertising performance, product rankings, customer reviews, and overall revenue growth.'
+      }
+    ]
+  },
+{
     id: 'video-production',
     slug: 'video-production-and-shoots',
     metaTitle: 'AI Video Production Company | Creative Video Solutions',
     metaDescription: 'Prittal is a leading AI video production agency, creating AI-powered videos, UGC content and creative visual solutions that help brands engage and grow.',
-    num: '04',
-    eyebrow: 'Service 04',
+    num: '05',
+    eyebrow: 'Service 05',
     badge: 'Cinematic & High-Retention',
     icon: Video,
     title: 'Video production',
@@ -503,13 +625,13 @@ export const servicesData = [
       }
     ]
   },
-  {
+{
     id: 'events-activations',
     slug: 'events-and-activations',
     metaTitle: 'Event Marketing & Brand Activation Agency | Prittal',
     metaDescription: 'Prittal creates immersive corporate event experiences and brand activations that engage audiences and build brand equity worldwide. Partner with us today.',
-    num: '05',
-    eyebrow: 'Service 05',
+    num: '06',
+    eyebrow: 'Service 06',
     badge: 'Experiential & PR Events',
     icon: Calendar,
     title: 'Events and activations',
@@ -624,129 +746,8 @@ export const servicesData = [
         answer: 'We can measure factors such as attendance, creator and media reach, audience engagement, content performance, brand visibility, and overall campaign impact.'
       }
     ]
-  },
-  {
-    id: 'marketplace-growth',
-    slug: 'marketplace-growth',
-    metaTitle: 'E-commerce & Marketplace Growth Agency | Prittal',
-    metaDescription: 'Prittal specializes in e-commerce branding, website design, and marketplace optimization to boost sales and listing performance worldwide. Explore solutions.',
-    num: '06',
-    eyebrow: 'Service 06',
-    badge: 'E-Commerce & Q-Commerce',
-    icon: ShoppingBag,
-    title: 'Marketplace growth',
-    displayTitle: 'Marketplace Growth',
-    desc: 'Digital growth across Amazon, Flipkart, Meesho — we get your products found and bought.',
-    lede: 'Amazon, Flipkart, Meesho — we get your products found and bought. Marketplace presence managed like its own channel, not an afterthought.',
-    stats: [
-      { label: 'Listing Conversion', value: '+45%' },
-      { label: 'Channel Coverage', value: 'Top 5 E-Com' },
-      { label: 'Q-Commerce Live', value: 'Blinkit/Zepto' }
-    ],
-    deliverables: [
-      'Amazon & Flipkart Scaling',
-      'Listing & A+ Content Opt.',
-      'Quick-Commerce Setup'
-    ],
-    capabilities: [
-      {
-        icon: ShoppingCart,
-        title: 'Amazon and Flipkart scaling',
-        desc: 'Catalog, ads and inventory strategy built to grow share on the marketplaces that matter most to you.',
-        tags: ['Sponsored Brand & Product Ads', 'Buy Box Defense', 'Inventory Forecasting']
-      },
-      {
-        icon: FileText,
-        title: 'Listing and A+ content optimization',
-        desc: 'Titles, images and A+ content rebuilt around what actually drives clicks and conversion in search.',
-        tags: ['A+ Brand Story Modules', 'Infographic Gallery', 'Keyword Indexed Titles']
-      },
-      {
-        icon: Zap,
-        title: 'Quick-commerce setup',
-        desc: 'Onboarding and listing management for Blinkit, Zepto, Instamart and other quick-commerce platforms.',
-        tags: ['Fast Onboarding', 'City Dark-Store Fill', 'Banner Placements']
-      },
-      {
-        icon: Star,
-        title: 'Reviews and ratings management',
-        desc: 'Systems to build review volume and respond to feedback before it affects your buy box.',
-        tags: ['Review Ingestion', 'Customer Resolution', 'Rating Protection']
-      }
-    ],
-    process: [
-      {
-        num: '01',
-        name: 'Audit',
-        desc: 'Review current listings, pricing and marketplace performance.',
-        deliverable: 'Listing Health & Competitor Gap Analysis'
-      },
-      {
-        num: '02',
-        name: 'Optimize',
-        desc: 'Rebuild listings, content and keyword targeting.',
-        deliverable: 'Rebuilt Titles, Images & A+ Modules'
-      },
-      {
-        num: '03',
-        name: 'Advertise',
-        desc: 'Run marketplace ad campaigns tied to margin, not just visibility.',
-        deliverable: 'Targeted PPC Ads & Keyword Bid Matrix'
-      },
-      {
-        num: '04',
-        name: 'Expand',
-        desc: 'Add new marketplaces and quick-commerce platforms as volume proves out.',
-        deliverable: 'Multi-Channel Scaling & Q-Comm Rollout'
-      }
-    ],
-    closing: {
-      heading: 'Ready to talk marketplace growth?',
-      desc: 'Tell us where you\'re stuck and we\'ll tell you honestly if this is the right service to start with.'
-    },
-    faqs: [
-      {
-        id: 'mg-1',
-        question: 'What does your Marketplace Growth service include?',
-        answer: 'We manage your marketplace presence across platforms like Amazon, Flipkart, Meesho, and quick-commerce channels, covering listings, content, advertising, pricing, and optimization.'
-      },
-      {
-        id: 'mg-2',
-        question: 'Which marketplaces do you manage?',
-        answer: 'We work across major marketplaces including Amazon, Flipkart, Meesho, and quick-commerce platforms such as Blinkit, Zepto, and Instamart.'
-      },
-      {
-        id: 'mg-3',
-        question: 'Can you optimize my existing product listings?',
-        answer: 'Yes. We optimize product titles, descriptions, images, keywords, enhanced content, and other listing elements to improve visibility and conversions.'
-      },
-      {
-        id: 'mg-4',
-        question: 'Do you manage Amazon and Flipkart advertising?',
-        answer: 'Yes. We can manage marketplace advertising and PPC campaigns, including campaign strategy, keyword targeting, budget optimization, and performance tracking.'
-      },
-      {
-        id: 'mg-5',
-        question: 'Can you help improve my product\'s marketplace ranking?',
-        answer: 'Yes. We use a combination of listing optimization, keyword strategy, advertising, pricing, inventory management, and performance analysis to improve marketplace visibility.'
-      },
-      {
-        id: 'mg-6',
-        question: 'Do you manage pricing and inventory across marketplaces?',
-        answer: 'Yes. We help monitor pricing, stock levels, and product availability to support sales performance and reduce missed opportunities.'
-      },
-      {
-        id: 'mg-7',
-        question: 'Do you provide quick-commerce marketplace support?',
-        answer: 'Yes. We can help brands establish and optimize their presence across platforms such as Blinkit, Zepto, and Instamart, including product visibility and promotional placements.'
-      },
-      {
-        id: 'mg-8',
-        question: 'How do you measure Marketplace Growth?',
-        answer: 'We track metrics such as sales, conversion rate, marketplace visibility, advertising performance, product rankings, customer reviews, and overall revenue growth.'
-      }
-    ]
   }
+
 ];
 
 export const getServiceById = (idOrSlug) => {

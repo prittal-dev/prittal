@@ -29,9 +29,9 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
     { name: 'Brand & Design', href: '/services/brand-design' },
     { name: 'Digital Marketing', href: '/services/digital-marketing' },
     { name: 'Performance Marketing', href: '/services/performance-marketing' },
+    { name: 'Marketplace Growth', href: '/services/marketplace-growth' },
     { name: 'Video Production', href: '/services/video-production' },
     { name: 'Events & Activations', href: '/services/events-activations' },
-    { name: 'Marketplace Growth', href: '/services/marketplace-growth' },
     { name: 'Work & Portfolio', href: '/work' },
     { name: 'About Us', href: '/about-us' },
   ];

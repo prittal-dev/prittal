@@ -8,6 +8,7 @@ import WhoIsThisForSection from './components/WhoIsThisForSection';
 import ServicesSection from './components/ServicesSection';
 import WorkSection, { blogPosts } from './components/WorkSection';
 import WhyPrittalTestimonials from './components/WhyPrittalTestimonials';
+import FaqSection from './components/FaqSection';
 import ContactDrawer from './components/ContactDrawer';
 import Footer from './components/Footer';
 import SideScrollNav from './components/SideScrollNav';
@@ -999,6 +1000,7 @@ export default function App() {
         <WhoIsThisForSection
           onOpenContact={(serviceName) => handleOpenContact(serviceName)}
           onExploreWork={() => handleGlobalNavigation('/work')}
+          onNavigate={handleGlobalNavigation}
         />
 
         {/* FOLD 3: Services Overview (6 Service Cards) */}
@@ -1015,6 +1017,12 @@ export default function App() {
 
         {/* FOLD 5: Why Prittal */}
         <WhyPrittalTestimonials
+          onOpenContact={(serviceName) => handleOpenContact(serviceName)}
+          onNavigate={handleGlobalNavigation}
+        />
+
+        {/* FOLD 6: Frequently Asked Questions (FAQ) */}
+        <FaqSection
           onOpenContact={(serviceName) => handleOpenContact(serviceName)}
         />
 

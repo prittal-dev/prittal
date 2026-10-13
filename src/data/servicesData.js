@@ -38,12 +38,14 @@ export const servicesData = [
   {
     id: 'brand-design',
     slug: 'brand-design',
+    metaTitle: 'Brand Identity & Design Agency | Branding Solutions - Prittal',
+    metaDescription: 'Prittal is a global brand design agency providing identity design, logo creation, and strategic positioning to build memorable brands. Get started today.',
     num: '01',
     eyebrow: 'Service 01',
     badge: 'Brand Identity & Systems',
     icon: Palette,
-    title: 'Brand and design',
-    displayTitle: 'Brand & Design',
+    title: 'Brand Strategy & Identity Design',
+    displayTitle: 'Brand Strategy & Identity Design',
     desc: 'Logo, identity, UI, packaging — we make you look like you mean business.',
     lede: 'Logo, identity, UI, packaging — we make you look like you mean business. Everything a brand touches, designed as one connected system instead of six disconnected assets.',
     stats: [
@@ -52,9 +54,9 @@ export const servicesData = [
       { label: 'Full IP Handover', value: 'Included' }
     ],
     deliverables: [
+      'Brand Strategy & Positioning',
       'Visual Identity Systems',
-      'Brand Guidelines',
-      'Web & App UI/UX'
+      'Brand Guidelines'
     ],
     capabilities: [
       {
@@ -158,15 +160,15 @@ export const servicesData = [
   {
     id: 'digital-marketing',
     slug: 'digital-marketing',
-    metaTitle: 'Best Digital Marketing Company | Strategy, Performance & Growth',
-    metaDescription: 'Prittal is a professional digital marketing company offering data-driven performance marketing, strategy and growth solutions for brands.',
+    metaTitle: 'Digital Marketing & SEO Agency | Growth Solutions - Prittal',
+    metaDescription: 'Prittal drives global business growth through strategic SEO, content marketing, and performance-driven digital campaigns. Scale your brand presence now.',
     num: '02',
     eyebrow: 'Service 02',
     badge: 'Organic Engine & Presence',
     icon: Share2,
     title: 'Digital marketing',
     displayTitle: 'Digital Marketing',
-    desc: 'Social media, SEO, content — showing up where your audience actually scrolls.',
+    desc: 'Digital growth strategy, social media, SEO, and content — showing up where your audience actually scrolls.',
     lede: 'Social media, SEO, content — showing up where your audience actually scrolls. We build the organic engine that keeps your brand visible between campaigns.',
     stats: [
       { label: 'Organic Reach', value: '3.5x+' },
@@ -270,15 +272,15 @@ export const servicesData = [
   {
     id: 'performance-marketing',
     slug: 'performance-marketing',
-    metaTitle: 'Performance Marketing Agency | ROI-Driven Growth',
-    metaDescription: 'Prittal is a leading performance marketing agency, delivering Google Ads, paid media and ROI-driven strategies that drive measurable business growth.',
+    metaTitle: 'Performance Marketing & Paid Media Agency | Growth - Prittal',
+    metaDescription: 'Prittal delivers data-driven performance marketing, paid media, and growth advertising to maximize ROI and scale global businesses. Request a consultation.',
     num: '03',
     eyebrow: 'Service 03',
     badge: 'Paid Ads & High ROAS',
     icon: Target,
     title: 'Performance marketing',
     displayTitle: 'Performance Marketing',
-    desc: 'Google Ads, Meta Ads, funnel optimization — turned into actual revenue.',
+    desc: 'Data-driven digital growth through Google Ads, Meta Ads, and funnel optimization.',
     lede: 'Google Ads, Meta Ads, funnel optimization — turned into actual revenue. We manage paid budgets with the discipline of a financial portfolio.',
     stats: [
       { label: 'Avg ROAS', value: '4.2x+' },
@@ -504,8 +506,8 @@ export const servicesData = [
   {
     id: 'events-activations',
     slug: 'events-and-activations',
-    metaTitle: 'Top Event Management Company | Experiential & Brand Activation',
-    metaDescription: 'Prittal is a professional event management and experiential marketing company, delivering strategic brand activations, corporate events and BTL experiences.',
+    metaTitle: 'Event Marketing & Brand Activation Agency | Prittal',
+    metaDescription: 'Prittal creates immersive corporate event experiences and brand activations that engage audiences and build brand equity worldwide. Partner with us today.',
     num: '05',
     eyebrow: 'Service 05',
     badge: 'Experiential & PR Events',
@@ -626,15 +628,15 @@ export const servicesData = [
   {
     id: 'marketplace-growth',
     slug: 'marketplace-growth',
-    metaTitle: 'Best Marketplace Growth Agency | Ecommerce Growth Consulting',
-    metaDescription: 'Prittal is a leading marketplace growth agency offering Amazon & Flipkart management, listing optimization, seller growth and ecommerce solutions.',
+    metaTitle: 'E-commerce & Marketplace Growth Agency | Prittal',
+    metaDescription: 'Prittal specializes in e-commerce branding, website design, and marketplace optimization to boost sales and listing performance worldwide. Explore solutions.',
     num: '06',
     eyebrow: 'Service 06',
     badge: 'E-Commerce & Q-Commerce',
     icon: ShoppingBag,
     title: 'Marketplace growth',
     displayTitle: 'Marketplace Growth',
-    desc: 'Amazon, Flipkart, Meesho — we get your products found and bought.',
+    desc: 'Digital growth across Amazon, Flipkart, Meesho — we get your products found and bought.',
     lede: 'Amazon, Flipkart, Meesho — we get your products found and bought. Marketplace presence managed like its own channel, not an afterthought.',
     stats: [
       { label: 'Listing Conversion', value: '+45%' },

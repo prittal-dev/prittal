@@ -3,7 +3,6 @@ import prittalLogo from '../../assets/Prittal_logo.png';
 import { 
   Facebook, 
   Linkedin, 
-  Twitter, 
   Instagram, 
   Youtube, 
   Globe, 
@@ -17,34 +16,30 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const socialLinks = [
-    { name: 'LinkedIn Page', icon: Linkedin, href: 'https://in.linkedin.com/company/prittalcreative', label: 'LinkedIn Page' },
-    { name: 'Instagram Profile', icon: Instagram, href: 'https://www.instagram.com/prittalcreative/', label: 'Instagram Profile' },
-    { name: 'Facebook Group', icon: Facebook, href: 'https://www.facebook.com/prittalcreative/', label: 'Facebook Page' },
-    { name: 'Twitter Feed', icon: Twitter, href: 'https://twitter.com', label: 'Twitter Feed' },
-    { name: 'YouTube Channel', icon: Youtube, href: 'https://www.youtube.com/@prittalcreativeagency5363', label: 'YouTube Channel' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://in.linkedin.com/company/prittalcreative', label: 'LinkedIn Page', ariaLabel: 'Prittal Creative Agency LinkedIn Page' },
+    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/prittalcreative/', label: 'Instagram Profile', ariaLabel: 'Prittal Creative Agency Instagram Profile' },
+    { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/prittalcreative/', label: 'Facebook Page', ariaLabel: 'Prittal Creative Agency Facebook Page' },
+    { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/@prittalcreativeagency5363', label: 'YouTube Channel', ariaLabel: 'Prittal Creative Agency YouTube Channel' },
   ];
 
   const quickLinks = [
     { name: 'Home', href: '/' },
     { name: 'Choose Your Stage', href: '/who-for' },
-    { name: 'Services', href: '/services' },
-    { name: 'Work', href: '/work' },
+    { name: 'Services Overview', href: '/services' },
+    { name: 'Brand & Design', href: '/services/brand-design' },
+    { name: 'Digital Marketing', href: '/services/digital-marketing' },
+    { name: 'Performance Marketing', href: '/services/performance-marketing' },
+    { name: 'Video Production', href: '/services/video-production' },
+    { name: 'Events & Activations', href: '/services/events-activations' },
+    { name: 'Marketplace Growth', href: '/services/marketplace-growth' },
+    { name: 'Work & Portfolio', href: '/work' },
     { name: 'About Us', href: '/about-us' },
   ];
 
-  const servicesList = [
-    { name: 'Brand & Design', href: '/services/brand-design' },
-    { name: 'Digital Marketing', href: '/services/best-digital-marketing-company-in-delhi' },
-    { name: 'Performance Marketing', href: '/services/performance-marketing' },
-    { name: 'Video Production', href: '/services/video-production-and-shoots' },
-    { name: 'Events & Activations', href: '/services/events-and-activations' },
-    { name: 'Marketplace Growth', href: '/services/marketplace-growth' },
-  ];
-
   const offices = [
-    { title: 'INDIA', detail: 'New Delhi, INDIA' },
-    { title: 'UAE', detail: 'Dubai, UAE' },
-    { title: 'USA', detail: 'California, USA' },
+    { title: 'INDIA', detail: 'Okhla Phase III, New Delhi 110020, India' },
+    { title: 'UAE', detail: 'Business Bay, Downtown Dubai, UAE' },
+    { title: 'USA', detail: 'Market St, San Francisco, CA 94105, USA' },
   ];
 
   const [subscribeError, setSubscribeError] = useState(null);
@@ -183,7 +178,7 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
 
             {/* Agency Summary Paragraph */}
             <p className="text-[11px] text-white/65 font-light leading-relaxed max-w-xs">
-              Your brand growth digital agency scaling brands across India, UAE & USA since 2018.
+              Prittal is a branding, creative and digital growth agency scaling brands across India, UAE & USA since 2018.
             </p>
 
             <p className="font-montserrat text-[11px] sm:text-xs font-normal text-white/60 leading-tight whitespace-nowrap">
@@ -238,10 +233,12 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-7 h-7 rounded-full bg-[#00afc8] hover:bg-white/10 hover:backdrop-blur-md text-white flex items-center justify-center border border-[#00afc8] hover:border-white/20 hover:text-[#00afc8] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-[#00afc8]/20 group"
+                    aria-label={social.ariaLabel}
                     title={social.label}
+                    className="w-7 h-7 rounded-full bg-[#00afc8] hover:bg-white/10 hover:backdrop-blur-md text-white flex items-center justify-center border border-[#00afc8] hover:border-white/20 hover:text-[#00afc8] cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-[#00afc8]/20 group"
                   >
                     <IconComp className="w-3.5 h-3.5 group-hover:scale-110 transition-transform duration-300" />
+                    <span className="sr-only">{social.ariaLabel}</span>
                   </a>
                 );
               })}

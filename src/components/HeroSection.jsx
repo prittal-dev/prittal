@@ -124,10 +124,10 @@ export default function HeroSection({ onOpenContact, onExploreWork }) {
   const slides = [
     {
       subtitle: "We build it. We grow it. We scale it.",
-      titleLine1: "NOT JUST AN AGENCY.",
-      titleLine2: "YOUR BRAND",
-      titleLine3: "GROWTH PARTNER.",
-      desc: "No matter where you are in your journey, we're here to help. From building your brand identity and online presence to marketing, launches, and growth, Prittal works alongside you every step of the way."
+      titleLine1: "Not Just a Branding Agency.",
+      titleLine2: "Your Brand",
+      titleLine3: "Growth Partner.",
+      desc: "Prittal is a branding, creative and digital growth agency. From brand strategy and identity to marketing, launches and growth, we work alongside you every step of the way."
     },
     {
       subtitle: "Your Full-Service Growth Engine",

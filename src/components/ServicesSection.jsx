@@ -30,7 +30,7 @@ export default function ServicesSection({ onOpenContact, onSelectService }) {
           </h2>
 
           <p className="text-[#1B1B1B]/70 dark:text-white/70 text-[11px] sm:text-xs font-light">
-            One agency. 6 core services. Zero chaos.
+            One creative agency. 6 core services. Zero chaos.
           </p>
         </div>
 

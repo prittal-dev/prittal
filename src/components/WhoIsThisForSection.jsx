@@ -25,7 +25,7 @@ function AnimatedStatNumber({ value, prefix = '', suffix = '' }) {
   );
 }
 
-export default function WhoIsThisForSection({ onOpenContact, onExploreWork }) {
+export default function WhoIsThisForSection({ onOpenContact, onExploreWork, onNavigate }) {
   const brandStats = [
     { id: 'exp', value: 8, suffix: '+ Years', label: 'Industry Experience' },
     { id: 'proj', value: 5000, suffix: '+', label: 'Projects Delivered' },
@@ -34,14 +34,14 @@ export default function WhoIsThisForSection({ onOpenContact, onExploreWork }) {
   ];
 
   const brandLogos = [
-    { name: "APTARA", logo: logoAptara },
-    { name: "NOKIA", logo: logoNokia },
-    { name: "SAGE", logo: logoSage },
-    { name: "XSEED", logo: logoXseed },
-    { name: "OXFORD", logo: logoOxford },
-    { name: "CAMBRIDGE", logo: logoCambridge },
-    { name: "UAE", logo: logoUae },
-    { name: "OYO", logo: logoOyo },
+    { name: "APTARA", alt: "Aptara, a Prittal branding client", logo: logoAptara },
+    { name: "NOKIA", alt: "Nokia, a Prittal branding client", logo: logoNokia },
+    { name: "SAGE", alt: "Sage, a Prittal branding client", logo: logoSage },
+    { name: "XSEED", alt: "XSEED, a Prittal branding client", logo: logoXseed },
+    { name: "OXFORD", alt: "Oxford, a Prittal branding client", logo: logoOxford },
+    { name: "CAMBRIDGE", alt: "Cambridge, a Prittal branding client", logo: logoCambridge },
+    { name: "UAE Exchange", alt: "UAE Exchange, a Prittal branding client", logo: logoUae },
+    { name: "OYO", alt: "OYO, a Prittal branding client", logo: logoOyo },
   ];
 
   const situationCards = [
@@ -52,10 +52,11 @@ export default function WhoIsThisForSection({ onOpenContact, onExploreWork }) {
       badge: "FOUNDATION",
       badgeColor: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
       title: "Starting from scratch",
-      subtitle: "No brand yet? No problem. We build your identity, visuals, and market presence from the ground up.",
+      subtitle: "No brand yet? No problem. Our brand identity and brand strategy team builds your identity, visuals, and market presence from the ground up.",
       highlights: ["Brand Identity & Guidelines", "Custom Web & App Portal", "Launch Strategy Blueprint"],
       ctaPrimary: "See Scope",
-      ctaSecondary: "Get started"
+      ctaSecondary: "Get started",
+      serviceLink: "/services/brand-design"
     },
     {
       id: "visibility",
@@ -67,7 +68,8 @@ export default function WhoIsThisForSection({ onOpenContact, onExploreWork }) {
       subtitle: "You have a business but the world doesn't know it. Time to build your digital presence the right way.",
       highlights: ["Brand Identity Refresh", "Organic Social Engine", "SEO & Search Dominance"],
       ctaPrimary: "See Scope",
-      ctaSecondary: "Get started"
+      ctaSecondary: "Get started",
+      serviceLink: "/services/digital-marketing"
     },
     {
       id: "growth",
@@ -76,10 +78,11 @@ export default function WhoIsThisForSection({ onOpenContact, onExploreWork }) {
       badge: "PERFORMANCE",
       badgeColor: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
       title: "Ready to market & grow",
-      subtitle: "Your brand is ready. Now let's put it in front of the right people with the right message.",
+      subtitle: "Your brand is ready. With our growth agency support, we put it in front of the right people with the right message.",
       highlights: ["High-ROAS Media Buying", "UGC Video Creatives", "Conversion Rate Funnels"],
       ctaPrimary: "See Scope",
-      ctaSecondary: "Get started"
+      ctaSecondary: "Get started",
+      serviceLink: "/services/performance-marketing"
     },
     {
       id: "scale",
@@ -88,10 +91,11 @@ export default function WhoIsThisForSection({ onOpenContact, onExploreWork }) {
       badge: "EXPANSION",
       badgeColor: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
       title: "Scale to the next level",
-      subtitle: "You're already growing. Let's 10x it with performance, events, and marketplaces that convert.",
+      subtitle: "You're already growing. With dedicated growth agency support, let's 10x it with performance, events, and marketplaces that convert.",
       highlights: ["Amazon & Flipkart Scaling", "Pan-India Retail Activations", "Omnichannel Strategy"],
       ctaPrimary: "See Scope",
-      ctaSecondary: "Get started"
+      ctaSecondary: "Get started",
+      serviceLink: "/services/marketplace-growth"
     }
   ];
 
@@ -114,7 +118,7 @@ export default function WhoIsThisForSection({ onOpenContact, onExploreWork }) {
                 >
                   <img
                     src={brand.logo}
-                    alt={brand.name}
+                    alt={brand.alt}
                     className="h-6 sm:h-7 max-w-[110px] sm:max-w-[125px] w-auto object-contain transition-all duration-300 filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 dark:brightness-0 dark:invert dark:opacity-70 dark:group-hover:brightness-0 dark:group-hover:invert dark:group-hover:opacity-100"
                   />
                 </div>
@@ -157,6 +161,10 @@ export default function WhoIsThisForSection({ onOpenContact, onExploreWork }) {
             ))}
           </div>
         </div>
+
+        <p className="mt-4 sm:mt-5 text-center text-xs sm:text-sm font-montserrat text-[#1B1B1B]/75 dark:text-white/75 font-medium">
+          As a business growth agency, we have helped clients generate over ₹50Cr in revenue.
+        </p>
       </div>
 
       {/* 2. "Who Is This For" Situation Cards Grid */}
@@ -238,7 +246,13 @@ export default function WhoIsThisForSection({ onOpenContact, onExploreWork }) {
                 <div className="grid grid-cols-2 gap-2 pt-2.5 border-t border-black/5 dark:border-white/10 group-hover:border-white/20 relative z-10 transition-colors duration-300">
                   {/* Primary Action Button (Audit) */}
                   <button
-                    onClick={onOpenContact}
+                    onClick={() => {
+                      if (card.serviceLink && onNavigate) {
+                        onNavigate(card.serviceLink);
+                      } else if (onOpenContact) {
+                        onOpenContact();
+                      }
+                    }}
                     className="py-2 px-1.5 rounded-xl bg-[#00afc8] text-white font-montserrat font-bold text-[9px] uppercase tracking-wider group-hover:bg-white group-hover:text-[#003E4D] transition-all duration-300 flex items-center justify-center gap-1 cursor-pointer shadow-sm hover:shadow-md group/btn"
                     title={card.ctaPrimary}
                   >

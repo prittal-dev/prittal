@@ -125,14 +125,14 @@ export default function AboutUsPage({
   ];
 
   const clientLogos = [
-    { name: 'APTARA', logo: aptaraLogo },
-    { name: 'NOKIA', logo: nokiaLogo },
-    { name: 'SAGE', logo: sageLogo },
-    { name: 'XSEED', logo: xseedLogo },
-    { name: 'OXFORD', logo: oxfordLogo },
-    { name: 'CAMBRIDGE', logo: cambridgeLogo },
-    { name: 'UAE', logo: uaeLogo },
-    { name: 'OYO', logo: oyoLogo },
+    { name: 'APTARA', alt: 'Aptara, a Prittal branding client', logo: aptaraLogo },
+    { name: 'NOKIA', alt: 'Nokia, a Prittal branding client', logo: nokiaLogo },
+    { name: 'SAGE', alt: 'Sage, a Prittal branding client', logo: sageLogo },
+    { name: 'XSEED', alt: 'XSEED, a Prittal branding client', logo: xseedLogo },
+    { name: 'OXFORD', alt: 'Oxford, a Prittal branding client', logo: oxfordLogo },
+    { name: 'CAMBRIDGE', alt: 'Cambridge, a Prittal branding client', logo: cambridgeLogo },
+    { name: 'UAE Exchange', alt: 'UAE Exchange, a Prittal branding client', logo: uaeLogo },
+    { name: 'OYO', alt: 'OYO, a Prittal branding client', logo: oyoLogo },
   ];
 
   const pillars = [
@@ -620,7 +620,7 @@ export default function AboutUsPage({
                 >
                   <img
                     src={client.logo}
-                    alt={client.name}
+                    alt={client.alt}
                     className="h-6 sm:h-7 max-w-[110px] sm:max-w-[125px] w-auto object-contain transition-all duration-300 filter grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 dark:brightness-0 dark:invert dark:opacity-70 dark:group-hover:brightness-0 dark:group-hover:invert dark:group-hover:opacity-100"
                   />
                 </div>

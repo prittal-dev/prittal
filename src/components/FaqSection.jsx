@@ -4,44 +4,34 @@ import { Plus, X } from 'lucide-react';
 
 const faqs = [
   {
-    id: 'safe-linkedin',
-    question: 'Is SalesTrigger safe to use with LinkedIn?',
-    answer: 'Yes, 100%. We use human-mimicking behavior, randomized delays, and strict safety thresholds to ensure your LinkedIn account remains completely safe and compliant at all times.'
+    id: 'faq-branding-agency',
+    question: 'Why choose Prittal as your Branding Agency and Brand Strategy Agency?',
+    answer: 'Prittal operates as a full-service branding agency and brand strategy agency. We do not just design logos; we build strategic positioning, visual identity systems, messaging frameworks, and brand guidelines that scale your business and establish market authority.'
   },
   {
-    id: 'ai-personalization',
-    question: 'How does AI personalize messages?',
-    answer: 'Our AI researches prospect profiles, recent activity, company updates, and industry news to craft hyper-personalized outreach messages that read like handwritten emails.'
+    id: 'faq-creative-agency',
+    question: 'What core services does Prittal offer as a Creative Agency?',
+    answer: 'As a multidisciplinary creative agency, Prittal delivers 6 connected capabilities: Brand Strategy & Identity Design, Digital Growth & Marketing, High-ROAS Performance Marketing, Video Production & Shoots, Events & Activations, and Marketplace Growth.'
   },
   {
-    id: 'lead-lists',
-    question: 'Can I upload my own lead lists?',
-    answer: 'Yes, you can easily upload CSV files or sync your lead lists directly from your CRM. Our system will automatically enrich and verify every prospect contact.'
+    id: 'faq-brand-identity',
+    question: 'How does a dedicated Brand Identity Agency impact your business?',
+    answer: 'A specialized brand identity agency creates visual consistency across all touchpoints—logos, typography, color palettes, packaging, UI/UX, and marketing collateral—establishing immediate trust and premium brand perception.'
   },
   {
-    id: 'what-is-prittal',
-    question: 'What is SalesTrigger?',
-    answer: 'AI researches prospects, analyzes profiles, and builds your ideal customer list automatically. Analyzes profiles, and builds your ideal customer list automatically'
+    id: 'faq-digital-growth',
+    question: 'How does Prittal drive growth as a Digital Growth Agency and Business Growth Agency?',
+    answer: 'As a digital growth agency and business growth agency partner, we focus on measurable revenue. We combine search engine positioning (SEO/AEO), high-conversion paid ads, funnel optimization, and data-driven creative execution to scale your business online.'
   },
   {
-    id: 'own-tone',
-    question: 'Can I use my own tone or style in messages?',
-    answer: 'Absolutely. You can define custom brand guidelines, tone presets (formal, casual, persuasive), and provide sample messages to ensure the AI speaks in your exact voice.'
+    id: 'faq-turnaround',
+    question: 'What is the typical timeline for a brand identity or strategy project?',
+    answer: 'Comprehensive brand strategy and identity projects typically take 3 to 6 weeks depending on scope. Our structured agency roadmap ensures transparent milestones and fast execution without compromising creative quality.'
   },
   {
-    id: 'integrations',
-    question: 'What integrations do you support?',
-    answer: 'We seamlessly integrate with HubSpot, Salesforce, Zoho, Zapier, Make, Slack, Gmail, Outlook, and popular webhooks to sync leads and campaign performance.'
-  },
-  {
-    id: 'ai-sdr',
-    question: 'What does AI SDR mean?',
-    answer: 'An AI SDR (Sales Development Representative) automates prospect research, personalized outreach, objection handling, and meeting scheduling 24/7 without manual effort.'
-  },
-  {
-    id: 'how-soon',
-    question: 'How soon can I start?',
-    answer: 'You can get started immediately! Setup takes less than 5 minutes, and your first automated outreach campaign can be live and sending within 24 hours.'
+    id: 'faq-global-clients',
+    question: 'Does Prittal serve clients across India, UAE, and USA?',
+    answer: 'Yes! Prittal is a premier global creative agency and digital growth agency supporting high-growth brands and enterprises across India, UAE, and the USA since 2018.'
   }
 ];
 

@@ -784,7 +784,7 @@ export default function WorkSection({ onOpenContact, onSelectArticle }) {
               onClick={onOpenContact}
               className="inline-flex items-center gap-2 text-xs font-montserrat font-bold text-[#00A9B9] hover:text-[#008f9d] uppercase tracking-wider group cursor-pointer shrink-0 whitespace-nowrap"
             >
-              <span>Read All Articles</span>
+              <span>Read all brand and growth articles</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
             </button>
 
@@ -841,7 +841,20 @@ export default function WorkSection({ onOpenContact, onSelectArticle }) {
                       </span>
                     </div>
                     <h3 className="text-2xl font-extrabold font-montserrat text-white mb-2 line-clamp-2">
-                      {post.title}
+                      <a
+                        href={`/insights/${post.slug || post.id}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (onSelectArticle) {
+                            onSelectArticle(post);
+                          } else {
+                            setActiveArticle(post);
+                          }
+                        }}
+                        className="hover:underline hover:text-[#00A9B9] transition-colors"
+                      >
+                        {post.title}
+                      </a>
                     </h3>
                     <p className="text-xs text-white/90 font-light line-clamp-2 mb-5">
                       ✦ {post.teaser}
@@ -868,7 +881,7 @@ export default function WorkSection({ onOpenContact, onSelectArticle }) {
               <img
                 src={post.image}
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-                alt={post.title}
+                alt={post.imageAlt || `${post.title} — Prittal Branding & Business Growth Agency Insights`}
               />
             </motion.div>
           ))}
@@ -894,7 +907,7 @@ export default function WorkSection({ onOpenContact, onSelectArticle }) {
               <img
                 src={post.image}
                 className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                alt={post.title}
+                alt={post.imageAlt || `${post.title} — Prittal Branding & Business Growth Agency Insights`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent z-10" />
               
@@ -908,8 +921,22 @@ export default function WorkSection({ onOpenContact, onSelectArticle }) {
                     {post.readTime}
                   </span>
                 </div>
-                <h3 className="text-base sm:text-lg font-extrabold font-montserrat text-white mb-2 line-clamp-2 leading-tight">
-                  {post.title}
+                <h3 className="text-base sm:text-lg font-extrabold font-montserrat text-[#fff6f1] mb-2 line-clamp-2 leading-tight">
+                  <a
+                    href={`/insights/${post.slug || post.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (onSelectArticle) {
+                        onSelectArticle(post);
+                      } else {
+                        setActiveArticle(post);
+                      }
+                    }}
+                    className="hover:underline hover:text-[#00A9B9] transition-colors"
+                  >
+                    {post.title}
+                  </a>
                 </h3>
                 <p className="text-[11px] text-white/80 font-light line-clamp-2 mb-4 leading-relaxed">
                   {post.teaser}

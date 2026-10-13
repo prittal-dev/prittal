@@ -1,9 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Layers, Compass, Eye, Quote, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Layers, Compass, Eye, Quote, Star, ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react';
 import { CrowdCanvas } from './v1/skiper39';
 
-export default function WhyPrittalTestimonials({ onOpenContact }) {
+export default function WhyPrittalTestimonials({ onOpenContact, onNavigate }) {
   const [isCardHovered, setIsCardHovered] = useState(false);
   const testimonialsScrollRef = useRef(null);
 
@@ -25,7 +25,8 @@ export default function WhyPrittalTestimonials({ onOpenContact }) {
       title: "Sr. Project Manager",
       company: "XSEED Education",
       category: "K-12 Book Design & Publishing",
-      rating: 5
+      rating: 5,
+      caseStudyLink: "/portfolio"
     },
     {
       id: 2,
@@ -34,7 +35,8 @@ export default function WhyPrittalTestimonials({ onOpenContact }) {
       title: "Sr. Marketing Manager",
       company: "Sage",
       category: "Brand Campaigns & Social Media",
-      rating: 5
+      rating: 5,
+      caseStudyLink: "/portfolio"
     },
     {
       id: 3,
@@ -43,7 +45,8 @@ export default function WhyPrittalTestimonials({ onOpenContact }) {
       title: "Sr. Marketing Manager",
       company: "UAE Exchange",
       category: "Corporate Branding & Collateral",
-      rating: 5
+      rating: 5,
+      caseStudyLink: "/portfolio"
     },
     {
       id: 4,
@@ -52,7 +55,8 @@ export default function WhyPrittalTestimonials({ onOpenContact }) {
       title: "Manager",
       company: "SPi Global",
       category: "Artwork Production & Execution",
-      rating: 5
+      rating: 5,
+      caseStudyLink: "/portfolio"
     },
     {
       id: 5,
@@ -61,7 +65,8 @@ export default function WhyPrittalTestimonials({ onOpenContact }) {
       title: "Sr. Project Manager",
       company: "University of Cambridge",
       category: "K-12 Learning & Typography",
-      rating: 5
+      rating: 5,
+      caseStudyLink: "/portfolio"
     }
   ];
 
@@ -135,19 +140,37 @@ export default function WhyPrittalTestimonials({ onOpenContact }) {
                         </p>
                       </div>
 
-                      {/* Author Details */}
-                      <div className="pl-2 pt-2.5 sm:pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-2.5">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#00A9B9]/10 text-[#00A9B9] font-montserrat font-extrabold text-[10px] flex items-center justify-center border border-[#00A9B9]/30 shrink-0 shadow-sm">
-                          {initials}
+                      {/* Author Details & Case Study Link */}
+                      <div className="pl-2 pt-2.5 sm:pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#00A9B9]/10 text-[#00A9B9] font-montserrat font-extrabold text-[10px] flex items-center justify-center border border-[#00A9B9]/30 shrink-0 shadow-sm">
+                            {initials}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="font-montserrat font-extrabold text-xs text-slate-900 dark:text-white truncate leading-tight">
+                              {t.name}
+                            </h4>
+                            <p className="text-[10px] font-montserrat text-slate-500 dark:text-slate-400 truncate mt-0.5 leading-tight">
+                              {t.title}, <span className="font-semibold text-slate-700 dark:text-slate-300">{t.company}</span>
+                            </p>
+                          </div>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <h4 className="font-montserrat font-extrabold text-xs text-slate-900 dark:text-white truncate leading-tight">
-                            {t.name}
-                          </h4>
-                          <p className="text-[10px] font-montserrat text-slate-500 dark:text-slate-400 truncate mt-0.5 leading-tight">
-                            {t.title}, <span className="font-semibold text-slate-700 dark:text-slate-300">{t.company}</span>
-                          </p>
-                        </div>
+
+                        {t.caseStudyLink && (
+                          <a
+                            href={t.caseStudyLink}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (onNavigate) onNavigate(t.caseStudyLink);
+                              else window.location.href = t.caseStudyLink;
+                            }}
+                            className="inline-flex items-center gap-0.5 text-[10px] font-montserrat font-bold text-[#00A9B9] hover:underline shrink-0"
+                            title={`Read ${t.company} case study`}
+                          >
+                            <span>Case Study</span>
+                            <ArrowUpRight className="w-3 h-3" />
+                          </a>
+                        )}
                       </div>
                     </div>
                   );
@@ -186,6 +209,12 @@ export default function WhyPrittalTestimonials({ onOpenContact }) {
                 return (
                   <div
                     key={idx}
+                    onClick={() => {
+                      if (t.caseStudyLink) {
+                        if (onNavigate) onNavigate(t.caseStudyLink);
+                        else window.location.href = t.caseStudyLink;
+                      }
+                    }}
                     className="w-[285px] sm:w-[410px] h-[240px] sm:h-[250px] bg-white/95 dark:bg-black backdrop-blur-xl rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200/90 dark:border-white/10 shadow-xl hover:shadow-2xl hover:shadow-[#00A9B9]/15 hover:border-[#00A9B9] hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 flex flex-col justify-between shrink-0 group cursor-pointer relative overflow-hidden"
                   >
                     {/* Left Accent Bar */}
@@ -210,19 +239,38 @@ export default function WhyPrittalTestimonials({ onOpenContact }) {
                       </p>
                     </div>
 
-                    {/* Author Details with Avatar Initials Badge */}
-                    <div className="pl-2 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center gap-3">
-                      <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#00A9B9]/10 text-[#00A9B9] font-montserrat font-extrabold text-[10px] sm:text-xs flex items-center justify-center border border-[#00A9B9]/30 shrink-0 shadow-sm group-hover:bg-[#00A9B9] group-hover:text-white transition-colors">
-                        {initials}
+                    {/* Author Details & Case Study Link */}
+                    <div className="pl-2 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#00A9B9]/10 text-[#00A9B9] font-montserrat font-extrabold text-[10px] sm:text-xs flex items-center justify-center border border-[#00A9B9]/30 shrink-0 shadow-sm group-hover:bg-[#00A9B9] group-hover:text-white transition-colors">
+                          {initials}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="font-montserrat font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
+                            {t.name}
+                          </h4>
+                          <p className="text-[10px] sm:text-[11px] font-montserrat text-slate-500 dark:text-slate-400 truncate mt-0.5 sm:mt-0">
+                            {t.title}, <span className="font-semibold text-slate-700 dark:text-slate-300">{t.company}</span>
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <h4 className="font-montserrat font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
-                          {t.name}
-                        </h4>
-                        <p className="text-[10px] sm:text-[11px] font-montserrat text-slate-500 dark:text-slate-400 truncate mt-0.5 sm:mt-0">
-                          {t.title}, <span className="font-semibold text-slate-700 dark:text-slate-300">{t.company}</span>
-                        </p>
-                      </div>
+
+                      {t.caseStudyLink && (
+                        <a
+                          href={t.caseStudyLink}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            if (onNavigate) onNavigate(t.caseStudyLink);
+                            else window.location.href = t.caseStudyLink;
+                          }}
+                          className="inline-flex items-center gap-1 text-[11px] font-montserrat font-bold text-[#00A9B9] hover:text-[#008c99] hover:underline shrink-0 group/link"
+                          title={`Read ${t.company} case study`}
+                        >
+                          <span>Case Study</span>
+                          <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 );

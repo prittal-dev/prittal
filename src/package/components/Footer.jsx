@@ -3,7 +3,6 @@ const prittalLogo = '/assets/Prittal_logo.png';
 import { 
   Facebook, 
   Linkedin, 
-  Twitter, 
   Instagram, 
   Youtube, 
   Check,
@@ -16,11 +15,10 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate, onSta
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const socialLinks = [
-    { name: 'LinkedIn Page', icon: Linkedin, href: 'https://in.linkedin.com/company/prittalcreative', label: 'LinkedIn Page' },
-    { name: 'Instagram Profile', icon: Instagram, href: 'https://www.instagram.com/prittalcreative/', label: 'Instagram Profile' },
-    { name: 'Facebook Group', icon: Facebook, href: 'https://www.facebook.com/prittalcreative/', label: 'Facebook Page' },
-    { name: 'Twitter Feed', icon: Twitter, href: 'https://twitter.com', label: 'Twitter Feed' },
-    { name: 'YouTube Channel', icon: Youtube, href: 'https://www.youtube.com/@prittalcreativeagency5363', label: 'YouTube Channel' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://in.linkedin.com/company/prittalcreative', label: 'LinkedIn Page', ariaLabel: 'Prittal Creative Agency LinkedIn Page' },
+    { name: 'Instagram', icon: Instagram, href: 'https://www.instagram.com/prittalcreative/', label: 'Instagram Profile', ariaLabel: 'Prittal Creative Agency Instagram Profile' },
+    { name: 'Facebook', icon: Facebook, href: 'https://www.facebook.com/prittalcreative/', label: 'Facebook Page', ariaLabel: 'Prittal Creative Agency Facebook Page' },
+    { name: 'YouTube', icon: Youtube, href: 'https://www.youtube.com/@prittalcreativeagency5363', label: 'YouTube Channel', ariaLabel: 'Prittal Creative Agency YouTube Channel' },
   ];
 
   // Quick Links taken from the Package page
@@ -35,9 +33,9 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate, onSta
   ];
 
   const offices = [
-    { title: 'INDIA', detail: 'New Delhi, INDIA' },
-    { title: 'UAE', detail: 'Dubai, UAE' },
-    { title: 'USA', detail: 'California, USA' },
+    { title: 'INDIA', detail: 'Okhla Phase III, New Delhi 110020, India' },
+    { title: 'UAE', detail: 'Business Bay, Downtown Dubai, UAE' },
+    { title: 'USA', detail: 'Market St, San Francisco, CA 94105, USA' },
   ];
 
   const [subscribeError, setSubscribeError] = useState(null);
@@ -143,7 +141,7 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate, onSta
 
             {/* Agency Summary Paragraph */}
             <p className="text-[11px] text-white/65 font-light leading-relaxed max-w-xs">
-              Your brand growth digital agency scaling brands across India, UAE & USA since 2018.
+              Prittal is a branding, creative and digital growth agency scaling brands across India, UAE & USA since 2018.
             </p>
 
             <p className="font-montserrat text-[11px] sm:text-xs font-normal text-white/60 leading-tight whitespace-nowrap">

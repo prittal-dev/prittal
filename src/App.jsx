@@ -469,8 +469,8 @@ export default function App() {
     }
 
     updateSEOTags({
-      title: 'Best Branding Agency | Prittal Creative',
-      description: 'Looking for the Brand Growth Partner? We craft powerful brand identities & strategies that drive growth. For Nokia, OYO, CAMBRIDGE OXFORD',
+      title: 'Brand Strategy & Business Growth Agency | Prittal',
+      description: 'Best Branding Firm & Creative Agency | Prittal',
       path: '/'
     });
 
@@ -724,8 +724,8 @@ export default function App() {
         setIsPackagePage(false);
 
         updateSEOTags({
-          title: 'Best Branding Agency | Prittal Creative',
-          description: 'Looking for the Brand Growth Partner? We craft powerful brand identities & strategies that drive growth. For Nokia, OYO, CAMBRIDGE OXFORD',
+          title: 'Brand Strategy & Business Growth Agency | Prittal',
+          description: 'Best Branding Firm & Creative Agency | Prittal',
           path: '/',
           noIndex: hasQuery
         });

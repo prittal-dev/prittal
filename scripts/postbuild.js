@@ -62,11 +62,6 @@ const serviceSubpages = [
     description: 'High-impact commercial video production, brand films, product shoots, and social-first video content.'
   },
   {
-    slug: 'video-production-and-shoots',
-    title: 'Video Production & Commercial Shoot Services — Prittal',
-    description: 'High-impact commercial video production, brand films, product shoots, and social-first video content.'
-  },
-  {
     slug: 'events-activations',
     title: 'Event Marketing & Brand Activation Agency | Prittal',
     description: 'Prittal creates immersive corporate event experiences and brand activations that engage audiences and build brand equity worldwide. Partner with us today.'

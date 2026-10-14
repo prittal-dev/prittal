@@ -68,10 +68,6 @@
       "destination": "/services/video-production/index.html"
     },
     {
-      "source": "/services/video-production-and-shoots",
-      "destination": "/services/video-production-and-shoots/index.html"
-    },
-    {
       "source": "/services/events-activations",
       "destination": "/services/events-activations/index.html"
     },

@@ -255,8 +255,8 @@ export default function App() {
     }
 
     updateSEOTags({
-      title: 'Digital Marketing & Brand Growth Solutions',
-      description: 'Prittal is a brand growth partner delivering strategic branding, and digital marketing solutions for ambitious brands, including Nokia, OYO, Cambridge & Oxford.',
+      title: 'Best Branding Firm & Creative Agency | Prittal',
+      description: 'Prittal is a premier branding firm in USA, UAE & India. Recognized among the best creative agencies for strategic brand identity design & business growth.',
       path: path,
       type: 'website'
     });
@@ -281,8 +281,8 @@ export default function App() {
     }
 
     updateSEOTags({
-      title: 'Services — Prittal Creative Agency',
-      description: 'Explore our full range of brand strategy, UI/UX design, digital marketing, performance ads, video production, and marketplace growth services.',
+      title: 'Digital Growth Solutions & Strategy | Scale Online | Prittal',
+      description: 'Discover how to scale a business online with Prittal. We deliver custom business growth strategy and digital growth solutions to transform clicks into revenue.',
       path: path,
       type: 'website'
     });

@@ -470,7 +470,7 @@ export default function App() {
 
     updateSEOTags({
       title: 'Brand Strategy & Business Growth Agency | Prittal',
-      description: 'Best Branding Firm & Creative Agency | Prittal',
+      description: 'Prittal is a premier branding agency & brand identity agency. As your creative agency partner, we build strategies and identities that scale your business.',
       path: '/'
     });
 
@@ -725,7 +725,7 @@ export default function App() {
 
         updateSEOTags({
           title: 'Brand Strategy & Business Growth Agency | Prittal',
-          description: 'Best Branding Firm & Creative Agency | Prittal',
+          description: 'Prittal is a premier branding agency & brand identity agency. As your creative agency partner, we build strategies and identities that scale your business.',
           path: '/',
           noIndex: hasQuery
         });

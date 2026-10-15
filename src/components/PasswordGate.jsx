@@ -9,7 +9,7 @@ export default function PasswordGate({ pageTitle, pageType, onAuthenticated, onG
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password.trim() === 'prittal@2026') {
+    if (password.trim() === 'Prittal@#201808') {
       try {
         sessionStorage.setItem(`prittal_auth_${pageType}`, 'true');
       } catch (err) {}

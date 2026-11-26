@@ -326,10 +326,22 @@ export default function Footer({ onOpenContact, onReplayIntro, onNavigate }) {
 
         </div>
 
-        {/* Bottom Bar (Copyright Notice) */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-start gap-4 text-xs font-montserrat text-white/70">
+        {/* Bottom Bar (Copyright Notice & Legal Links) */}
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-montserrat text-white/70">
           <div className="text-left text-[11px] font-medium text-white/60">
             © 2018–2026 Prittal Creative Agency. All rights reserved.
+          </div>
+          <div className="flex items-center gap-4 text-[11px] font-medium text-white/60">
+            <a
+              href="/privacy-policy"
+              onClick={(e) => {
+                e.preventDefault();
+                handleScrollTo('/privacy-policy');
+              }}
+              className="hover:text-[#00afc8] transition-colors"
+            >
+              Privacy Policy
+            </a>
           </div>
         </div>
 

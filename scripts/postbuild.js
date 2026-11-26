@@ -33,6 +33,11 @@ const routes = [
     description: 'Thank you for reaching out to Prittal. Our senior strategy team will review your project brief and respond shortly.'
   },
   {
+    path: '/privacy-policy',
+    title: 'Privacy Policy | Prittal Creative Agency',
+    description: 'Read the Privacy Policy for Prittal Creative Agency (https://www.prittal.com). Learn how we collect, use, protect, and respect your personal data.'
+  },
+  {
     path: '/404',
     title: '404 — Page Not Found | Prittal Creative Agency',
     description: 'The page you are looking for does not exist or has been moved.'

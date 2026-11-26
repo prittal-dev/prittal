@@ -21,6 +21,7 @@ import FloatingWhatsApp from './components/FloatingWhatsApp';
 import PasswordGate from './components/PasswordGate';
 import NotFoundPage from './components/NotFoundPage';
 import ThankYouPage from './components/ThankYouPage';
+import PrivacyPolicyPage from './components/PrivacyPolicyPage';
 import { servicesData, getServiceById } from './data/servicesData';
 import { updateSEOTags, slugify } from './utils/seo';
 
@@ -65,6 +66,7 @@ export default function App() {
   const [isPortfolioPage, setIsPortfolioPage] = useState(false);
   const [isPackagePage, setIsPackagePage] = useState(false);
   const [isThankYouPage, setIsThankYouPage] = useState(false);
+  const [isPrivacyPolicyPage, setIsPrivacyPolicyPage] = useState(false);
 
   // Ensure dark class is applied to document root on mount & update
   useEffect(() => {
@@ -140,6 +142,7 @@ export default function App() {
     setIsPortfolioPage(false);
     setIsPackagePage(false);
     setIsThankYouPage(false);
+    setIsPrivacyPolicyPage(false);
     setIsNotFoundPage(true);
 
     const path = typeof window !== 'undefined' ? window.location.pathname : '/404';
@@ -168,6 +171,7 @@ export default function App() {
     setIsPortfolioPage(false);
     setIsPackagePage(false);
     setIsNotFoundPage(false);
+    setIsPrivacyPolicyPage(false);
     setIsThankYouPage(true);
 
     const path = '/thank-you';
@@ -196,6 +200,7 @@ export default function App() {
     setIsPortfolioPage(false);
     setIsNotFoundPage(false);
     setIsThankYouPage(false);
+    setIsPrivacyPolicyPage(false);
     setIsPackagePage(true);
     const path = '/package';
 
@@ -222,6 +227,7 @@ export default function App() {
     setIsAboutPage(false);
     setIsPackagePage(false);
     setIsNotFoundPage(false);
+    setIsPrivacyPolicyPage(false);
     setIsPortfolioPage(true);
     const path = '/portfolio';
 
@@ -247,6 +253,7 @@ export default function App() {
     setIsPortfolioPage(false);
     setIsPackagePage(false);
     setIsNotFoundPage(false);
+    setIsPrivacyPolicyPage(false);
     setIsAboutPage(true);
     const path = '/about-us';
 
@@ -265,6 +272,34 @@ export default function App() {
     if (window.lenis) window.lenis.scrollTo(0, { duration: 0.8 });
   };
 
+  const navigateToPrivacyPolicy = (push = true) => {
+    setSkipIntro(true);
+    setSelectedServicePage(null);
+    setSelectedBlogArticle(null);
+    setIsAboutPage(false);
+    setIsPortfolioPage(false);
+    setIsPackagePage(false);
+    setIsNotFoundPage(false);
+    setIsThankYouPage(false);
+    setIsPrivacyPolicyPage(true);
+    const path = '/privacy-policy';
+
+    if (push && typeof window !== 'undefined' && window.location.pathname !== path) {
+      window.history.pushState({ type: 'privacy-policy' }, '', path);
+    }
+
+    updateSEOTags({
+      title: 'Privacy Policy | Prittal Creative Agency',
+      description: 'Read the Privacy Policy for Prittal Creative Agency (https://www.prittal.com). Learn how we collect, use, protect, and respect your personal data.',
+      path: path,
+      type: 'website',
+      noIndex: false
+    });
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.lenis) window.lenis.scrollTo(0, { duration: 0.8 });
+  };
+
   const navigateToServices = (push = true) => {
     setSkipIntro(true);
     setSelectedServicePage(null);
@@ -274,6 +309,7 @@ export default function App() {
     setIsPackagePage(false);
     setIsNotFoundPage(false);
     setIsThankYouPage(false);
+    setIsPrivacyPolicyPage(false);
     const path = '/services';
 
     if (push && typeof window !== 'undefined' && window.location.pathname !== path) {
@@ -307,6 +343,7 @@ export default function App() {
     setIsPackagePage(false);
     setIsNotFoundPage(false);
     setIsThankYouPage(false);
+    setIsPrivacyPolicyPage(false);
     const path = '/work';
 
     if (push && typeof window !== 'undefined' && window.location.pathname !== path) {
@@ -340,6 +377,7 @@ export default function App() {
     setIsPackagePage(false);
     setIsNotFoundPage(false);
     setIsThankYouPage(false);
+    setIsPrivacyPolicyPage(false);
     const path = '/who-for';
 
     if (push && typeof window !== 'undefined' && window.location.pathname !== path) {
@@ -371,6 +409,7 @@ export default function App() {
     setIsPortfolioPage(false);
     setIsPackagePage(false);
     setIsNotFoundPage(false);
+    setIsPrivacyPolicyPage(false);
     setSelectedServicePage(service);
     const path = `/services/${service.slug || service.id}`;
     
@@ -421,6 +460,7 @@ export default function App() {
     setIsPortfolioPage(false);
     setIsPackagePage(false);
     setIsNotFoundPage(false);
+    setIsPrivacyPolicyPage(false);
     setSelectedBlogArticle(article);
     const slug = article.slug || slugify(article.title);
     const path = `/insights/${slug}`;
@@ -463,6 +503,7 @@ export default function App() {
     setIsPortfolioPage(false);
     setIsPackagePage(false);
     setIsNotFoundPage(false);
+    setIsPrivacyPolicyPage(false);
 
     if (push && typeof window !== 'undefined' && window.location.pathname !== '/') {
       window.history.pushState(null, '', '/' + (href && href !== '#' && !href.startsWith('/') ? href : ''));
@@ -498,6 +539,15 @@ export default function App() {
     }
     if (href === '/thank-you' || href === 'thank-you' || href === '#thank-you' || href.startsWith('/thank-you')) {
       navigateToThankYou(true);
+      return;
+    }
+    if (
+      href === '/privacy-policy' ||
+      href === '/privacy-policy/' ||
+      href === 'privacy-policy' ||
+      href === '#privacy-policy'
+    ) {
+      navigateToPrivacyPolicy(true);
       return;
     }
     if (href === '/404' || href === '404' || href === '#404') {
@@ -707,6 +757,12 @@ export default function App() {
         return;
       }
 
+      // Handle /privacy-policy route
+      if (pathname === '/privacy-policy' || pathname === '/privacy-policy/') {
+        navigateToPrivacyPolicy(false);
+        return;
+      }
+
       // Handle /404 route
       if (pathname === '/404' || pathname === '/404/') {
         navigateToNotFound(false);
@@ -717,6 +773,7 @@ export default function App() {
       if (pathname === '/' || pathname === '') {
         setIsNotFoundPage(false);
         setIsThankYouPage(false);
+        setIsPrivacyPolicyPage(false);
         setSelectedServicePage(null);
         setSelectedBlogArticle(null);
         setIsAboutPage(false);
@@ -807,6 +864,30 @@ export default function App() {
     setSkipIntro(true);
     window.scrollTo({ top: 0, behavior: 'auto' });
   };
+
+  // If Privacy Policy page is active, show full PrivacyPolicyPage view
+  if (isPrivacyPolicyPage) {
+    return (
+      <>
+        <PrivacyPolicyPage
+          onBack={() => navigateToHome('#', true)}
+          onNavigate={handleGlobalNavigation}
+          onOpenContact={(serviceName) => handleOpenContact(serviceName)}
+          onReplayIntro={handleReplayIntro}
+          isDark={isDark}
+          onToggleTheme={toggleTheme}
+        />
+        <ContactDrawer
+          isOpen={isContactOpen}
+          onClose={() => setIsContactOpen(false)}
+          initialService={selectedServiceForContact}
+          isDark={isDark}
+          onNavigate={handleGlobalNavigation}
+        />
+        <FloatingWhatsApp onOpenContact={handleOpenContact} />
+      </>
+    );
+  }
 
   // If Thank You page is active, show full ThankYouPage view
   if (isThankYouPage) {

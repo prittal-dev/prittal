@@ -48,6 +48,10 @@
       "destination": "/thank-you/index.html"
     },
     {
+      "source": "/privacy-policy",
+      "destination": "/privacy-policy/index.html"
+    },
+    {
       "source": "/404",
       "destination": "/404.html"
     },
